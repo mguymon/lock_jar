@@ -1,13 +1,13 @@
 require 'rubygems'
-require 'lib/accelr'
+require 'lib/lock_jar/resolver'
 require 'fileutils'
 require 'naether'
 
-describe Accelr do
+describe LockJar::Resolver do
   context "Instance" do
     it "should bootstrap naether" do
       FileUtils.mkdir_p( 'tmp/test-repo' )
-      accelr = Accelr.new( 'tmp/test-repo' )
+      resolver = LockJar::Resolver.new( :local_repo => 'tmp/test-repo' )
       
       deps = Naether::Bootstrap.check_local_repo_for_deps( 'tmp/test-repo' )
       deps[:missing].should eql([])
