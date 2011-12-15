@@ -29,9 +29,10 @@ module LockJar
       jars << Naether::JAR_PATH
       @naether = Naether.create_from_jars( jars )
       
-      if opts[:offline]
-        @naether.clear_remote_repositories
-      end
+      @naether.local_repo_path = opts[:local_repo] if opts[:local_repo]
+      
+      
+      @naether.clear_remote_repositories if opts[:offline]
     end
     
     def add_remote_repository( repo )
@@ -41,13 +42,11 @@ module LockJar
     def resolve( notations )
       @naether.dependencies = notations
       @naether.resolve_dependencies
-      @naether.dependenciesNotation
+      @naether.dependencies_path
     end
     
-    def load_to_classpath( notations )
-      @naether.dependencies = notations
-      @naether.resolve_dependencies
-      @naether.load_dependencies_to_classpath
+    def load_jars_to_classpath( jars )
+      
     end
   end
 end
