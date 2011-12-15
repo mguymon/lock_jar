@@ -3,7 +3,9 @@ require 'naether'
 require 'tmpdir'
 
 class Accelr
-  def initialize( local_repo = nil )
+  def initialize( opts = {} )
+    
+    local_repo = opts[:local_repo]
     
     # Bootstrap Naether
     jars = []
@@ -24,11 +26,19 @@ class Accelr
     
     jars << Naether::JAR_PATH
     @naether = Naether.create_from_jars( jars )
+    
+    if opts[:offline]
+      @naether.clear_remote_repositories
+    end
   end
   
   def load( notations )
     @naether.dependencies = notations
     @naether.resolve_dependencies
     @naether.load_dependencies_to_classpath
+  end
+
+  def create( java_class, *args )
+    Naether::Java.create( java_class, *args )
   end
 end
