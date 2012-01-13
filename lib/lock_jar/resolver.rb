@@ -42,11 +42,14 @@ module LockJar
     def resolve( notations )
       @naether.dependencies = notations
       @naether.resolve_dependencies
-      @naether.dependencies_path
+      @naether.dependenciesNotation
     end
     
-    def load_jars_to_classpath( jars )
+    def load_jars_to_classpath( notations )
+      jars = @naether.to_local_paths( notations )
+      Naether::Java.load_jars( jars )
       
+      jars
     end
   end
 end

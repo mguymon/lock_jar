@@ -10,22 +10,36 @@ module LockJar
     
     attr_reader :notations
     attr_reader :repositories
+    attr_reader :scopes
     
     def initialize
-      @notations = []
+
       @repositories = []
+      @scopes = ['compile', 'runtime', 'test']
+      @notations = {}
+        
+      @scopes.each do |scope|
+        @notations[scope] = []
+      end
+        
+      @present_scope = 'compile'
     end
     
     def jar(notation, *args)
-      @notations << notation
+      @notations[@present_scope] << notation
     end
     
     def repository( url, opts = {} )
       @repositories << url
     end
     
-    def scope(*scope)
-       yield
+    def scope(*scopes, &blk)
+       scopes.each do |scope|
+         @present_scope = scope.to_s
+         yield
+       end
+       
+       @present_scope = 'compile'
     end
     
     def read_file(file)

@@ -1,3 +1,11 @@
 repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
 
 jar "org.apache.mina:mina-core:2.0.4"
+
+scope 'runtime' do
+    jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
+end
+
+scope 'test' do
+    jar 'junit:junit:jar:4.10'
+end

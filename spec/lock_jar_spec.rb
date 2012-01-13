@@ -8,7 +8,8 @@ describe LockJar do
       File.delete( 'tmp/Jarfile.lock' ) if File.exists?( 'tmp/Jarfile.lock' )
       Dir.mkdir( 'tmp' ) unless File.exists?( 'tmp' )
       
-      LockJar.lock( "spec/Jarfile", :jarfile => 'tmp/Jarfile.lock', :local_repo => 'tmp/test-repo' )
+      lock_jar = LockJar.setup( :local_repo => 'tmp/test-repo' )
+      lock_jar.lock( "spec/Jarfile", :jarfile => 'tmp/Jarfile.lock' )
       File.exists?( 'tmp/Jarfile.lock' ).should be_true
     end
     
@@ -18,10 +19,11 @@ describe LockJar do
       else
         lambda { Rjb::import('org.apache.mina.core.IoUtil') }.should raise_error
       end
-      jars = LockJar.load( 'tmp/Jarfile.lock' )
       
-      jars.should eql( [File.expand_path("tmp/test-repo/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 
-        File.expand_path("tmp/test-repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar")] )
+      lock_jar = LockJar.setup( :local_repo => 'tmp/test-repo' )
+      jars =  lock_jar.load( 'tmp/Jarfile.lock' )
+      
+      jars.should eql( [File.expand_path("tmp/test-repo/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), File.expand_path("tmp/test-repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"), File.expand_path("tmp/test-repo/org/apache/tomcat/servlet-api/6.0.35/servlet-api-6.0.35.jar")] )
         
       if Naether.platform == 'java'
         lambda { include_class 'org.apache.mina.core.IoUtil' }.should_not raise_error
