@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "naether", "~> 0.5.3"
+gem "naether", "~> 0.5.9"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
