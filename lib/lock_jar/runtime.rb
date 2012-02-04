@@ -11,18 +11,13 @@ module LockJar
     end
     
     def lock( jarfile, opts = {} )
-        # load notations from Jarfile
-        # resolve dependencies
-        # create Jarfile.lock
-    
-        
         lock_jar_file = LockJar::Dsl.evaluate( jarfile )
     
         lock_jar_file.repositories.each do |repo|
           @resolver.add_remote_repository( repo )
         end
     
-        lock_data = {}
+        lock_data = { 'scopes' => {} }
     
         if lock_jar_file.repositories.size > 0
           lock_data['repositories'] = lock_jar_file.repositories
@@ -36,7 +31,7 @@ module LockJar
           end
           
           resolved_notations = @resolver.resolve( dependencies )
-          lock_data[scope] = { 
+          lock_data['scopes'][scope] = { 
             'dependencies' => notations,
             'resolved_dependencies' => resolved_notations } 
         end
@@ -46,15 +41,27 @@ module LockJar
         end
       end
     
+      def list( jarfile_lock, scopes = ['compile', 'runtime'] )
+        lock_data = YAML.load_file( jarfile_lock )
+                
+        dependencies = []
+          
+        scopes.each do |scope|
+          dependencies += lock_data['scopes'][scope]['resolved_dependencies']
+        end
+        
+        lock_data
+      end
+      
       def load( jarfile_lock, scopes = ['compile', 'runtime'] )
         lock_data = YAML.load_file( jarfile_lock )
         
         dependencies = []
           
         scopes.each do |scope|
-          dependencies += lock_data[scope]['resolved_dependencies']
+          dependencies += lock_data['scopes'][scope]['resolved_dependencies']
         end
-       
+        
         @resolver.load_jars_to_classpath( dependencies )
       end
   end
