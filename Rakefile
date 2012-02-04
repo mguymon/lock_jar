@@ -14,8 +14,8 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "accelr"
-  gem.homepage = "http://github.com/mguymon/accelr"
+  gem.name = "lockjar"
+  gem.homepage = "http://github.com/mguymon/lockjar"
   gem.license = "MIT"
   gem.summary = %Q{TODO: summary}
   gem.description = %Q{TODO: desc}
@@ -47,7 +47,7 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "accelr #{version}"
+  rdoc.title = "lockjar #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end

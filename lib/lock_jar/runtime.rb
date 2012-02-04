@@ -50,16 +50,18 @@ module LockJar
           dependencies += lock_data['scopes'][scope]['resolved_dependencies']
         end
         
-        lock_data
+        dependencies
       end
       
       def load( jarfile_lock, scopes = ['compile', 'runtime'] )
         lock_data = YAML.load_file( jarfile_lock )
         
         dependencies = []
-          
+           
         scopes.each do |scope|
-          dependencies += lock_data['scopes'][scope]['resolved_dependencies']
+          if lock_data['scopes'][scope]
+            dependencies += lock_data['scopes'][scope]['resolved_dependencies']
+          end
         end
         
         @resolver.load_jars_to_classpath( dependencies )
