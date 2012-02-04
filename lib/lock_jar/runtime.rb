@@ -29,7 +29,13 @@ module LockJar
         end
           
         lock_jar_file.notations.each do |scope, notations|
-          resolved_notations = @resolver.resolve( notations ) 
+          
+          dependencies = []
+          notations.each do |notation|
+            dependencies << {notation => scope}
+          end
+          
+          resolved_notations = @resolver.resolve( dependencies )
           lock_data[scope] = { 
             'dependencies' => notations,
             'resolved_dependencies' => resolved_notations } 
@@ -41,10 +47,6 @@ module LockJar
       end
     
       def load( jarfile_lock, scopes = ['compile', 'runtime'] )
-        # load Jarfile.lock
-        # create path to jars
-        # manually add to class path?
-    
         lock_data = YAML.load_file( jarfile_lock )
         
         dependencies = []

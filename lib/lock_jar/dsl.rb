@@ -17,6 +17,7 @@ module LockJar
       @repositories = []
       @scopes = ['compile', 'runtime', 'test']
       @notations = {}
+      @poms = []
         
       @scopes.each do |scope|
         @notations[scope] = []
@@ -27,6 +28,10 @@ module LockJar
     
     def jar(notation, *args)
       @notations[@present_scope] << notation
+    end
+    
+    def pom(path, *args)
+      @notations[@present_scope] << path
     end
     
     def repository( url, opts = {} )

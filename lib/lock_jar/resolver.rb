@@ -8,7 +8,7 @@ module LockJar
     
     def initialize( opts = {} )
       local_repo = opts[:local_repo]
-      
+        
       # Bootstrap Naether
       jars = []
       deps = Naether::Bootstrap.check_local_repo_for_deps( local_repo )
@@ -39,8 +39,8 @@ module LockJar
       @naether.add_remote_repository( repo )
     end
     
-    def resolve( notations )
-      @naether.dependencies = notations
+    def resolve( dependencies )
+      @naether.dependencies = dependencies
       @naether.resolve_dependencies
       @naether.dependenciesNotation
     end
