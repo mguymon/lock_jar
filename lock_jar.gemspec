@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
     "spec/pom.xml"
   ]
   s.homepage = "http://github.com/mguymon/lock_jar"
-  s.licenses = ["MIT"]
+  s.licenses = ["Apache"]
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.12"
   s.summary = "TODO: summary"
