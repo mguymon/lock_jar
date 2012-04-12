@@ -4,20 +4,22 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "lock_jar"
+  s.name = %q{lock_jar}
   s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Michael Guymon"]
-  s.date = "2012-02-04"
-  s.description = "TODO: desc"
-  s.email = "michael.guymon@gmail.com"
+  s.authors = [%q{Michael Guymon}]
+  s.date = %q{2012-04-12}
+  s.description = %q{TBD}
+  s.email = %q{michael.guymon@gmail.com}
   s.extra_rdoc_files = [
+    "LICENSE",
     "README.rdoc"
   ]
   s.files = [
     "Gemfile",
     "Gemfile.lock",
+    "LICENSE",
     "README.rdoc",
     "Rakefile",
     "VERSION",
@@ -25,17 +27,18 @@ Gem::Specification.new do |s|
     "lib/lock_jar/dsl.rb",
     "lib/lock_jar/resolver.rb",
     "lib/lock_jar/runtime.rb",
+    "lock_jar.gemspec",
     "spec/Jarfile",
     "spec/lock_jar/dsl_spec.rb",
     "spec/lock_jar/resolver_spec.rb",
     "spec/lock_jar_spec.rb",
     "spec/pom.xml"
   ]
-  s.homepage = "http://github.com/mguymon/lock_jar"
-  s.licenses = ["Apache"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.12"
-  s.summary = "TODO: summary"
+  s.homepage = %q{http://github.com/mguymon/lockjar}
+  s.licenses = [%q{Apache}]
+  s.require_paths = [%q{lib}]
+  s.rubygems_version = %q{1.8.9}
+  s.summary = %q{TBD}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
@@ -43,22 +46,19 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<naether>, ["~> 0.5.11"])
       s.add_development_dependency(%q<rspec>, [">= 0"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_development_dependency(%q<bundler>, ["> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
-      s.add_development_dependency(%q<rcov>, [">= 0"])
     else
       s.add_dependency(%q<naether>, ["~> 0.5.11"])
       s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_dependency(%q<bundler>, ["> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
-      s.add_dependency(%q<rcov>, [">= 0"])
     end
   else
     s.add_dependency(%q<naether>, ["~> 0.5.11"])
     s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+    s.add_dependency(%q<bundler>, ["> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
-    s.add_dependency(%q<rcov>, [">= 0"])
   end
 end
 

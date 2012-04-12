@@ -14,11 +14,11 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "lockjar"
+  gem.name = "lock_jar"
   gem.homepage = "http://github.com/mguymon/lockjar"
   gem.license = "Apache"
-  gem.summary = %Q{TODO: summary}
-  gem.description = %Q{TODO: desc}
+  gem.summary = "TBD"
+  gem.description = "TBD"
   gem.email = "michael.guymon@gmail.com"
   gem.authors = ["Michael Guymon"]
   # dependencies defined in Gemfile

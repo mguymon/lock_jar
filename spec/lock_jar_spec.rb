@@ -13,7 +13,7 @@ describe LockJar do
     end
     
     it "should list jars" do
-      jars = LockJar.list( 'tmp/Jarfile.lock', ['compile', 'runtime'], :local_repo => 'tmp/test-repo' )
+      jars = LockJar.list( 'tmp/Jarfile.lock', ['compile', 'runtime', 'bad scope'], :local_repo => 'tmp/test-repo' )
       jars.should eql( ["org.apache.mina:mina-core:jar:2.0.4", "org.slf4j:slf4j-api:jar:1.6.1", "com.slackworks:modelcitizen:jar:0.2.2", "commons-lang:commons-lang:jar:2.6", "commons-beanutils:commons-beanutils:jar:1.8.3", "commons-logging:commons-logging:jar:1.1.1", "ch.qos.logback:logback-classic:jar:0.9.24", "ch.qos.logback:logback-core:jar:0.9.24", "com.metapossum:metapossum-scanner:jar:1.0", "commons-io:commons-io:jar:1.4", "junit:junit:jar:4.7", "org.apache.tomcat:servlet-api:jar:6.0.35"] )
     end
         

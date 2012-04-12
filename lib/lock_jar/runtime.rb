@@ -62,7 +62,9 @@ module LockJar
         dependencies = []
           
         scopes.each do |scope|
-          dependencies += lock_data['scopes'][scope]['resolved_dependencies']
+          if lock_data['scopes'][scope]
+            dependencies += lock_data['scopes'][scope]['resolved_dependencies']
+          end
         end
         
         dependencies
