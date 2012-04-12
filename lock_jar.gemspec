@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "lib/lock_jar.rb",
+    "lib/lock_jar/buildr.rb",
     "lib/lock_jar/dsl.rb",
     "lib/lock_jar/resolver.rb",
     "lib/lock_jar/runtime.rb",

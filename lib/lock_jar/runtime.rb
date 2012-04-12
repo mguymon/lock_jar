@@ -15,9 +15,9 @@
 
 require "yaml"
 require 'rubygems'
-require 'lib/lock_jar/resolver'
-require 'lib/lock_jar/dsl'
-require 'lib/lock_jar/runtime'
+require 'lock_jar/resolver'
+require 'lock_jar/dsl'
+require 'lock_jar/runtime'
 
 module LockJar
   class Runtime

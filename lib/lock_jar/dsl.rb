@@ -33,6 +33,8 @@ module LockJar
       @scopes = ['compile', 'runtime', 'test']
       @notations = {}
       @poms = []
+       
+      @scope_changed = false
         
       @scopes.each do |scope|
         @notations[scope] = []
@@ -45,8 +47,15 @@ module LockJar
       @notations[@present_scope] << notation
     end
     
+    # Pom default to all scopes, unless nested in a scope
     def pom(path, *args)
-      @notations[@present_scope] << path
+      if @scope_changed
+        @notations[@present_scope] << path
+      else
+        @scopes.each do |scope|
+          @notations[scope] << path
+        end
+      end
     end
     
     def repository( url, opts = {} )
@@ -54,11 +63,12 @@ module LockJar
     end
     
     def scope(*scopes, &blk)
+       @scope_changed = true
        scopes.each do |scope|
          @present_scope = scope.to_s
          yield
        end
-       
+       @scope_changed = false
        @present_scope = 'compile'
     end
     
