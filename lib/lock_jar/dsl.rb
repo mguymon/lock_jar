@@ -15,28 +15,45 @@
 
 module LockJar
   class Dsl
-    def self.evaluate(jarfile)
-      builder = new
-      builder.instance_eval(builder.read_file(jarfile.to_s), jarfile.to_s, 1)
-      #builder.to_definition(lockfile, unlock)
-      
-      builder
-    end
-    
+
     attr_reader :notations
     attr_reader :repositories
     attr_reader :scopes
     
+    class << self
+    
+      def evaluate(jarfile = nil, &blk)
+        if jarfile.nil? && blk.nil?
+          raise "jarfile or block must be set"
+        end
+        
+        
+        builder = new
+        
+        if jarfile
+          builder.instance_eval(builder.read_file(jarfile.to_s), jarfile.to_s, 1)
+        end      
+            
+        if blk
+          builder.instance_eval(&blk)
+        end      
+        
+        builder
+      end
+      
+      def scopes
+        ['compile', 'runtime', 'test']
+      end
+    end
+    
     def initialize
 
       @repositories = []
-      @scopes = ['compile', 'runtime', 'test']
       @notations = {}
-      @poms = []
        
       @scope_changed = false
         
-      @scopes.each do |scope|
+      LockJar::Dsl.scopes.each do |scope|
         @notations[scope] = []
       end
         
@@ -44,7 +61,9 @@ module LockJar
     end
     
     def jar(notation, *args)
-      @notations[@present_scope] << notation
+      if notation
+        @notations[@present_scope] << notation
+      end
     end
     
     # Pom default to all scopes, unless nested in a scope
@@ -52,7 +71,7 @@ module LockJar
       if @scope_changed
         @notations[@present_scope] << path
       else
-        @scopes.each do |scope|
+        LockJar::Dsl.scopes.each do |scope|
           @notations[scope] << path
         end
       end
@@ -76,5 +95,14 @@ module LockJar
       File.open(file, "rb") { |f| f.read }
     end
     
+    def merge( dsl )
+      @repositories = (@repositories + dsl.repositories).uniq
+      
+      dsl.notations.each do |scope, notations|
+        @notations[scope] = (@notations[scope] + notations).uniq         
+      end
+      
+      self
+    end
   end
 end

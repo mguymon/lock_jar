@@ -26,8 +26,14 @@ module LockJar
     end
     
     def lock( jarfile, opts = {} )
-        lock_jar_file = LockJar::Dsl.evaluate( jarfile )
-    
+        lock_jar_file = nil
+        
+        if jarfile.is_a? LockJar::Dsl
+          lock_jar_file = jarfile
+        else
+          lock_jar_file = LockJar::Dsl.evaluate( jarfile )
+        end
+        
         lock_jar_file.repositories.each do |repo|
           @resolver.add_remote_repository( repo )
         end
