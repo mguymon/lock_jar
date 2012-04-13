@@ -18,18 +18,17 @@ require 'lock_jar/dsl'
 
 module Buildr
   
-  class << self
-    attr_reader :global_lockjar_dsl
-    def lock_jar( &blk )
-        @global_lockjar_dsl = LockJar::DSL.evaluate(&blk)            
-    end
+  attr_reader :global_lockjar_dsl
+  
+  def lock_jar( &blk )
+    @global_lockjar_dsl = ::LockJar::Dsl.evaluate(&blk)            
   end
   
   namespace "lock_jar" do
     desc "Lock dependencies for each project"    
     task("lock") do 
       projects.each do |project|      
-        ::LockJar.lock( "Jarfile", "#{project.name}.lock" )
+        ::LockJar.lock( project.lockjar_dsl, "#{project.name}.lock" )
       end
     end
   end
@@ -48,7 +47,7 @@ module Buildr
       end
       
       def lockjar_dsl
-        @lockjar_dsl || Buildr.global_lockjar_dsl
+        @lockjar_dsl || global_lockjar_dsl
       end
       
       after_define do |project|      
@@ -58,7 +57,7 @@ module Buildr
         namespace "lock_jar" do
             desc "Lock dependencies to JarFile"
             task("lock") do 
-              dsl = lockjar_dsl
+              dsl = project.lockjar_dsl
               if dsl
                 ::LockJar.lock( dsl, :jarfile => "#{project.name}.lock" )
               else
