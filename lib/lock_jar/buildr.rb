@@ -24,11 +24,15 @@ module Buildr
     @global_lockjar_dsl = ::LockJar::Dsl.evaluate(&blk)            
   end
   
+  def project_to_lockfile( project )
+    "#{project.name.gsub(/:/,'-')}.lock"
+  end
+  
   namespace "lock_jar" do
     desc "Lock dependencies for each project"    
     task("lock") do 
       projects.each do |project|      
-        ::LockJar.lock( project.lockjar_dsl, "#{project.name}.lock" )
+        ::LockJar.lock( project.lockjar_dsl, project_to_lockfile(project) )
       end
     end
   end
@@ -37,13 +41,11 @@ module Buildr
     module ProjectExtension
       include Extension
     
-      class << self
-        def lock_jar( &blk )
-            @lockjar_dsl = LockJar::DSL.evaluate(&blk)    
-            if Buildr.global_lockjar_dsl
-              @lockjar_dsl.merge( Buildr.global_lockjar_dsl )
-            end        
-        end
+      def lock_jar( &blk )
+          @lockjar_dsl = ::LockJar::Dsl.evaluate(&blk)    
+          if Buildr.global_lockjar_dsl
+            @lockjar_dsl.merge( global_lockjar_dsl )
+          end        
       end
       
       def lockjar_dsl
@@ -59,7 +61,7 @@ module Buildr
             task("lock") do 
               dsl = project.lockjar_dsl
               if dsl
-                ::LockJar.lock( dsl, :jarfile => "#{project.name}.lock" )
+                ::LockJar.lock( dsl )
               else
                 # XXX: output that there were not dependencies to lock
                 puts "No lock_jar dependencies to lock for #{project.name}" 
@@ -67,18 +69,18 @@ module Buildr
             end      
             
             task("compile") do
-              unless File.exists? "#{project.name}.lock"
+              unless File.exists? project_to_lockfile(project)
                 raise "#{project.name}.lock does not exist, run #{project.name}:lockjar:lock first"
               end
-              jars = ::LockJar.list( "#{project.name}.lock", ['compile', 'runtime'] )
+              jars = ::LockJar.list( project_to_lockfile(project), ['compile', 'runtime'] )
               project.compile.with( jars )
             end
             
             task("test:compile") do
-              unless File.exists? "#{project.name}.lock"
-                raise "#{project.name}.lock does not exist, run #{project.name}:lockjar:lock first"
+              unless File.exists? project_to_lockfile(project)
+                raise "#{project_to_lockfile(project)} does not exist, run #{project.name}:lockjar:lock first"
               end
-              jars = ::LockJar.list( "#{project.name}.lock", ['compile', 'test', 'runtime'] )
+              jars = ::LockJar.list( project_to_lockfile(project), ['compile', 'test', 'runtime'] )
               
               project.test.compile.with( jars )
               project.test.with( jars )
