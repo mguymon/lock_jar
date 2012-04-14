@@ -25,12 +25,12 @@ module LockJar
     Runtime.new( opts ).lock( jarfile, opts )
   end
   
-  def self.list( jarfile_lock = 'Jarfile.lock', scopes = ['compile', 'runtime'], opts = {} )
-      Runtime.new( opts ).list( jarfile_lock, scopes )
+  def self.list( lockfile = 'Jarfile.lock', scopes = ['compile', 'runtime'], opts = {} )
+      Runtime.new( opts ).list( lockfile, scopes )
   end
     
-  def self.load( jarfile_lock = 'Jarfile.lock', scopes = ['compile', 'runtime'], opts = {} )
-      Runtime.new( opts ).load( jarfile_lock, scopes )
+  def self.load( lockfile = 'Jarfile.lock', scopes = ['compile', 'runtime'], opts = {} )
+      Runtime.new( opts ).load( lockfile, scopes )
   end
 
 end

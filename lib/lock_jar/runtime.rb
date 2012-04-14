@@ -57,7 +57,7 @@ module LockJar
             'resolved_dependencies' => resolved_notations } 
         end
     
-        File.open( opts[:jarfile] || "Jarfile.lock", "w") do |f|
+        File.open( opts[:lockfile] || "Jarfile.lock", "w") do |f|
           f.write( lock_data.to_yaml )
         end
       end

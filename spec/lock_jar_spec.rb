@@ -8,7 +8,7 @@ describe LockJar do
       File.delete( 'tmp/Jarfile.lock' ) if File.exists?( 'tmp/Jarfile.lock' )
       Dir.mkdir( 'tmp' ) unless File.exists?( 'tmp' )
       
-      LockJar.lock( "spec/Jarfile", :local_repo => 'tmp/test-repo', :jarfile => 'tmp/Jarfile.lock' )
+      LockJar.lock( "spec/Jarfile", :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
       File.exists?( 'tmp/Jarfile.lock' ).should be_true
     end
     
