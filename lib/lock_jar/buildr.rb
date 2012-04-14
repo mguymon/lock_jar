@@ -31,8 +31,10 @@ module Buildr
   namespace "lock_jar" do
     desc "Lock dependencies for each project"    
     task("lock") do 
-      projects.each do |project|      
-        ::LockJar.lock( project.lockjar_dsl, project_to_lockfile(project) )
+      projects.each do |project|   
+        if project.lockjar_dsl
+          ::LockJar.lock( project.lockjar_dsl, project_to_lockfile(project) )       
+        end
       end
     end
   end
@@ -43,7 +45,7 @@ module Buildr
     
       def lock_jar( &blk )
           @lockjar_dsl = ::LockJar::Dsl.evaluate(&blk)    
-          if Buildr.global_lockjar_dsl
+          if global_lockjar_dsl
             @lockjar_dsl.merge( global_lockjar_dsl )
           end        
       end
@@ -69,7 +71,7 @@ module Buildr
             end      
             
             task("compile") do
-              unless File.exists? project_to_lockfile(project)
+              if project.lockjar_dsl && !File.exists?( project_to_lockfile(project) )
                 raise "#{project.name}.lock does not exist, run #{project.name}:lockjar:lock first"
               end
               jars = ::LockJar.list( project_to_lockfile(project), ['compile', 'runtime'] )
@@ -77,7 +79,7 @@ module Buildr
             end
             
             task("test:compile") do
-              unless File.exists? project_to_lockfile(project)
+              if project.lockjar_dsl && !File.exists?( project_to_lockfile(project) )
                 raise "#{project_to_lockfile(project)} does not exist, run #{project.name}:lockjar:lock first"
               end
               jars = ::LockJar.list( project_to_lockfile(project), ['compile', 'test', 'runtime'] )
