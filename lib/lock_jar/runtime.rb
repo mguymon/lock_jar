@@ -79,18 +79,53 @@ module LockJar
         dependencies
       end
       
-      def load( jarfile_lock = "Jarfile.lock", scopes = ['compile', 'runtime'] )
+      def load( jarfile_lock = "Jarfile.lock", scopes = ['compile', 'runtime'], &blk )
+        dependencies = []
+        
+        if jarfile_lock
+          if File.exists?(jarfile_lock)
+            dependencies += read_jarfile( jarfile_lock, scopes )
+          else
+            warn( "LockJar jarfile_lock not found: #{jarfile_lock}" )
+          end
+        end
+                
+        if blk
+          dsl = LockJar::Dsl.evaluate(&blk)
+          dependencies += read_dsl( dsl, scopes )
+        end
+        
+        dependencies.uniq!
+        
+        @resolver.load_jars_to_classpath( dependencies )
+      end
+      
+      private
+      def read_jarfile( jarfile_lock, scopes )
         lock_data = YAML.load_file( jarfile_lock )
         
         dependencies = []
-           
+         
         scopes.each do |scope|
           if lock_data['scopes'][scope]
             dependencies += lock_data['scopes'][scope]['resolved_dependencies']
           end
         end
         
-        @resolver.load_jars_to_classpath( dependencies )
+        dependencies
+      end
+      
+      def read_dsl( dsl, scopes )
+        
+        dependencies = []
+         
+        dsl.notations.each do |scope,notations|
+          if notations && notations.size > 0
+            dependencies += notations
+          end
+        end
+        
+        @resolver.resolve( dependencies )
       end
   end
 end
