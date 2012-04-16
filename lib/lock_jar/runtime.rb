@@ -21,6 +21,9 @@ require 'lock_jar/runtime'
 
 module LockJar
   class Runtime
+    
+    attr_reader :resolver
+    
     def initialize( opts = {} )
       @resolver = LockJar::Resolver.new( opts )
     end

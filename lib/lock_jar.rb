@@ -21,14 +21,23 @@ require 'lock_jar/runtime'
 
 module LockJar
   
+  # Lock a Jarfile and generate a Jarfile.lock
+  #
+  # Accepts path to the jarfile and hash of options to configure LockJar
   def self.lock( jarfile = 'Jarfile', opts = {} )
     Runtime.new( opts ).lock( jarfile, opts )
   end
   
+  # List jars for an array of scope in a lockfile
+  #
+  # Accepts path to the lockfile, array of scopes, and hash of options to configure LockJar
   def self.list( lockfile = 'Jarfile.lock', scopes = ['compile', 'runtime'], opts = {} )
       Runtime.new( opts ).list( lockfile, scopes )
   end
     
+  # Load jars for an array of scopes in a lockfile
+  #
+  # Accepts a path to the lockfile, array scopes, and hash of optiosn to configure LockJar
   def self.load( lockfile = 'Jarfile.lock', scopes = ['compile', 'runtime'], opts = {} )
       Runtime.new( opts ).load( lockfile, scopes )
   end
