@@ -17,22 +17,15 @@ Jeweler::Tasks.new do |gem|
   gem.name = "lock_jar"
   gem.homepage = "http://github.com/mguymon/lockjar"
   gem.license = "Apache"
-  gem.summary = "TBD"
-  gem.description = "TBD"
+  gem.summary = "Manage Jar files for Ruby"
+  gem.description = "Manage Jar files for Ruby. In the spirit of Bundler, a Jarfile
+  is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test.
+  The Jarfile.lock can be used to populate the classpath"
   gem.email = "michael.guymon@gmail.com"
   gem.authors = ["Michael Guymon"]
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
-
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-end
-
-task :default => :test
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
