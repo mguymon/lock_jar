@@ -37,6 +37,7 @@ Example Jarfile
   scope 'test' do
     jar 'junit:junit:jar:4.10'
   end
+  
 	
 ==== Resolving dependencies
 
@@ -87,6 +88,7 @@ The Jarfile.lock
   repositories: 
     - http://repository.jboss.org/nexus/content/groups/public-jboss
   
+  
 ==== Accessing Jars
 
 Once a Jarfile.lock is generated, you can list all resolved jars by
@@ -101,6 +103,7 @@ or directly load all Jars into the classpath
   
   jars = LockJar.load  
   
+  
 === Buildr Integration
 
 LockJar integrates with {Buildr}[http://buildr.apache.org/] using an {Addon}[https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/buildr.rb].
@@ -108,7 +111,16 @@ This allows the Jarfile to be defined directly into a buildfile. A global app Lo
 is inherited to all projects. Each project may have its own LockJar definition. A lock file is generated per project based
 on the project name.
 
+A new Buildr task is added to generate the lockfile for all projects
+
+  buildr lock_jar:lock
+  
+and a task per project to generate the lockfile for a single project
+
+  buildr <app>:<project>:lock_jar:lock
+
 The resolved dependencies are automatically added to the classpath for compiling and testing. 
+
 
 ==== Example
 
@@ -141,7 +153,7 @@ Sample buildfile with LockJar
 
   end
 
-Generated lock files
+Generated the following lock files using lock_jar:lock
 
 * project1.lock - contains junit and mina jars.
 * project2.lock - contains junit and pom.xml jars.
