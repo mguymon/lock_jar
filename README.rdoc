@@ -102,6 +102,8 @@ or directly load all Jars into the classpath
   require 'lock_jars'
   
   jars = LockJar.load  
+
+Do not forget, if you change your Jarfile, you have to re-generate the Jarfile.lock.
   
   
 === Buildr Integration
@@ -119,7 +121,8 @@ and a task per project to generate the lockfile for a single project
 
   buildr <app>:<project>:lock_jar:lock
 
-The resolved dependencies are automatically added to the classpath for compiling and testing. 
+The resolved dependencies are automatically added to the classpath for compiling and testing. Do not forget, if you change the lock_jar
+definitions, you have to rerun the lock_jar:lock task.
 
 
 ==== Example
