@@ -15,7 +15,7 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "lock_jar"
-  gem.homepage = "http://github.com/mguymon/lockjar"
+  gem.homepage = "http://github.com/mguymon/lock_jar"
   gem.license = "Apache"
   gem.summary = "Manage Jar files for Ruby"
   gem.description = "Manage Jar files for Ruby. In the spirit of Bundler, a Jarfile

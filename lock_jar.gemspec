@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
     "spec/lock_jar_spec.rb",
     "spec/pom.xml"
   ]
-  s.homepage = "http://github.com/mguymon/lockjar"
+  s.homepage = "http://github.com/mguymon/lock_jar"
   s.licenses = ["Apache"]
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.12"
