@@ -2,13 +2,150 @@
 
 Manage Jar files for Ruby. In the spirit of Bundler, a Jarfile ({example}[https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile])
 is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test.
-The Jarfile.lock can be used to populate the classpath for specific scopes.
+The Jarfile.lock can be used to populate the classpath.
 
 https://github.com/mguymon/lock_jar
 
-=== Install
+== Install
 
 gem install lock_jar
+
+== Usage
+
+=== Using a Jarfile
+
+==== Jarfile
+A Jarfile is a simple Ruby DSL for defining a project's Jar dependencies using the following 
+methods:
+
+* repository: url of additional Maven repository to use.
+* jar: artifact notation of Jar dependency
+* pom: local path to a Maven pom
+* scope: set the scope for a jar or pom declaration. Default scope is compile
+
+Example Jarfile
+
+	repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
+	
+	// Default scope is compile
+	jar "org.apache.mina:mina-core:2.0.4"
+	    
+	scope 'runtime' do
+	    jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
+	end
+	
+	scope 'test' do
+	    jar 'junit:junit:jar:4.10'
+	end
+	
+==== Resolving dependencies
+
+When the Jarfile is locked, the transitive dependencies for the Jars and Pom are resolved and saved to the Jarfile.lock file.
+
+Example of locking
+
+    require 'lock_jar'
+    
+    LockJar.lock
+  
+ 
+==== Jarfile.lock
+
+The Jarfile.lock generated is a YAML file containing the scoped dependencies, their resolved dependencies, and
+the additional Maven repositories.
+
+The Jarfile.lock
+
+	--- 
+	scopes: 
+	  compile: 
+	    dependencies: 
+	      - org.apache.mina:mina-core:2.0.4
+	    resolved_dependencies: 
+	      - org.apache.mina:mina-core:jar:2.0.4
+	      - org.slf4j:slf4j-api:jar:1.6.1
+	      - com.slackworks:modelcitizen:jar:0.2.2
+	      - commons-lang:commons-lang:jar:2.6
+	      - commons-beanutils:commons-beanutils:jar:1.8.3
+	      - commons-logging:commons-logging:jar:1.1.1
+	      - ch.qos.logback:logback-classic:jar:0.9.24
+	      - ch.qos.logback:logback-core:jar:0.9.24
+	      - com.metapossum:metapossum-scanner:jar:1.0
+	      - commons-io:commons-io:jar:1.4
+	      - junit:junit:jar:4.7
+	  runtime: 
+	    dependencies: 
+	      - org.apache.tomcat:servlet-api:jar:6.0.35
+	    resolved_dependencies: 
+	      - org.apache.tomcat:servlet-api:jar:6.0.35
+	  test: 
+	    dependencies: 
+	      - junit:junit:jar:4.10
+	    resolved_dependencies: 
+	      - junit:junit:jar:4.10
+	      - org.hamcrest:hamcrest-core:jar:1.1
+	repositories: 
+	  - http://repository.jboss.org/nexus/content/groups/public-jboss
+  
+==== Accessing Jars
+
+Once a Jarfile.lock is generated, you can list all resolved jars by
+
+  require 'lock_jars'
+  
+  jars = LockJar.list
+  
+or directly load all Jars into the classpath
+
+  require 'lock_jars'
+  
+  jars = LockJar.load  
+  
+=== Buildr Integration
+
+LockJar integrates with {Buildr}[http://buildr.apache.org/] using an {Addon}[https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/buildr.rb].
+This allows the Jarfile to be defined directly into a buildfile. A global app LockJar definition can be set and
+is inherited to all projects. Each project may have its own LockJar definition. A lock file is generated per project based
+on the project name.
+
+The resolved dependencies are automatically added to the classpath for compiling and testing. 
+
+==== Example
+
+Sample buildfile with LockJar
+
+  require 'lock_jar/buildr'
+  
+  # app definition, inherited into all projects
+  lock_jar do
+       repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
+
+       scope 'test' do
+         jar 'junit:junit:jar:4.10'
+       end
+  end
+
+  define 'app' do
+
+     def 'project1' do
+       lock_jar do
+         jar  "org.apache.mina:mina-core:2.0.4"
+       end
+     end
+
+     def 'project2' do
+        lock_jar do
+          pom 'pom.xml'
+        end
+     end
+
+  end
+
+Generated lock files
+
+* project1.lock - contains junit and mina jars.
+* project2.lock - contains junit and pom.xml jars.
+  
 
 == License
 
