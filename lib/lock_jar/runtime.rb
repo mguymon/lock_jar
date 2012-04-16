@@ -25,7 +25,7 @@ module LockJar
       @resolver = LockJar::Resolver.new( opts )
     end
     
-    def lock( jarfile, opts = {} )
+    def lock( jarfile = "Jarfile", opts = {} )
         lock_jar_file = nil
         
         if jarfile.is_a? LockJar::Dsl
@@ -62,7 +62,7 @@ module LockJar
         end
       end
     
-      def list( jarfile_lock, scopes = ['compile', 'runtime'] )
+      def list( jarfile_lock = "Jarfile.lock", scopes = ['compile', 'runtime'] )
         lock_data = YAML.load_file( jarfile_lock )
                 
         dependencies = []
@@ -76,7 +76,7 @@ module LockJar
         dependencies
       end
       
-      def load( jarfile_lock, scopes = ['compile', 'runtime'] )
+      def load( jarfile_lock = "Jarfile.lock", scopes = ['compile', 'runtime'] )
         lock_data = YAML.load_file( jarfile_lock )
         
         dependencies = []
