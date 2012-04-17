@@ -1,8 +1,9 @@
 = LockJar
 
-LockJar manages Java Jars for Ruby. A Jarfile ({example}[https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile])
-is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test. The Jarfile.lock can be used to populate 
-the classpath.
+LockJar manages Java Jars for Ruby. Power by {Naether}[https://github.com/mguymon/naether] to create a frankenstein of 
+Bundler and Maven. A Jarfile ({example}[https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile]) is used to 
+generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test. 
+The Jarfile.lock can be used to populate the classpath.
 
 https://github.com/mguymon/lock_jar
 
@@ -45,8 +46,6 @@ When the Jarfile is locked, the transitive dependencies for the Jars and Pom are
 
 Example of locking
 
-    require 'lock_jar'
-    
     LockJar.lock
   
  
@@ -92,19 +91,23 @@ The Jarfile.lock
 ==== Accessing Jars
 
 Once a Jarfile.lock is generated, you can list all resolved jars by
-
-  require 'lock_jars'
   
   jars = LockJar.list
   
 or directly load all Jars into the classpath
-
-  require 'lock_jars'
   
   jars = LockJar.load  
 
 Do not forget, if you change your Jarfile, you have to re-generate the Jarfile.lock.
   
+=== Skipping the Jarfile
+
+You can skip the Jarfile and directly load dependencies by passing a block to LockJar.load
+    
+    LockJar.load do
+	jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
+    end
+
   
 === Buildr Integration
 
@@ -161,9 +164,6 @@ Generated the following lock files using lock_jar:lock
 * project1.lock - contains junit and mina jars.
 * project2.lock - contains junit and pom.xml jars.
   
-=== About
-
-Power by {Naether}[https://github.com/mguymon/naether] to create a frankenstein of Bundler and Maven.
 
 == License
 
