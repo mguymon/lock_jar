@@ -28,7 +28,7 @@ module LockJar
       @resolver = LockJar::Resolver.new( opts )
     end
     
-    def lock( jarfile = "Jarfile", opts = {} )
+    def lock( jarfile, opts = {} )
         lock_jar_file = nil
         
         if jarfile.is_a? LockJar::Dsl
@@ -65,37 +65,23 @@ module LockJar
         end
       end
     
-      def list( jarfile_lock = "Jarfile.lock", scopes = ['compile', 'runtime'] )
-        lock_data = YAML.load_file( jarfile_lock )
-                
+      def list( jarfile_lock, scopes = ['compile', 'runtime'], &blk )
         dependencies = []
-          
-        scopes.each do |scope|
-          if lock_data['scopes'][scope]
-            dependencies += lock_data['scopes'][scope]['resolved_dependencies']
-          end
+                
+        if jarfile_lock
+          dependencies += read_jarfile( jarfile_lock, scopes )
         end
         
-        dependencies
+        unless blk.nil?
+          dsl = LockJar::Dsl.evaluate(&blk)
+          dependencies += resolve_dsl( dsl, scopes )
+        end
+        
+        dependencies.uniq
       end
       
-      def load( jarfile_lock = "Jarfile.lock", scopes = ['compile', 'runtime'], &blk )
-        dependencies = []
-        
-        if jarfile_lock
-          if File.exists?(jarfile_lock)
-            dependencies += read_jarfile( jarfile_lock, scopes )
-          else
-            warn( "LockJar jarfile_lock not found: #{jarfile_lock}" )
-          end
-        end
-                
-        if blk
-          dsl = LockJar::Dsl.evaluate(&blk)
-          dependencies += read_dsl( dsl, scopes )
-        end
-        
-        dependencies.uniq!
+      def load( jarfile_lock, scopes = ['compile', 'runtime'], &blk )
+        dependencies = list( jarfile_lock, scopes, &blk )
         
         @resolver.load_jars_to_classpath( dependencies )
       end
@@ -115,7 +101,7 @@ module LockJar
         dependencies
       end
       
-      def read_dsl( dsl, scopes )
+      def resolve_dsl( dsl, scopes )
         
         dependencies = []
          

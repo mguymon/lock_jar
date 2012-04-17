@@ -17,7 +17,7 @@ describe LockJar do
       jars.should eql( ["org.apache.mina:mina-core:jar:2.0.4", "org.slf4j:slf4j-api:jar:1.6.1", "com.slackworks:modelcitizen:jar:0.2.2", "commons-lang:commons-lang:jar:2.6", "commons-beanutils:commons-beanutils:jar:1.8.3", "commons-logging:commons-logging:jar:1.1.1", "ch.qos.logback:logback-classic:jar:0.9.24", "ch.qos.logback:logback-core:jar:0.9.24", "com.metapossum:metapossum-scanner:jar:1.0", "commons-io:commons-io:jar:1.4", "junit:junit:jar:4.7", "org.apache.tomcat:servlet-api:jar:6.0.35"] )
     end
         
-    it "should load jars" do
+    it "should load jars by Jarfile.lock" do
       if Naether.platform == 'java'
         lambda { include_class 'org.apache.mina.core.IoUtil' }.should raise_error
       else
@@ -34,5 +34,25 @@ describe LockJar do
         lambda { Rjb::import('org.apache.mina.core.IoUtil') }.should_not raise_error
       end
     end
+    
+    it "should load jars by block" do
+        if Naether.platform == 'java'
+          lambda { include_class 'org.modeshape.common.math.Duration' }.should raise_error
+        else
+          lambda { Rjb::import('org.modeshape.common.math.Duration') }.should raise_error
+        end
+        
+        jars = LockJar.load do 
+          jar 'org.modeshape:modeshape-common:2.3.0.Final'
+        end
+        
+        jars.should eql( ["/home/zinger/.m2/repository/org/modeshape/modeshape-common/2.3.0.Final/modeshape-common-2.3.0.Final.jar", "/home/zinger/.m2/repository/org/slf4j/slf4j-api/1.5.11/slf4j-api-1.5.11.jar", "/home/zinger/.m2/repository/net/jcip/jcip-annotations/1.0/jcip-annotations-1.0.jar"] )
+          
+        if Naether.platform == 'java'
+          lambda { include_class 'org.modeshape.common.math.Duration' }.should_not raise_error
+        else
+          lambda { Rjb::import('org.modeshape.common.math.Duration') }.should_not raise_error
+        end
+      end
   end
 end

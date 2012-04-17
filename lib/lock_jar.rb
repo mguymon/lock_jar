@@ -31,14 +31,53 @@ module LockJar
   # List jars for an array of scope in a lockfile
   #
   # Accepts path to the lockfile, array of scopes, and hash of options to configure LockJar
-  def self.list( lockfile = 'Jarfile.lock', scopes = ['compile', 'runtime'], opts = {}, &blk )
-      Runtime.new( opts ).list( lockfile, scopes )
+  def self.list( *args, &blk )
+      lockfile = nil
+      opts = {}
+      scopes = ['compile', 'runtime']
+        
+      args.each do |arg|
+        if arg.is_a?(Hash)
+          opts.merge!( arg )
+        elsif arg.is_a?( String )
+          lockfile = arg
+        elsif arg.is_a?( Array )
+          scopes = arg
+        end
+      end
+      
+      # default to Jarfile.lock
+      if blk.nil? && lockfile.nil?
+        lockfile = 'Jarfile.lock'
+      end
+      
+      Runtime.new( opts ).list( lockfile, scopes, &blk )
   end
     
-  # Load jars for an array of scopes in a lockfile
+  # Load jars for an array of scopes in a lockfile. Defaults lockfile to Jarfile.lock
   #
-  # Accepts a path to the lockfile, array scopes, and hash of optiosn to configure LockJar
-  def self.load( lockfile = 'Jarfile.lock', scopes = ['compile', 'runtime'], opts = {}, &blk )
+  # Accepts a path to the lockfile, array scopes, and hash of options to configure LockJar. A
+  # block of LockJar::Dsl can be set.
+  def self.load( *args, &blk )
+      lockfile = nil
+      opts = {}
+      scopes = ['compile', 'runtime']
+        
+      args.each do |arg|
+        if arg.is_a?(Hash)
+          opts.merge!( arg )
+        elsif arg.is_a?( String )
+          lockfile = arg
+        elsif arg.is_a?( Array )
+          scopes = arg
+        end
+      end
+      
+      # default to Jarfile.lock
+      if blk.nil? && lockfile.nil?
+        lockfile = 'Jarfile.lock'
+      end
+      
       Runtime.new( opts ).load( lockfile, scopes, &blk )
   end
  
