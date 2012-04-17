@@ -53,13 +53,13 @@ module LockJar
         end
         
         lock_data = { }
-    
-        if lock_jar_file.repositories.size > 0
-          lock_data['repositories'] = lock_jar_file.repositories
-        end
-        
+
         unless lock_jar_file.local_repository.nil?
           lock_data['local_repository'] = lock_jar_file.local_repository
+        end
+          
+        if lock_jar_file.repositories.size > 0
+          lock_data['repositories'] = lock_jar_file.repositories
         end
           
         lock_data['scopes'] = {} 

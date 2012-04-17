@@ -19,9 +19,10 @@ gem install lock_jar
 A Jarfile is a simple file using a Ruby DSL for defining a project's Jar dependencies using the following 
 methods:
 
-* repository: url of additional Maven repository to use.
-* jar: artifact notation of Jar dependency
-* pom: local path to a Maven pom
+* local: Set the local Maven repository
+* repository: Add url of additional Maven repository to use.
+* jar: Add Jar dependency in artifact notation
+* pom: Add local path to a Maven pom
 * scope: set the scope for a jar or pom declaration. Default scope is compile
 
 Example Jarfile
@@ -57,6 +58,8 @@ the additional Maven repositories.
 The Jarfile.lock
 
   --- 
+  repositories: 
+    - http://repository.jboss.org/nexus/content/groups/public-jboss
   scopes: 
     compile: 
       dependencies: 
@@ -84,8 +87,6 @@ The Jarfile.lock
       resolved_dependencies: 
         - junit:junit:jar:4.10
         - org.hamcrest:hamcrest-core:jar:1.1
-  repositories: 
-    - http://repository.jboss.org/nexus/content/groups/public-jboss
   
   
 ==== Accessing Jars
