@@ -106,7 +106,7 @@ Do not forget, if you change your Jarfile, you have to re-generate the Jarfile.l
 You can skip the Jarfile and directly load dependencies by passing a block to LockJar.load
     
     LockJar.load do
-	jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
+      jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
     end
 
   
