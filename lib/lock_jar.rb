@@ -25,7 +25,7 @@ module LockJar
   #
   # Accepts path to the jarfile and hash of options to configure LockJar
   def self.lock( jarfile = 'Jarfile', opts = {} )
-    Runtime.new( opts ).lock( jarfile, opts )
+    Runtime.instance.lock( jarfile, opts )
   end
   
   # List jars for an array of scope in a lockfile
@@ -51,7 +51,7 @@ module LockJar
         lockfile = 'Jarfile.lock'
       end
       
-      Runtime.new( opts ).list( lockfile, scopes, &blk )
+      Runtime.instance.list( lockfile, scopes, opts, &blk )
   end
     
   # Load jars for an array of scopes in a lockfile. Defaults lockfile to Jarfile.lock
@@ -78,7 +78,7 @@ module LockJar
         lockfile = 'Jarfile.lock'
       end
       
-      Runtime.new( opts ).load( lockfile, scopes, &blk )
+      Runtime.instance.load( lockfile, scopes, opts, &blk )
   end
  
 end

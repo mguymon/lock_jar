@@ -6,12 +6,14 @@ describe LockJar::Dsl do
     it "should load a Jarfile" do
       jarfile = LockJar::Dsl.evaluate( "spec/Jarfile" )
       
+      jarfile.local_repository.should eql '~/.m2'
       jarfile.notations.should eql( {"compile"=>["org.apache.mina:mina-core:2.0.4", "spec/pom.xml"], "runtime"=>["spec/pom.xml", "org.apache.tomcat:servlet-api:jar:6.0.35"], "test"=>["spec/pom.xml", "junit:junit:jar:4.10"]}  )
       jarfile.repositories.should eql( ["http://repository.jboss.org/nexus/content/groups/public-jboss"] )
     end
     
     it "should load a block" do
       block = LockJar::Dsl.evaluate  do
+        local '~/.m2'
         repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
         
         jar "org.apache.mina:mina-core:2.0.4"
@@ -26,6 +28,7 @@ describe LockJar::Dsl do
         end
       end
       
+      block.local_repository.should eql '~/.m2'
       block.notations.should eql( {"compile"=>["org.apache.mina:mina-core:2.0.4", "spec/pom.xml"], "runtime"=>["spec/pom.xml", "org.apache.tomcat:servlet-api:jar:6.0.35"], "test"=>["spec/pom.xml", "junit:junit:jar:4.10"]}  )
       block.repositories.should eql( ["http://repository.jboss.org/nexus/content/groups/public-jboss"] )
           

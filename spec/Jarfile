@@ -1,3 +1,4 @@
+local '~/.m2'
 repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
 
 jar "org.apache.mina:mina-core:2.0.4"

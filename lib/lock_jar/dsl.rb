@@ -18,6 +18,7 @@ module LockJar
 
     attr_reader :notations
     attr_reader :repositories
+    attr_reader :local_repository
     attr_reader :scopes
     
     class << self
@@ -58,6 +59,12 @@ module LockJar
       end
         
       @present_scope = 'compile'
+      
+      @local_repository = nil
+    end
+    
+    def local( path )
+      @local_repository = path
     end
     
     def jar(notation, *args)

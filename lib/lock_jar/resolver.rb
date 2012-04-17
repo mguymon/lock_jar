@@ -20,9 +20,11 @@ require 'tmpdir'
 module LockJar
   class Resolver
     
+    attr_reader :opts
     attr_reader :naether
     
     def initialize( opts = {} )
+      @opts = opts
       local_repo = opts[:local_repo]
         
       # Bootstrap Naether

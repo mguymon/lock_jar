@@ -13,19 +13,25 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-require "yaml"
 require 'rubygems'
+require "yaml"
+require 'singleton'
 require 'lock_jar/resolver'
 require 'lock_jar/dsl'
 require 'lock_jar/runtime'
 
 module LockJar
   class Runtime
+    include Singleton
     
-    attr_reader :resolver
+    attr_reader :current_resolver
     
-    def initialize( opts = {} )
-      @resolver = LockJar::Resolver.new( opts )
+    def resolver( opts = {} )
+      if @current_resolver.nil? || opts != @current_resolver.opts
+        @current_resolver = LockJar::Resolver.new( opts )
+      end
+      
+      @current_resolver
     end
     
     def lock( jarfile, opts = {} )
@@ -37,16 +43,27 @@ module LockJar
           lock_jar_file = LockJar::Dsl.evaluate( jarfile )
         end
         
-        lock_jar_file.repositories.each do |repo|
-          @resolver.add_remote_repository( repo )
+        # If not set in opts, and is set in  dsl
+        if opts[:local_repo].nil? && lock_jar_file.local_repository
+          opts[:local_repo] = lock_jar_file.local_repository 
         end
-    
-        lock_data = { 'scopes' => {} }
+        
+        lock_jar_file.repositories.each do |repo|
+          resolver(opts).add_remote_repository( repo )
+        end
+        
+        lock_data = { }
     
         if lock_jar_file.repositories.size > 0
           lock_data['repositories'] = lock_jar_file.repositories
         end
+        
+        unless lock_jar_file.local_repository.nil?
+          lock_data['local_repository'] = lock_jar_file.local_repository
+        end
           
+        lock_data['scopes'] = {} 
+        
         lock_jar_file.notations.each do |scope, notations|
           
           dependencies = []
@@ -54,7 +71,7 @@ module LockJar
             dependencies << {notation => scope}
           end
           
-          resolved_notations = @resolver.resolve( dependencies )
+          resolved_notations = resolver(opts).resolve( dependencies )
           lock_data['scopes'][scope] = { 
             'dependencies' => notations,
             'resolved_dependencies' => resolved_notations } 
@@ -65,43 +82,61 @@ module LockJar
         end
       end
     
-      def list( jarfile_lock, scopes = ['compile', 'runtime'], &blk )
+      def list( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
         dependencies = []
                 
         if jarfile_lock
-          dependencies += read_jarfile( jarfile_lock, scopes )
+          dependencies += lockfile_dependencies( read_lockfile( jarfile_lock), scopes )
         end
         
         unless blk.nil?
           dsl = LockJar::Dsl.evaluate(&blk)
-          dependencies += resolve_dsl( dsl, scopes )
+          dependencies += resolve_dsl( dsl, scopes, opts )
         end
         
         dependencies.uniq
       end
       
-      def load( jarfile_lock, scopes = ['compile', 'runtime'], &blk )
+      def load( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
+        if jarfile_lock
+          lockfile = read_lockfile( jarfile_lock )
+  
+          if opts[:local_repo].nil? && lockfile['local_repo']
+            opts[:local_repo] = lockfile['local_repo']
+          end
+        end
+        
+        unless blk.nil?
+          dsl = LockJar::Dsl.evaluate(&blk)
+          
+          if opts[:local_repo].nil? && dsl.local_repository
+            opts[:local_repo] = dsl.local_repository
+          end
+        end
+        
         dependencies = list( jarfile_lock, scopes, &blk )
         
-        @resolver.load_jars_to_classpath( dependencies )
+        resolver(opts).load_jars_to_classpath( dependencies )
       end
       
       private
-      def read_jarfile( jarfile_lock, scopes )
-        lock_data = YAML.load_file( jarfile_lock )
-        
+      def read_lockfile( jarfile_lock )
+        YAML.load_file( jarfile_lock )
+      end
+      
+      def lockfile_dependencies( lockfile, scopes)
         dependencies = []
          
         scopes.each do |scope|
-          if lock_data['scopes'][scope]
-            dependencies += lock_data['scopes'][scope]['resolved_dependencies']
+          if lockfile['scopes'][scope]
+            dependencies += lockfile['scopes'][scope]['resolved_dependencies']
           end
         end
         
         dependencies
       end
       
-      def resolve_dsl( dsl, scopes )
+      def resolve_dsl( dsl, scopes, opts )
         
         dependencies = []
          
@@ -111,7 +146,7 @@ module LockJar
           end
         end
         
-        @resolver.resolve( dependencies )
+        resolver(opts).resolve( dependencies )
       end
   end
 end
