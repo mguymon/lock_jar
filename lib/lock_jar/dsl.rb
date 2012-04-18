@@ -68,20 +68,28 @@ module LockJar
     end
     
     def jar(notation, *args)
-      if notation
-        @notations[@present_scope] << notation
+      opts = {}
+      if args.last.is_a? Hash
+        opts.merge!( args.last )
       end
+      
+      artifact( notation, opts )
     end
     
     # Pom default to all scopes, unless nested in a scope
     def pom(path, *args)
-      if @scope_changed
-        @notations[@present_scope] << path
-      else
-        LockJar::Dsl.scopes.each do |scope|
-          @notations[scope] << path
-        end
+      opts = { }
+        
+      if args.last.is_a? Hash
+        opts.merge!( args.last )
       end
+      
+      # if not scope opts and default scope, set to all
+      unless opts[:scope] || opts[:scopes] || @scope_changed
+        opts[:scope] = Dsl.scopes
+      end
+      
+      artifact( path, opts )
     end
     
     def repository( url, opts = {} )
@@ -111,5 +119,37 @@ module LockJar
       
       self
     end
+   
+    private 
+    def artifact(artifact, opts)
+      
+      scopes = opts[:scope] || opts[:scopes] || opts[:group]
+      if scopes
+        
+        unless scopes.is_a? Array
+          scopes = [scopes]
+        end
+        
+        # include present scope if within a scope block
+        if @scope_changed
+          scopes << @present_scope
+        end
+        
+      else
+        scopes = [@present_scope]
+      end
+      
+      if artifact
+        scopes.each do |scope|
+          scope = 'compile' if scope.to_s == 'development'
+          
+          if @notations[scope.to_s]
+            @notations[scope.to_s] << artifact
+          end
+        end
+      end
+      
+    end
+    
   end
 end

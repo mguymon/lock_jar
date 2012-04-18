@@ -63,7 +63,7 @@ module LockJar
         end
           
         lock_data['scopes'] = {} 
-        
+          
         lock_jar_file.notations.each do |scope, notations|
           
           dependencies = []
@@ -71,10 +71,12 @@ module LockJar
             dependencies << {notation => scope}
           end
           
-          resolved_notations = resolver(opts).resolve( dependencies )
-          lock_data['scopes'][scope] = { 
-            'dependencies' => notations,
-            'resolved_dependencies' => resolved_notations } 
+          if dependencies.size > 0
+            resolved_notations = resolver(opts).resolve( dependencies )
+            lock_data['scopes'][scope] = { 
+              'dependencies' => notations,
+              'resolved_dependencies' => resolved_notations } 
+          end
         end
     
         File.open( opts[:lockfile] || "Jarfile.lock", "w") do |f|
@@ -91,7 +93,7 @@ module LockJar
         
         unless blk.nil?
           dsl = LockJar::Dsl.evaluate(&blk)
-          dependencies += resolve_dsl( dsl, scopes, opts )
+          dependencies += dsl_dependencies( dsl, scopes )
         end
         
         dependencies.uniq
@@ -116,6 +118,10 @@ module LockJar
         
         dependencies = list( jarfile_lock, scopes, &blk )
         
+        if opts[:resolve]
+          dependencies = resolver(opts).resolve( dependencies )
+        end
+        
         resolver(opts).load_jars_to_classpath( dependencies )
       end
       
@@ -136,7 +142,7 @@ module LockJar
         dependencies
       end
       
-      def resolve_dsl( dsl, scopes, opts )
+      def dsl_dependencies( dsl, scopes )
         
         dependencies = []
          
@@ -146,7 +152,7 @@ module LockJar
           end
         end
         
-        resolver(opts).resolve( dependencies )
+        dependencies
       end
   end
 end
