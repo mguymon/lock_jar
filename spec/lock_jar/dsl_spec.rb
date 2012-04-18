@@ -1,5 +1,4 @@
-require 'rubygems'
-require 'lib/lock_jar/dsl'
+require 'spec_helper'
 
 describe LockJar::Dsl do
   context "Instance" do
