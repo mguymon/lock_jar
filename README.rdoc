@@ -126,9 +126,14 @@ when Bundler requires.
 
 The following Gemfile with LockJar
 
-  require 'lock_jar/bundler'
+  # This is what modifies Bundler to trigger LockJar
+  require 'lock_jar/bundler' 
   
   gem "naether"
+
+  group :development do
+    gem "rspec", "~> 2.9.0"
+  end
         
   # lockjar dsl that is used to generate Jarfile.lock
   lock_jar do
@@ -143,7 +148,15 @@ Will produce a Gemfile.lock and Jarfile.lock for
 
   bundle install
   
-When Bundle.setup or Bundle.require is called, the jars from the Jarfile.lock are loaded into the classpath.
+When Bundler.setup or Bundler.require is called, the jars from the Jarfile.lock are loaded into the classpath.
+
+  require 'rubygems'
+  require 'bundler'
+
+  # This is what modifies Bundler to trigger LockJar
+  require 'lock_jar/bundler' 
+
+  Bundler.require
   
 === Buildr Integration
 
