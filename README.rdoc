@@ -109,6 +109,34 @@ You can skip the Jarfile and directly load dependencies by passing a block to Lo
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
     end
 
+=== Bundler Integration
+
+LockJar integrates with {Bundler}[https://github.com/carlhuda/bundler/] by {modifying}[https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/bundler.rb] the Bundler
+DSL to include LockJar's DSL, generating a Jarfile.lock when Bundler locks, and populating the classpath
+when Bundler requires.
+
+==== Example
+
+The following Gemfile with LockJar
+
+  require 'lock_jar/bundler'
+  
+  gem "naether"
+        
+  # lockjar dsl that is used to generate Jarfile.lock
+  lock_jar do
+    scope :test do
+	  jar 'junit:junit:jar:4.10'
+	end
+	  
+    pom 'spec/pom.xml', :scope => :compile
+  end
+
+Will produce a Gemfile.lock and Jarfile.lock for
+
+  bundle install
+  
+When Bundle.setup or Bundle.require is called, the jars from the Jarfile.lock are loaded into the classpath.
   
 === Buildr Integration
 
