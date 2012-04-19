@@ -103,9 +103,16 @@ Do not forget, if you change your Jarfile, you have to re-generate the Jarfile.l
   
 === Skipping the Jarfile
 
-You can skip the Jarfile and directly load dependencies by passing a block to LockJar.load
+You can skip the Jarfile and Jarfile.lock to directly load dependencies by passing a block to LockJar.load
     
     LockJar.load do
+      jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
+    end
+
+Since you skipped the locking part, mostly likely you will need to resolve the dependences in the block, just pass the 
+:reslve => true option to enable dependency resolution.
+
+    LockJar.load( :resolve => true ) do
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
     end
 
