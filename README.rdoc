@@ -45,7 +45,7 @@ Example Jarfile
 
 When the Jarfile is locked, the transitive dependencies for the Jars and Pom are resolved and saved to the Jarfile.lock file.
 
-Example of locking
+Example of locking a Jarfile to a Jarfile.lock
 
     LockJar.lock
   
