@@ -133,9 +133,9 @@ The following Gemfile with LockJar
   # lockjar dsl that is used to generate Jarfile.lock
   lock_jar do
     scope :test do
-	  jar 'junit:junit:jar:4.10'
-	end
-	  
+      jar 'junit:junit:jar:4.10'
+    end
+    
     pom 'spec/pom.xml', :scope => :compile
   end
 
