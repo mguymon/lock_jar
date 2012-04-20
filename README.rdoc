@@ -101,7 +101,7 @@ or directly load all Jars into the classpath
 
 Do not forget, if you change your Jarfile, you have to re-generate the Jarfile.lock.
   
-=== Skipping the Jarfile
+==== Skipping the Jarfile
 
 You can skip the Jarfile and Jarfile.lock to directly load dependencies by passing a block to LockJar.load
     
