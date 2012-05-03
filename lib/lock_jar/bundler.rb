@@ -47,6 +47,8 @@ module Bundler
     attr_accessor :lock_jar
     
     def lock( file )
+      
+      # XXX: this is call from Bundler.setup. Only should happen on install or update
       LockJar.lock( lock_jar )
       
       lockjar_replaced_lock( file )
