@@ -3,14 +3,19 @@ require 'rubygems'
 require 'bundler'
 require 'lib/lock_jar/bundler'
 require 'helper/bundler_helper'
+require 'fileutils'
 
 describe Bundler do
     include BundlerHelper
     
+    before(:all) do
+      FileUtils.rm_rf( bundled_app ) if File.exists? bundled_app
+    end
+    
     before(:each) do
       gemfile <<-G
         require 'lock_jar/bundler'
-        source "file://#{tmp('bundler')}"
+        source "file:///#{tmp('bundler')}"
         gem "naether"
         
         lock_jar do
@@ -40,7 +45,7 @@ describe Bundler do
     File.delete( bundled_app("Jarfile.lock") ) if File.exists? bundled_app("Jarfile.lock")
     install_gemfile <<-G
       require 'lock_jar/bundler'
-      source "file://#{tmp('bundler')}"
+      source "file:///#{tmp('bundler')}"
       gem "naether"
       
       lock_jar do
@@ -53,9 +58,9 @@ describe Bundler do
       
     G
     
-    File.exists?(  bundled_app("Jarfile.lock") ).should be_true
+    File.exists?( bundled_app("Jarfile.lock") ).should be_true
     
-    IO.read( File.join(root,'spec', 'BundlerJarfile.lock') ).should eql( IO.read( bundled_app("Jarfile.lock") ) )
+    LockJar.read( File.join(root,'spec', 'BundlerJarfile.lock') ).should eql( LockJar.read( bundled_app("Jarfile.lock") ) )
   end
   
   it "should create Jarfile.lock with bundle update" do
@@ -63,7 +68,7 @@ describe Bundler do
     bundle "update"
     File.exists?(  bundled_app("Jarfile.lock") ).should be_true
     
-    IO.read( File.join(root,'spec', 'BundlerJarfile.lock') ).should eql( IO.read( bundled_app("Jarfile.lock") ) )
+    LockJar.read( File.join(root,'spec', 'BundlerJarfile.lock') ).should eql( LockJar.read( bundled_app("Jarfile.lock") ) )
   end
   
   it "should load Jarfile.lock with Bundle.setup" do
@@ -71,12 +76,13 @@ describe Bundler do
       require 'rubygems'
       require 'bundler'
       require 'lock_jar/bundler'
+      require 'naether/java'
       Bundler.setup
 
-      puts com.slackworks.modelcitizen.ModelFactory.to_s
+      puts Naether::Java.create('com.slackworks.modelcitizen.ModelFactory').getClass().toString()
     RUBY
     err.should eq("")
-    out.should match("Java::ComSlackworksModelcitizen::ModelFactory")
+    out.should match("class com.slackworks.modelcitizen.ModelFactory")
   end
   
 end
