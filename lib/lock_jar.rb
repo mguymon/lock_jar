@@ -80,5 +80,9 @@ module LockJar
       
       Runtime.instance.load( lockfile, scopes, opts, &blk )
   end
+  
+  def self.read( lockfile )
+    Runtime.instance.read_lockfile( lockfile )
+  end
  
 end

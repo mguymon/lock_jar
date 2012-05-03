@@ -35,6 +35,7 @@ module LockJar
     end
     
     def lock( jarfile, opts = {} )
+      
         lock_jar_file = nil
         
         if jarfile.is_a? LockJar::Dsl
@@ -61,7 +62,11 @@ module LockJar
         if lock_jar_file.repositories.size > 0
           lock_data['repositories'] = lock_jar_file.repositories
         end
-          
+        
+        if lock_jar_file.maps.size > 0
+          lock_data['maps'] = lock_jar_file.maps
+        end
+        
         lock_data['scopes'] = {} 
           
         lock_jar_file.notations.each do |scope, notations|
@@ -73,6 +78,25 @@ module LockJar
           
           if dependencies.size > 0
             resolved_notations = resolver(opts).resolve( dependencies )
+    
+            if lock_jar_file.maps.size > 0 
+              mapped_dependencies = []
+              
+              lock_jar_file.maps.each do |notation, replacements|
+                resolved_notations.each do |dep|
+                  if dep =~ /notation/
+                    replacements.each do |replacement|
+                      mapped_dependencies << replacement
+                    end
+                  else
+                    mapped_dependencies << dep
+                  end
+                end
+              end
+              
+              resolved_notations = mapped_dependencies
+            end
+            
             lock_data['scopes'][scope] = { 
               'dependencies' => notations,
               'resolved_dependencies' => resolved_notations } 
@@ -122,13 +146,14 @@ module LockJar
           dependencies = resolver(opts).resolve( dependencies )
         end
         
-        resolver(opts).load_jars_to_classpath( dependencies )
+        resolver(opts).load_to_classpath( dependencies )
       end
       
-      private
       def read_lockfile( jarfile_lock )
         YAML.load_file( jarfile_lock )
       end
+      
+      private
       
       def lockfile_dependencies( lockfile, scopes)
         dependencies = []

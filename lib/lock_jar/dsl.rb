@@ -20,6 +20,7 @@ module LockJar
     attr_reader :repositories
     attr_reader :local_repository
     attr_reader :scopes
+    attr_reader :maps
     
     class << self
     
@@ -61,10 +62,7 @@ module LockJar
       @present_scope = 'compile'
       
       @local_repository = nil
-    end
-    
-    def local( path )
-      @local_repository = path
+      @maps = {}
     end
     
     def jar(notation, *args)
@@ -74,6 +72,34 @@ module LockJar
       end
       
       artifact( notation, opts )
+    end
+
+    def local( path )
+      @local_repository = path
+    end
+    
+    def merge( dsl )
+      @repositories = (@repositories + dsl.repositories).uniq
+      
+      dsl.notations.each do |scope, notations|
+        @notations[scope] = (@notations[scope] + notations).uniq         
+      end
+      
+      dsl.maps.each do |notation,paths|
+        existing_map = @maps[notation]
+        if existing_map
+          @maps[notation] = (existing_map + paths).uniq
+        else
+          @maps[notation] = paths
+        end
+      end
+      
+      self
+    end
+  
+    # Map a dependency to another dependency or local directory.
+    def map( notation, *args )
+      maps[notation] = args
     end
     
     # Pom default to all scopes, unless nested in a scope
@@ -91,11 +117,15 @@ module LockJar
       
       artifact( path, opts )
     end
+
+    def read_file(file)
+      File.open(file, "rb") { |f| f.read }
+    end
     
     def repository( url, opts = {} )
       @repositories << url
     end
-    
+
     def scope(*scopes, &blk)
        @scope_changed = true
        scopes.each do |scope|
@@ -104,22 +134,8 @@ module LockJar
        end
        @scope_changed = false
        @present_scope = 'compile'
-    end
+    end   
     
-    def read_file(file)
-      File.open(file, "rb") { |f| f.read }
-    end
-    
-    def merge( dsl )
-      @repositories = (@repositories + dsl.repositories).uniq
-      
-      dsl.notations.each do |scope, notations|
-        @notations[scope] = (@notations[scope] + notations).uniq         
-      end
-      
-      self
-    end
-   
     private 
     def artifact(artifact, opts)
       

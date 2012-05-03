@@ -18,16 +18,18 @@ require 'lock_jar/dsl'
 
 module Buildr
   
-  attr_reader :global_lockjar_dsl
-  
   class << self
     def project_to_lockfile( project )
       "#{project.name.gsub(/:/,'-')}.lock"
     end
+    
+    def global_lockjar_dsl
+      @@global_lockjar_dsl
+    end
   end
   
   def lock_jar( &blk )
-    @global_lockjar_dsl = ::LockJar::Dsl.evaluate(&blk)            
+    @@global_lockjar_dsl = ::LockJar::Dsl.evaluate(&blk) 
   end
   
   namespace "lock_jar" do
@@ -47,8 +49,9 @@ module Buildr
     
       def lock_jar( &blk )
           @lockjar_dsl = ::LockJar::Dsl.evaluate(&blk)    
-          if global_lockjar_dsl
-            @lockjar_dsl.merge( global_lockjar_dsl )
+                   
+          unless Buildr.global_lockjar_dsl.nil?
+            @lockjar_dsl.merge( Buildr.global_lockjar_dsl )
           end        
       end
       
@@ -57,7 +60,7 @@ module Buildr
       end
       
       def lockjar_dsl
-        @lockjar_dsl || global_lockjar_dsl
+        @lockjar_dsl || Buildr.global_lockjar_dsl
       end
       
       after_define do |project|      
