@@ -16,14 +16,15 @@ gem install lock_jar
 === Using a Jarfile
 
 ==== Jarfile
-A Jarfile is a simple file using a Ruby DSL for defining a project's Jar dependencies using the following 
+
+A Jarfile is a simple file using a Ruby DSL for defining a project's dependencies using the following 
 methods:
 
 * local: Set the local Maven repository
-* repository: Add url of additional Maven repository to use.
-* jar: Add Jar dependency in artifact notation
-* pom: Add local path to a Maven pom
-* scope: set the scope for a jar or pom declaration. Default scope is compile
+* repository: Add url of additional remote Maven repository.
+* jar: Add Jar dependency in artifact notation, default scope is *compile*
+* pom: Add local path to a Maven pom, default is to load dependencies for all scopes.
+* scope: Set the scope for nested jar or pom.
 
 Example Jarfile
 
@@ -43,7 +44,7 @@ Example Jarfile
 	
 ==== Resolving dependencies
 
-When the Jarfile is locked, the transitive dependencies for the Jars and Pom are resolved and saved to the Jarfile.lock file.
+When the Jarfile is locked, the transitive dependencies for the Jars and POM are resolved and saved to the Jarfile.lock file.
 
 Example of locking a Jarfile to a Jarfile.lock
 
@@ -119,8 +120,7 @@ Since you skipped the locking part, mostly likely you will need to resolve the d
 === Bundler Integration
 
 LockJar integrates with {Bundler}[https://github.com/carlhuda/bundler/] by {modifying}[https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/bundler.rb] the Bundler
-DSL to include LockJar's DSL, generating a Jarfile.lock when Bundler locks, and populating the classpath
-when Bundler requires.
+DSL to include LockJar's DSL, generating a Jarfile.lock when Bundler locks, and populating the classpath when Bundler requires.
 
 ==== Example
 
@@ -161,7 +161,7 @@ When Bundler.setup or Bundler.require is called, the jars from the Jarfile.lock 
 === Buildr Integration
 
 LockJar integrates with {Buildr}[http://buildr.apache.org/] using an {Addon}[https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/buildr.rb].
-This allows the Jarfile to be defined directly into a buildfile. A global app LockJar definition can be set and
+This allows the Jarfile to be defined directly into a buildfile. A global LockJar definition can be set and
 is inherited to all projects. Each project may have its own LockJar definition. A lock file is generated per project based
 on the project name.
 
@@ -173,8 +173,9 @@ and a task per project to generate the lockfile for a single project
 
   buildr <app>:<project>:lock_jar:lock
 
-The resolved dependencies are automatically added to the classpath for compiling and testing. Do not forget, if you change the lock_jar
-definitions, you have to rerun the lock_jar:lock task.
+The compile scoped dependencies are automatically added to the classpath for compiling. The test scoped dependencies are
+automatically added to the classpath for tests. Do not forget, if you change the lock_jar
+definitions, you have to rerun the *lock_jar:lock* task.
 
 
 ==== Example
