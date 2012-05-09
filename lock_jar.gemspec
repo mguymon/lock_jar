@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "lock_jar"
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Guymon"]
-  s.date = "2012-04-19"
+  s.date = "2012-05-09"
   s.description = "Manage Jar files for Ruby. In the spirit of Bundler, a Jarfile\n  is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test.\n  The Jarfile.lock can be used to populate the classpath"
   s.email = "michael.guymon@gmail.com"
   s.extra_rdoc_files = [
@@ -45,25 +45,25 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/mguymon/lock_jar"
   s.licenses = ["Apache"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.12"
+  s.rubygems_version = "1.8.24"
   s.summary = "Manage Jar files for Ruby"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<naether>, ["~> 0.6.0"])
+      s.add_runtime_dependency(%q<naether>, ["~> 0.7.0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.9.0"])
       s.add_development_dependency(%q<bundler>, ["> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
     else
-      s.add_dependency(%q<naether>, ["~> 0.6.0"])
+      s.add_dependency(%q<naether>, ["~> 0.7.0"])
       s.add_dependency(%q<rspec>, ["~> 2.9.0"])
       s.add_dependency(%q<bundler>, ["> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
     end
   else
-    s.add_dependency(%q<naether>, ["~> 0.6.0"])
+    s.add_dependency(%q<naether>, ["~> 0.7.0"])
     s.add_dependency(%q<rspec>, ["~> 2.9.0"])
     s.add_dependency(%q<bundler>, ["> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
