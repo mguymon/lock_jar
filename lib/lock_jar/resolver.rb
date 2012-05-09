@@ -63,6 +63,19 @@ module LockJar
       @naether.dependenciesNotation
     end
     
+    def to_local_paths( notations )
+      paths = []   
+      notations.each do |notation|
+        if File.directory?(notation)
+          paths << notation
+        else
+          paths = paths + @naether.to_local_paths( [notation] )
+        end
+      end
+      
+      paths
+    end
+    
     def load_to_classpath( notations )
       dirs = []
       jars = [] 

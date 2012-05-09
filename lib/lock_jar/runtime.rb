@@ -27,6 +27,7 @@ module LockJar
     attr_reader :current_resolver
     
     def resolver( opts = {} )
+      # XXX: opts for a method will cause resolver to reload
       if @current_resolver.nil? || opts != @current_resolver.opts
         @current_resolver = LockJar::Resolver.new( opts )
       end
@@ -120,7 +121,13 @@ module LockJar
           dependencies += dsl_dependencies( dsl, scopes )
         end
         
-        dependencies.uniq
+        if opts[:local_paths]
+          opts.delete( :local_paths ) # remove list opts so resolver is not reset
+          resolver(opts).to_local_paths( dependencies.uniq )
+          
+        else
+          dependencies.uniq
+        end
       end
       
       def load( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
