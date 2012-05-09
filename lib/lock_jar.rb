@@ -21,6 +21,10 @@ require 'lock_jar/runtime'
 
 module LockJar
   
+  def self.config( opts )
+    Runtime.instance.resolver( opts )
+  end
+  
   # Lock a Jarfile and generate a Jarfile.lock
   #
   # Accepts path to the jarfile and hash of options to configure LockJar

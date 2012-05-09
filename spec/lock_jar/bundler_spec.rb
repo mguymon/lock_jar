@@ -1,4 +1,5 @@
-require 'spec/spec_helper'
+require File.expand_path(File.join(File.dirname(__FILE__),'../spec_helper'))
+  
 require 'rubygems'
 require 'bundler'
 require 'lib/lock_jar/bundler'
@@ -10,12 +11,12 @@ describe Bundler do
     
     before(:all) do
       FileUtils.rm_rf( bundled_app ) if File.exists? bundled_app
+      FileUtils.mkdir_p tmp('bundler')
     end
     
     before(:each) do
       gemfile <<-G
         require 'lock_jar/bundler'
-        source "file:///#{tmp('bundler')}"
         gem "naether"
         
         lock_jar do
@@ -38,14 +39,13 @@ describe Bundler do
   end
     
   it "provides a list of the jar and pom dependencies" do
-    Bundler.load.lock_jar.notations.should eql( {"compile"=>["/home/zinger/devel/projects/swx/lock_jar/spec/pom.xml"], "runtime"=>[], "test"=>["junit:junit:jar:4.10"]} )
+    Bundler.load.lock_jar.notations.should eql( {"compile"=>[File.expand_path(File.join(File.dirname(__FILE__), "../../spec/pom.xml"))], "runtime"=>[], "test"=>["junit:junit:jar:4.10"]} )
   end
   
   it "should create Jarfile.lock with bundle install" do
     File.delete( bundled_app("Jarfile.lock") ) if File.exists? bundled_app("Jarfile.lock")
     install_gemfile <<-G
       require 'lock_jar/bundler'
-      source "file:///#{tmp('bundler')}"
       gem "naether"
       
       lock_jar do
@@ -57,7 +57,6 @@ describe Bundler do
       end
       
     G
-    
     File.exists?( bundled_app("Jarfile.lock") ).should be_true
     
     LockJar.read( File.join(root,'spec', 'BundlerJarfile.lock') ).should eql( LockJar.read( bundled_app("Jarfile.lock") ) )
@@ -77,11 +76,14 @@ describe Bundler do
       require 'bundler'
       require 'lock_jar/bundler'
       require 'naether/java'
+      
+      LockJar.config( :local_repo => '#{tmp('test-repo')}' )
+      
       Bundler.setup
 
       puts Naether::Java.create('com.slackworks.modelcitizen.ModelFactory').getClass().toString()
     RUBY
-    err.should eq("")
+    # err.should eq("") # 1.9.3 has a IConv error that outputs to std err
     out.should match("class com.slackworks.modelcitizen.ModelFactory")
   end
   
