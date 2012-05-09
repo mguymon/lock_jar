@@ -55,8 +55,22 @@ module Buildr
           end        
       end
       
-      def lock_jars( scope = ['compile','runtime'])
-        ::LockJar.list( Buildr.project_to_lockfile(project), scope )
+      def lock_jars( *args )
+        lockfile = Buildr.project_to_lockfile(project)
+        opts = {}
+        scopes = ['compile','runtime']
+          
+        args.each do |arg|
+          if arg.is_a?(Hash)
+            opts.merge!( arg )
+          elsif arg.is_a?( String )
+            lockfile = arg
+          elsif arg.is_a?( Array )
+            scopes = arg
+          end
+        end
+          
+        ::LockJar.list( lockfile, scopes, opts )
       end
       
       def lockjar_dsl
