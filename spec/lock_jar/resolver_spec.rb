@@ -1,4 +1,4 @@
-require 'rubygems'
+require 'spec/spec_helper'
 require 'lib/lock_jar/resolver'
 require 'fileutils'
 require 'naether'
@@ -19,8 +19,8 @@ describe LockJar::Resolver do
     end
     
     it "should return local paths for notations" do
-      @resolver.to_local_paths( ["org.modeshape:modeshape-common:2.3.0.Final"] ).should 
-        eql( [File.expand_path("tmp/test-repo/org/modeshape/modeshape-common/2.3.0.Final/modeshape-common-2.3.0.Final.jar")] )
+      @resolver.to_local_paths( ["junit:junit:jar:4.10"] ).should 
+        eql( [File.expand_path("tmp/test-repo/junit/junit/4.10/junit-4.10.jar")] )
     end
   end
 end

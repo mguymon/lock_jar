@@ -79,24 +79,6 @@ module LockJar
           
           if dependencies.size > 0
             resolved_notations = resolver(opts).resolve( dependencies )
-    
-            if lock_jar_file.maps.size > 0 
-              mapped_dependencies = []
-              
-              lock_jar_file.maps.each do |notation, replacements|
-                resolved_notations.each do |dep|
-                  if dep =~ /notation/
-                    replacements.each do |replacement|
-                      mapped_dependencies << replacement
-                    end
-                  else
-                    mapped_dependencies << dep
-                  end
-                end
-              end
-              
-              resolved_notations = mapped_dependencies
-            end
             
             lock_data['scopes'][scope] = { 
               'dependencies' => notations,
@@ -111,14 +93,36 @@ module LockJar
     
       def list( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
         dependencies = []
-                
+        maps = []
+            
         if jarfile_lock
-          dependencies += lockfile_dependencies( read_lockfile( jarfile_lock), scopes )
+          lockfile = read_lockfile( jarfile_lock)
+          dependencies += lockfile_dependencies( lockfile, scopes )
+          maps = lockfile['maps']
         end
         
         unless blk.nil?
           dsl = LockJar::Dsl.evaluate(&blk)
           dependencies += dsl_dependencies( dsl, scopes )
+          maps = dsl.maps
+        end
+        
+        if maps && maps.size > 0 
+          mapped_dependencies = []
+          
+          maps.each do |notation, replacements|
+            dependencies.each do |dep|
+              if dep =~ /#{notation}/
+                replacements.each do |replacement|
+                  mapped_dependencies << replacement
+                end
+              else
+                mapped_dependencies << dep
+              end
+            end
+          end
+                          
+          dependencies = mapped_dependencies
         end
         
         if opts[:local_paths]

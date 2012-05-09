@@ -1,4 +1,4 @@
-require 'rubygems'
+require 'spec/spec_helper'
 require 'lib/lock_jar'
 require 'lib/lock_jar/maven'
 require 'naether'

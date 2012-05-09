@@ -99,7 +99,7 @@ module LockJar
   
     # Map a dependency to another dependency or local directory.
     def map( notation, *args )
-      maps[notation] = args
+      @maps[notation] = args
     end
     
     # Pom default to all scopes, unless nested in a scope
