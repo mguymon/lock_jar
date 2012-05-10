@@ -48,7 +48,7 @@ Example Jarfile
 
 * LockJar.lock( jarfile = 'Jarfile', opts = {} ): Using a Jarfile, creates a lock file. Default jarfile lock is *Jarfile.lock*, can be changed by setting opts = { :lockfile => 'NewLockFile' }. The local repo defined in the Jarfile can be override by setting opts = { :local_repo => 'path/to/local/repo' }
 
-When the Jarfile is locked, the transitive dependencies for the Jars and POM are resolved and saved to the Jarfile.lock file.
+When the Jarfile is locked, the transitive dependencies are resolved and saved to the Jarfile.lock file.
 
 Example of locking a Jarfile to a Jarfile.lock
 
