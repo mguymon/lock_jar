@@ -46,6 +46,8 @@ Example Jarfile
 	
 ==== Resolving dependencies
 
+* LockJar.lock( jarfile = 'Jarfile', opts = {} ): From the jarfile, creates a lock file. Default lock jar file Jarfile.lock, can be changed by setting opts = { :lockfile => 'NewLockFile' }. The local repo defined in the Jarfile can be override by setting opts = { :local_repo => 'path/to/local/repo' }
+
 When the Jarfile is locked, the transitive dependencies for the Jars and POM are resolved and saved to the Jarfile.lock file.
 
 Example of locking a Jarfile to a Jarfile.lock
@@ -93,6 +95,19 @@ The Jarfile.lock
   
   
 ==== Accessing Jars
+
+* LockJar.list(*args): Lists all dependencies as notations for scopes from the local file. Defaults scopes are *compile* and *runtime*. Default lock file is *Jarfile.lock*.
+  * args of a String will set the Jarfile, e.g. 'Jarfile.different'
+  * args of an Array will set the scopes, e.g. ['compile','test']
+  * args of a Hash will set the options, e.g. { :local_repo => 'path' }
+    * :local_repo sets the local repo path
+    * :local_paths converts the notations to paths to jars in the local repo path
+  
+* LockJar.load(*args): Loads all dependencies to the classpath. Defaults scopes are *compile* and *runtime*. Default lock file is *Jarfile.lock*.
+  * args of a String will set the Jarfile, e.g. 'Jarfile.different'
+  * args of an Array will set the scopes, e.g. ['compile','test']
+  * args of a Hash will set the options, e.g. { :local_repo => 'path' }
+    * :local_repo sets the local repo path
 
 Once a Jarfile.lock is generated, you can list all resolved jars by
   
