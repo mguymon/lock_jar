@@ -108,6 +108,7 @@ The Jarfile.lock
   * args of an Array will set the scopes, e.g. ['compile','test']
   * args of a Hash will set the options, e.g. { :local_repo => 'path' }
     * :local_repo sets the local repo path
+    * :resolve to true will make transitive dependences resolve before loading to classpath 
 
 Once a Jarfile.lock is generated, you can list all resolved jars by
   
@@ -189,6 +190,12 @@ A new Buildr task is added to generate the lockfile for all projects
 and a task per project to generate the lockfile for a single project
 
   buildr <app>:<project>:lock_jar:lock
+
+In a project, you can access an Array of notations using the *lock_jars* method, accepts same parameters as {LockJar.list}[https://github.com/mguymon/lock_jar#accessing-jars]
+
+  lock_jars()
+
+
 
 The compile scoped dependencies are automatically added to the classpath for compiling. The test scoped dependencies are
 automatically added to the classpath for tests. Do not forget, if you change the lock_jar
