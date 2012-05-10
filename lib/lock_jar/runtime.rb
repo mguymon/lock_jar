@@ -58,19 +58,43 @@ module LockJar
 
         unless lock_jar_file.local_repository.nil?
           lock_data['local_repository'] = lock_jar_file.local_repository
+          
+          if needs_force_encoding
+            lock_data['local_repository'] = lock_data['local_repository'].force_encoding("UTF-8")
+          end
         end
           
         if lock_jar_file.repositories.size > 0
           lock_data['repositories'] = lock_jar_file.repositories
+            
+          if needs_force_encoding
+            lock_data['repositories'].map { |repo| repo.force_encoding("UTF-8") }
+          end
         end
         
         if lock_jar_file.maps.size > 0
           lock_data['maps'] = lock_jar_file.maps
+            
+          #if needs_force_encoding
+          #  lock_data['maps'].map { |maps| maps.map { |map| map.force_encoding("UTF-8") } }
+          #end
+        end
+        
+        if lock_jar_file.excludes.size > 0 
+          lock_data['excludes'] = lock_jar_file.excludes
+            
+          if needs_force_encoding
+            lock_data['excludes'].map { |exclude| exclude.force_encoding("UTF-8") }
+          end
         end
         
         lock_data['scopes'] = {} 
           
         lock_jar_file.notations.each do |scope, notations|
+          
+          if needs_force_encoding
+            notations.map { |notation| notation.force_encoding("UTF-8") }
+          end
           
           dependencies = []
           notations.each do |notation|
@@ -79,6 +103,12 @@ module LockJar
           
           if dependencies.size > 0
             resolved_notations = resolver(opts).resolve( dependencies )
+            
+            if lock_data['excludes']
+              lock_data['excludes'].each do |exclude|
+                resolved_notations.delete_if { |dep| dep =~ /#{exclude}/ }
+              end
+            end
             
             lock_data['scopes'][scope] = { 
               'dependencies' => notations,
@@ -190,5 +220,11 @@ module LockJar
         
         dependencies
       end
+
+      private
+      def needs_force_encoding
+        @needs_force_encoding || @needs_force_encoding = RUBY_VERSION =~ /^1.9/
+      end
   end
+  
 end

@@ -28,6 +28,23 @@ describe LockJar do
             "compile"=>{
               "dependencies"=>["junit:junit:4.10"], "resolved_dependencies"=>["junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"]}}} )      
       end
+      
+      it "should exclude excludes from dependencies" do
+        dsl = LockJar::Dsl.evaluate do
+          exclude 'commons-logging', 'logkit'
+          jar 'opensymphony:oscache:jar:2.4.1'
+        end
+        
+        LockJar.lock( dsl, :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
+        lockfile = LockJar.read('tmp/Jarfile.lock')
+        lockfile.should eql( {
+          "excludes"=>["commons-logging", "logkit"], 
+          "scopes"=>{
+            "compile"=>{
+              "dependencies"=>["opensymphony:oscache:jar:2.4.1"], 
+              "resolved_dependencies"=>["opensymphony:oscache:jar:2.4.1", "log4j:log4j:jar:1.2.12", "avalon-framework:avalon-framework:jar:4.1.3", "javax.jms:jms:jar:1.1", "javax.servlet:servlet-api:jar:2.3"]}}} )      
+      
+      end
     end
   
     context "list" do

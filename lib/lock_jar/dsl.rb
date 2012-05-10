@@ -21,6 +21,7 @@ module LockJar
     attr_reader :local_repository
     attr_reader :scopes
     attr_reader :maps
+    attr_reader :excludes
     
     class << self
     
@@ -63,6 +64,11 @@ module LockJar
       
       @local_repository = nil
       @maps = {}
+      @excludes = []
+    end
+    
+    def exclude(*notations)
+      @excludes += notations
     end
     
     def jar(notation, *args)
@@ -92,6 +98,10 @@ module LockJar
         else
           @maps[notation] = paths
         end
+      end
+      
+      dsl.excludes.each do |exclude|
+        @excludes << exclude
       end
       
       self
