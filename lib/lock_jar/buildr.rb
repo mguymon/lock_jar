@@ -81,6 +81,8 @@ module Buildr
         task :compile => 'lock_jar:compile'
         task 'test:compile' => 'lock_jar:test:compile'
         
+        task 'eclipse' => 'lock_jar:eclipse'
+        
         namespace "lock_jar" do
             desc "Lock dependencies to JarFile"
             task("lock") do 
@@ -109,6 +111,17 @@ module Buildr
               
               project.test.compile.with( jars )
               project.test.with( jars )
+            end
+            
+            task("eclipse") do
+              if project.lockjar_dsl && !File.exists?( Buildr.project_to_lockfile(project) )
+                raise "#{Buildr.project_to_lockfile(project)} does not exist, run #{project.name}:lockjar:lock first"
+              end
+              jars = ::LockJar.list( Buildr.project_to_lockfile(project), ['compile', 'runtime'] )
+              project.compile.with( jars )
+              
+              jars = ::LockJar.list( Buildr.project_to_lockfile(project), ['compile', 'test', 'runtime'] )
+              project.test.compile.with( jars )
             end
         end
       end
