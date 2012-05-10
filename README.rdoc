@@ -96,14 +96,14 @@ The Jarfile.lock
   
 ==== Accessing Jars
 
-* LockJar.list(*args): Lists all dependencies as notations for scopes from the local file. Defaults scopes are *compile* and *runtime*. Default lock file is *Jarfile.lock*.
+* LockJar.list(*args): Lists all dependencies as notations for scopes from the Jarfile.lock. Defaults scopes are *compile* and *runtime*. Default lock file is *Jarfile.lock*.
   * args of a String will set the Jarfile, e.g. 'Jarfile.different'
   * args of an Array will set the scopes, e.g. ['compile','test']
   * args of a Hash will set the options, e.g. { :local_repo => 'path' }
     * :local_repo sets the local repo path
     * :local_paths converts the notations to paths to jars in the local repo path
   
-* LockJar.load(*args): Loads all dependencies to the classpath. Defaults scopes are *compile* and *runtime*. Default lock file is *Jarfile.lock*.
+* LockJar.load(*args): Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are *compile* and *runtime*. Default lock file is *Jarfile.lock*.
   * args of a String will set the Jarfile, e.g. 'Jarfile.different'
   * args of an Array will set the scopes, e.g. ['compile','test']
   * args of a Hash will set the options, e.g. { :local_repo => 'path' }
