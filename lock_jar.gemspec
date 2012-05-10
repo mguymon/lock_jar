@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "lock_jar"
-  s.version = "0.2.1"
+  s.version = "0.2.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Guymon"]
-  s.date = "2012-05-09"
+  s.date = "2012-05-10"
   s.description = "Manage Jar files for Ruby. In the spirit of Bundler, a Jarfile\n  is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test.\n  The Jarfile.lock can be used to populate the classpath"
   s.email = "michael.guymon@gmail.com"
   s.extra_rdoc_files = [
