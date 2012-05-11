@@ -18,13 +18,15 @@ require 'lock_jar/dsl'
 
 module Buildr
   
+  @@global_lockjar_dsl = nil
+  
   class << self
     def project_to_lockfile( project )
       "#{project.name.gsub(/:/,'-')}.lock"
     end
     
     def global_lockjar_dsl
-      @@global_lockjar_dsl
+      @@global_lockjar_dsl 
     end
   end
   
@@ -37,6 +39,10 @@ module Buildr
     task("lock") do 
       projects.each do |project|   
         if project.lockjar_dsl
+          # add buildr repos
+          repositories.remote.each do |repo|
+            project.lockjar_dsl.repository repo
+          end
           ::LockJar.lock( project.lockjar_dsl, :lockfile => Buildr.project_to_lockfile(project) )       
         end
       end
@@ -88,6 +94,11 @@ module Buildr
             task("lock") do 
               dsl = project.lockjar_dsl
               if dsl
+                # add buildr repos
+                repositories.remote do |repo|
+                  puts repo
+                  dsl.repository repo
+                end
                 ::LockJar.lock( dsl, :lockfile => "#{project.name}.lock" )
               else
                 # XXX: output that there were not dependencies to lock
