@@ -210,7 +210,6 @@ Sample buildfile with LockJar
   
   # app definition, inherited into all projects
   lock_jar do
-       repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
 
        scope 'test' do
          jar 'junit:junit:jar:4.10'
