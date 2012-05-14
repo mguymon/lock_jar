@@ -106,6 +106,7 @@ The Jarfile.lock
   * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
     * :local_repo sets the local repo path
     * :local_paths converts the notations to paths to jars in the local repo path
+    * :resolve to true will make transitive dependences resolve before loading to classpath 
   
 * LockJar.load(*args): Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are *compile* and *runtime*. Default lock file is *Jarfile.lock*.
   * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'
@@ -126,14 +127,28 @@ Do not forget, if you change your Jarfile, you have to re-generate the Jarfile.l
   
 ==== Skipping the Jarfile
 
-You can skip the Jarfile and Jarfile.lock to directly load dependencies by passing a block to LockJar.load
+You can skip the Jarfile and Jarfile.lock to directly play with dependencies by passing a block to LockJar.lock, LockJar.list, LockJar.load
+
+===== Lock with a Jarfile
+
+    LockJar.lock do
+      jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
+    end
+
+===== List with a Jarfile
+    
+    LockJar.list do
+      jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
+    end
+
+===== Load with a Jarfile
     
     LockJar.load do
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
     end
 
 Since you skipped the locking part, mostly likely you will need to resolve the dependences in the block, just pass the 
-:resolve => true option to enable dependency resolution.
+:resolve => true option to enable dependency resolution (also works for LockJar.list).
 
     LockJar.load( :resolve => true ) do
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
