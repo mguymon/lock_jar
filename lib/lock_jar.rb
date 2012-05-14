@@ -28,8 +28,24 @@ module LockJar
   # Lock a Jarfile and generate a Jarfile.lock
   #
   # Accepts path to the jarfile and hash of options to configure LockJar
-  def self.lock( jarfile = 'Jarfile', opts = {} )
-    Runtime.instance.lock( jarfile, opts )
+  def self.lock( *args, &blk )
+    jarfile = nil
+    opts = {}
+      
+    args.each do |arg|
+      if arg.is_a?(Hash)
+        opts.merge!( arg )
+      elsif arg.is_a?( String ) || arg.is_a?( LockJar::Dsl )
+        jarfile = arg
+      end
+    end
+    
+    # default to Jarfile
+    if blk.nil? && jarfile.nil?
+      jarfile = 'Jarfile'
+    end
+    
+    Runtime.instance.lock( jarfile, opts, &blk )
   end
   
   # List jars for an array of scope in a lockfile
