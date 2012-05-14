@@ -11,6 +11,8 @@ https://github.com/mguymon/lock_jar
 
 gem install lock_jar
 
+== [RDoc]{http://rubydoc.info/github/mguymon/lock_jar/master/frames}
+
 == Usage
 
 === Using a Jarfile

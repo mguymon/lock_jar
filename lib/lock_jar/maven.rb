@@ -16,22 +16,58 @@
 require 'lock_jar/runtime'
 
 module LockJar
+  
+  # Helper for providing Maven specific operations
+  #
+  # @author Michael Guymon
+  # 
   class Maven
     
     class << self
       
+      #
+      # Get the version of a POM
+      #
+      # @param [String] pom_path path to the pom
+      # @param [Hash] options
+      #
+      # @return [String] version of POM
+      #
       def pom_version( pom_path, opts = {} )
         Runtime.instance.resolver(opts).naether.pom_version( pom_path )
       end
       
-      def write_pom( notation, file_path, opts = {} )
-        Runtime.instance.resolver(opts).naether.write_pom( notation, file_path )
+      #
+      # Write a POM from list of notations
+      #
+      # @param [Array] notations 
+      # @param [String] file_path path of new pom
+      # @param [Hash] options
+      def write_pom( notations, file_path, opts = {} )
+        Runtime.instance.resolver(opts).naether.write_pom( notations, file_path )
       end
       
+      #
+      # Deploy an artifact to a Maven repository
+      #
+      # @param [String] notation of artifact
+      # @param [String] file_path path to the Jar
+      # @param [String] url Maven repository deploying to
+      # @param [Hash] deploy_opts options for deploying 
+      # @param [Hash] lockjar_opts options for initializing LockJar
+      #
       def deploy_artifact( notation, file_path, url, deploy_opts = {}, lockjar_opts = {} )
         Runtime.instance.resolver(lockjar_opts).naether.deploy_artifact( notation, file_path, url, deploy_opts )
       end
       
+      #
+      # Install an artifact to a local repository
+      #
+      # @param [String] notation of artifact
+      # @param [String] pom_path path to the pom
+      # @param [String] jar_path path to the jar
+      # @param [Hash] opts options
+      #
       def install( notation, pom_path, jar_path, opts = {} )
         Runtime.instance.resolver(opts).naether.install( notation, pom_path, jar_path )
       end

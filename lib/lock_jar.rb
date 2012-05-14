@@ -27,7 +27,7 @@ require 'lock_jar/runtime'
 module LockJar
   
   #
-  # Override a LockJar configuration
+  # Override LockJar configuration
   #
   def self.config( opts )
     Runtime.instance.resolver( opts )
