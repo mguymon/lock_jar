@@ -15,7 +15,7 @@
 
 require 'rubygems'
 require 'naether'
-require 'tmpdir'
+require 'fileutils'
 
 module LockJar
   class Resolver
@@ -25,27 +25,39 @@ module LockJar
     
     def initialize( opts = {} )
       @opts = opts
-      local_repo = opts[:local_repo]
+      local_repo = opts[:local_repo] || Naether::Bootstrap.default_local_repo
         
       # Bootstrap Naether
       jars = []
+      temp_jar_dir = File.join(local_repo, '.lock_jar', 'naether' )
       deps = Naether::Bootstrap.check_local_repo_for_deps( local_repo )
       if deps[:missing].size > 0
-        Dir.mktmpdir do |dir|
-          deps = Naether::Bootstrap.download_dependencies( dir, deps.merge( :local_repo => local_repo ) )
-          if deps[:downloaded].size > 0
-            Naether::Bootstrap.install_dependencies_to_local_repo( dir, :local_repo => local_repo )
-            jars = jars + deps[:downloaded].map{ |jar| jar.values[0] }
-          else
-            # XXX: download failed?            
+        deps = Naether::Bootstrap.download_dependencies( temp_jar_dir, deps.merge( :local_repo => local_repo ) )
+        if deps[:downloaded].size > 0
+                    
+          unless Dir.exists?( temp_jar_dir )
+            FileUtils.mkdir_p jar_dir
           end
+          
+          @naether = Naether::Bootstrap.install_dependencies_to_local_repo( temp_jar_dir, :local_repo => local_repo )
+          jars = jars + deps[:downloaded].map{ |jar| jar.values[0] }
+        else
+          # XXX: download failed?            
         end
+        
+      # Remove bootstrap jars, they have been installed to the local repo
+      elsif File.exists?( temp_jar_dir )        
+        FileUtils.rm_rf temp_jar_dir
       end
       
       jars = jars + deps[:exists].map{ |jar| jar.values[0] }
         
-      jars << Naether::JAR_PATH
-      @naether = Naether.create_from_jars( jars )
+      # Bootstrapping naether will create an instance from downloaded jars. 
+      # If jars exist locally already, create manually
+      if @naether.nil?  
+        jars << Naether::JAR_PATH
+        @naether = Naether.create_from_jars( jars )
+      end
       
       @naether.local_repo_path = opts[:local_repo] if opts[:local_repo]
       
