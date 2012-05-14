@@ -59,7 +59,7 @@ module LockJar
         @naether = Naether.create_from_jars( jars )
       end
       
-      @naether.local_repo_path = opts[:local_repo] if opts[:local_repo]
+      @naether.local_repo_path = opts[:local_repo].to_s if opts[:local_repo]
       
       
       @naether.clear_remote_repositories if opts[:offline]

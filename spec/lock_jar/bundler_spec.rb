@@ -30,7 +30,8 @@ describe Bundler do
       in_app_root
     end
     
-    after(:each) do
+    after(:all) do
+      puts "Changing pwd back to #{root}"
       Dir.chdir(root)
     end
   

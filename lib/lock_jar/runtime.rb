@@ -27,6 +27,10 @@ module LockJar
     attr_reader :current_resolver
     
     def resolver( opts = {} )
+      if opts[:local_repo]
+        opts[:local_repo] = File.expand_path(opts[:local_repo])
+      end
+      
       # XXX: opts for a method will cause resolver to reload
       if @current_resolver.nil? || opts != @current_resolver.opts
         @current_resolver = LockJar::Resolver.new( opts )
@@ -169,6 +173,10 @@ module LockJar
           dependencies = mapped_dependencies
         end
         
+        if opts[:resolve]
+          dependencies = resolver(opts).resolve( dependencies )
+        end
+        
         if opts[:local_paths]
           opts.delete( :local_paths ) # remove list opts so resolver is not reset
           resolver(opts).to_local_paths( dependencies.uniq )
@@ -196,11 +204,7 @@ module LockJar
         end
         
         dependencies = list( jarfile_lock, scopes, opts, &blk )
-        
-        if opts[:resolve]
-          dependencies = resolver(opts).resolve( dependencies )
-        end
-        
+                
         resolver(opts).load_to_classpath( dependencies )
       end
       
