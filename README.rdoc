@@ -129,19 +129,19 @@ Do not forget, if you change your Jarfile, you have to re-generate the Jarfile.l
 
 You can skip the Jarfile and Jarfile.lock to directly play with dependencies by passing a block to LockJar.lock, LockJar.list, LockJar.load
 
-===== Lock with a Jarfile
+===== Lock without a Jarfile
 
     LockJar.lock do
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
     end
 
-===== List with a Jarfile
+===== List without a Jarfile.lock
     
     LockJar.list do
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
     end
 
-===== Load with a Jarfile
+===== Load without a Jarfile.lock
     
     LockJar.load do
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
