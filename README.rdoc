@@ -46,7 +46,11 @@ Example Jarfile
 	
 ==== Resolving dependencies
 
-* LockJar.lock( jarfile = 'Jarfile', opts = {} ): Using a Jarfile, creates a lock file. Default jarfile lock is *Jarfile.lock*, can be changed by setting opts = { :lockfile => 'NewLockFile' }. The local repo defined in the Jarfile can be override by setting opts = { :local_repo => 'path/to/local/repo' }
+* LockJar.lock( *args ): Using a Jarfile, creates a lock file. Default jarfile is *Jarfile* and default lockfile is *Jarfile.lock*.
+  * An arg of a String will set the Jarfile, e.g. 'Jarfile.different'
+  * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
+    * :local_repo sets the local repo path
+    * :lockfile sets the Jarfile.lock path
 
 When the Jarfile is locked, the transitive dependencies are resolved and saved to the Jarfile.lock file.
 
@@ -97,16 +101,16 @@ The Jarfile.lock
 ==== Accessing Jars
 
 * LockJar.list(*args): Lists all dependencies as notations for scopes from the Jarfile.lock. Defaults scopes are *compile* and *runtime*. Default lock file is *Jarfile.lock*.
-  * args of a String will set the Jarfile, e.g. 'Jarfile.different'
-  * args of an Array will set the scopes, e.g. ['compile','test']
-  * args of a Hash will set the options, e.g. { :local_repo => 'path' }
+  * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'
+  * An arg of an Array will set the scopes, e.g. ['compile','test']
+  * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
     * :local_repo sets the local repo path
     * :local_paths converts the notations to paths to jars in the local repo path
   
 * LockJar.load(*args): Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are *compile* and *runtime*. Default lock file is *Jarfile.lock*.
-  * args of a String will set the Jarfile, e.g. 'Jarfile.different'
-  * args of an Array will set the scopes, e.g. ['compile','test']
-  * args of a Hash will set the options, e.g. { :local_repo => 'path' }
+  * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'
+  * An arg of an Array will set the scopes, e.g. ['compile','test']
+  * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
     * :local_repo sets the local repo path
     * :resolve to true will make transitive dependences resolve before loading to classpath 
 
