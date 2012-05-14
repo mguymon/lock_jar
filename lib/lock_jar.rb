@@ -19,15 +19,32 @@ require 'lock_jar/resolver'
 require 'lock_jar/dsl'
 require 'lock_jar/runtime'
 
+#
+# LockJar manages Java Jars for Ruby.
+#
+# @author Michael Guymon
+#
 module LockJar
   
+  #
+  # Override a LockJar configuration
+  #
   def self.config( opts )
     Runtime.instance.resolver( opts )
   end
   
-  # Lock a Jarfile and generate a Jarfile.lock
+  # Lock a Jarfile and generate a Jarfile.lock. 
   #
-  # Accepts path to the jarfile and hash of options to configure LockJar
+  # LockJar.lock accepts an Array for parameters. Depending on the type of arg, a different configuration is set.
+  #
+  # * An arg of a String will set the Jarfile, e.g. 'Jarfile.different'. Default Jarfile is *Jarfile*.
+  # * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
+  #   * :local_repo sets the local repo path
+  #   * :lockfile sets the Jarfile.lock path. Default lockfile is *Jarfile.lock*.
+  #
+  # A block can be passed in, overriding values from a Jarfile.
+  #
+  # @return [Hash] Lock data
   def self.lock( *args, &blk )
     jarfile = nil
     opts = {}
@@ -48,9 +65,18 @@ module LockJar
     Runtime.instance.lock( jarfile, opts, &blk )
   end
   
-  # List jars for an array of scope in a lockfile
+  # Lists all dependencies as notations for scopes from the Jarfile.lock. Depending on the type of arg, a different configuration is set.
   #
-  # Accepts path to the lockfile, array of scopes, and hash of options to configure LockJar
+  # * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'.  Default lock file is *Jarfile.lock*.
+  # * An arg of an Array will set the scopes, e.g. ['compile','test'].  Defaults scopes are *compile* and *runtime*
+  # * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
+  #   * :local_repo sets the local repo path
+  #   * :local_paths converts the notations to paths to jars in the local repo path
+  #   * :resolve to true will make transitive dependences resolve before loading to classpath
+  # 
+  # A block can be passed in, overriding values from a Jarfile.lock.
+  #
+  # @return [Array] of jar and mapped path
   def self.list( *args, &blk )
       lockfile = nil
       opts = {}
@@ -74,10 +100,16 @@ module LockJar
       Runtime.instance.list( lockfile, scopes, opts, &blk )
   end
     
-  # Load jars for an array of scopes in a lockfile. Defaults lockfile to Jarfile.lock
+  # LockJar.load(*args): Loads all dependencies to the classpath for scopes from the Jarfile.lock. Depending on the type of arg, a different configuration is set.
+  # * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'. Default lock file is *Jarfile.lock*.
+  # * An arg of an Array will set the scopes, e.g. ['compile','test'].Defaults scopes are *compile* and *runtime*.
+  # * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
+  #    * :local_repo sets the local repo path
+  #    * :resolve to true will make transitive dependences resolve before loading to classpath
+  # 
+  # A block can be passed in, overriding values from a Jarfile.lock.
   #
-  # Accepts a path to the lockfile, array scopes, and hash of options to configure LockJar. A
-  # block of LockJar::Dsl can be set.
+  # @return [Array] of absolute paths of jars and mapped paths loaded into claspath
   def self.load( *args, &blk )
       lockfile = nil
       opts = {}
@@ -101,6 +133,11 @@ module LockJar
       Runtime.instance.load( lockfile, scopes, opts, &blk )
   end
   
+  #
+  # Read a Jafile.lock and convert it to a Hash
+  #
+  # @param [String] lockfile path to lockfile
+  # @return [Hash] Lock Data
   def self.read( lockfile )
     Runtime.instance.read_lockfile( lockfile )
   end
