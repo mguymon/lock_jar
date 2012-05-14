@@ -71,6 +71,8 @@ describe Bundler do
   end
   
   it "should load Jarfile.lock with Bundle.setup" do
+    LockJar.list( :resolve => true, :local_repo => tmp('test-repo') ) # ensure jars are already downloaded
+    
     ruby <<-RUBY
       require 'rubygems'
       require 'bundler'
@@ -83,7 +85,7 @@ describe Bundler do
 
       puts Naether::Java.create('com.slackworks.modelcitizen.ModelFactory').getClass().toString()
     RUBY
-    # err.should eq("") # 1.9.3 has a IConv error that outputs to std err
+    #err.should eq("") # 1.9.3 has a IConv error that outputs to std err
     out.should match("class com.slackworks.modelcitizen.ModelFactory")
   end
   

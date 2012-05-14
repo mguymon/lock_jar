@@ -35,15 +35,27 @@ module LockJar
       @current_resolver
     end
     
-    def lock( jarfile, opts = {} )
+    def lock( jarfile, opts = {}, &blk )
       
         lock_jar_file = nil
         
-        if jarfile.is_a? LockJar::Dsl
-          lock_jar_file = jarfile
-        else
-          lock_jar_file = LockJar::Dsl.evaluate( jarfile )
+        if jarfile
+          if jarfile.is_a? LockJar::Dsl
+            lock_jar_file = jarfile
+          else
+            lock_jar_file = LockJar::Dsl.evaluate( jarfile )
+          end
         end
+        
+        unless blk.nil?
+          dsl = LockJar::Dsl.evaluate(&blk)
+          if lock_jar_file.nil?
+            lock_jar_file = dsl
+          else
+            lock_jar_file.merge( dsl )
+          end
+        end
+
         
         # If not set in opts, and is set in  dsl
         if opts[:local_repo].nil? && lock_jar_file.local_repository
@@ -183,7 +195,7 @@ module LockJar
           end
         end
         
-        dependencies = list( jarfile_lock, scopes, &blk )
+        dependencies = list( jarfile_lock, scopes, opts, &blk )
         
         if opts[:resolve]
           dependencies = resolver(opts).resolve( dependencies )

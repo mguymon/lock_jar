@@ -34,6 +34,7 @@ describe LockJar, "#lock" do
     end
     
     LockJar.lock( dsl, :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
+    File.exists?( 'tmp/Jarfile.lock' ).should be_true
     lockfile = LockJar.read('tmp/Jarfile.lock')
     lockfile.should eql( {
       "excludes"=>["commons-logging", "logkit"], 
@@ -44,8 +45,20 @@ describe LockJar, "#lock" do
   
   end
   
-  context "without a repo" do
+  
+  it "should lock using a block" do
+    LockJar.lock( :local_repo => 'tmp/test-repo', :lockfile => 'tmp/NoRepoJarfile.lock' ) do
+      jar "org.eclipse.jetty:jetty-servlet:8.1.3.v20120416"
+    end
     
+    File.exists?( 'tmp/NoRepoJarfile.lock' ).should be_true
+    
+    lockfile = LockJar.read('tmp/NoRepoJarfile.lock')
+    lockfile.should eql( {
+      "scopes"=>{
+        "compile"=>{
+            "dependencies"=>["org.eclipse.jetty:jetty-servlet:8.1.3.v20120416"], 
+            "resolved_dependencies"=>["org.eclipse.jetty:jetty-servlet:jar:8.1.3.v20120416", "org.eclipse.jetty:jetty-security:jar:8.1.3.v20120416", "org.eclipse.jetty:jetty-server:jar:8.1.3.v20120416", "org.eclipse.jetty.orbit:javax.servlet:jar:3.0.0.v201112011016", "org.eclipse.jetty:jetty-continuation:jar:8.1.3.v20120416", "org.eclipse.jetty:jetty-http:jar:8.1.3.v20120416", "org.eclipse.jetty:jetty-io:jar:8.1.3.v20120416", "org.eclipse.jetty:jetty-util:jar:8.1.3.v20120416"]}}} )           
   end
 end
 
