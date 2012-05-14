@@ -7,6 +7,8 @@ The Jarfile.lock can be used to populate the classpath.
 
 https://github.com/mguymon/lock_jar
 
+{RDoc}[http://rubydoc.info/github/mguymon/lock_jar/master/frames]
+
 == Install
 
 gem install lock_jar
