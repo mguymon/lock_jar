@@ -119,6 +119,8 @@ module LockJar
         File.open( opts[:lockfile] || "Jarfile.lock", "w") do |f|
           f.write( lock_data.to_yaml )
         end
+        
+        lock_data
       end
     
       def list( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
