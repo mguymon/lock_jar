@@ -35,7 +35,7 @@ module LockJar
         deps = Naether::Bootstrap.download_dependencies( temp_jar_dir, deps.merge( :local_repo => local_repo ) )
         if deps[:downloaded].size > 0
                     
-          unless Dir.exists?( temp_jar_dir )
+          unless File.directory?( temp_jar_dir )
             FileUtils.mkdir_p jar_dir
           end
           
