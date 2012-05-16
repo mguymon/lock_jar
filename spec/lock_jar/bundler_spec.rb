@@ -11,7 +11,6 @@ describe Bundler do
     
     before(:all) do
       FileUtils.rm_rf( bundled_app ) if File.exists? bundled_app
-      FileUtils.mkdir_p tmp('bundler')
     end
     
     before(:each) do
@@ -27,6 +26,9 @@ describe Bundler do
           pom "#{File.join(root, 'spec', 'pom.xml')}", :scope => :development
         end
       G
+      
+      ENV['BUNDLE_GEMFILE'] = bundled_app("Gemfile")
+      
       in_app_root
     end
     
@@ -36,7 +38,9 @@ describe Bundler do
     end
   
   it "provides a list of the env dependencies" do
-    Bundler.load.dependencies.should have_dep("naether", ">= 0")
+    dep = Bundler.load.dependencies.first
+    dep.name.should eql("naether")
+    (dep.requirement >= ">= 0").should be_true
   end
     
   it "provides a list of the jar and pom dependencies" do
@@ -86,7 +90,7 @@ describe Bundler do
 
       puts Naether::Java.create('com.slackworks.modelcitizen.ModelFactory').getClass().toString()
     RUBY
-    #err.should eq("") # 1.9.3 has a IConv error that outputs to std err
+    err.should eq("") # 1.9.3 has a IConv error that outputs to std err
     out.should match("class com.slackworks.modelcitizen.ModelFactory")
   end
   
