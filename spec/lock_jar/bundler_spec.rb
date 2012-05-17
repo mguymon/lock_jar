@@ -44,6 +44,7 @@ describe Bundler do
   end
     
   it "provides a list of the jar and pom dependencies" do
+    # XXX: In JRuby - works in autotest, fails directly from rspec. *sigh*
     Bundler.load.lock_jar.notations.should eql( {"compile"=>[File.expand_path(File.join(File.dirname(__FILE__), "../../spec/pom.xml"))], "runtime"=>[], "test"=>["junit:junit:jar:4.10"]} )
   end
   
