@@ -84,23 +84,19 @@ module LockJar
           lock_data['repositories'] = lock_jar_file.repositories
             
           if needs_force_encoding
-            lock_data['repositories'].map { |repo| repo.force_encoding("UTF-8") }
+            lock_data['repositories'].map! { |repo| repo.force_encoding("UTF-8") }
           end
         end
         
         if lock_jar_file.maps.size > 0
           lock_data['maps'] = lock_jar_file.maps
-            
-          #if needs_force_encoding
-          #  lock_data['maps'].map { |maps| maps.map { |map| map.force_encoding("UTF-8") } }
-          #end
         end
         
         if lock_jar_file.excludes.size > 0 
           lock_data['excludes'] = lock_jar_file.excludes
             
           if needs_force_encoding
-            lock_data['excludes'].map { |exclude| exclude.force_encoding("UTF-8") }
+            lock_data['excludes'].map! { |exclude| exclude.force_encoding("UTF-8") }
           end
         end
         
@@ -109,7 +105,7 @@ module LockJar
         lock_jar_file.notations.each do |scope, notations|
           
           if needs_force_encoding
-            notations.map { |notation| notation.force_encoding("UTF-8") }
+            notations.map! { |notation| notation.force_encoding("UTF-8") }
           end
           
           dependencies = []
