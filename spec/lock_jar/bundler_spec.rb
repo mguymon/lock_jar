@@ -15,7 +15,7 @@ describe Bundler do
     
     before(:each) do
       gemfile <<-G
-        require 'lock_jar/bundler'
+        require 'lib/lock_jar/bundler'
         gem "naether"
         
         lock_jar do
@@ -82,7 +82,7 @@ describe Bundler do
     ruby <<-RUBY
       require 'rubygems'
       require 'bundler'
-      require 'lock_jar/bundler'
+      require 'lib/lock_jar/bundler'
       require 'naether/java'
       
       LockJar.config( :local_repo => '#{tmp('test-repo')}' )

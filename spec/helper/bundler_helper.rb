@@ -65,7 +65,7 @@ module BundlerHelper
         v == true ? " --#{k}" : " --#{k} #{v}" if v
       end.join
 
-      cmd = "#{env}#{Gem.ruby} -I#{lib} #{requires_str} #{bundle_bin} #{cmd}#{args}"
+      cmd = "#{env}#{Gem.ruby} -I#{lib} -I#{root} #{requires_str} #{bundle_bin} #{cmd}#{args}"
 
       #puts cmd
       
@@ -118,7 +118,7 @@ module BundlerHelper
     expect_err = options.delete(:expect_err)
     env = (options.delete(:env) || {}).map{|k,v| "#{k}='#{v}' "}.join
     ruby.gsub!(/["`\$]/) {|m| "\\#{m}" }
-    lib_option = options[:no_lib] ? "" : " -I#{lib}"
+    lib_option = options[:no_lib] ? "" : " -I#{lib} -I#{root}"
      
     #puts %{#{env}#{Gem.ruby}#{lib_option} -e "#{ruby}"} 
       
