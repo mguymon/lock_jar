@@ -45,7 +45,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/mguymon/lock_jar"
   s.licenses = ["Apache"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.24"
+  s.rubygems_version = "1.8.15"
   s.summary = "Manage Jar files for Ruby"
 
   if s.respond_to? :specification_version then
