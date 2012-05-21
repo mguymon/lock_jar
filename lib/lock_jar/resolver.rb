@@ -78,7 +78,7 @@ module LockJar
     def to_local_paths( notations )
       paths = []   
       notations.each do |notation|
-        if File.directory?(notation)
+        if File.exists?(notation)
           paths << notation
         else
           paths = paths + @naether.to_local_paths( [notation] )
