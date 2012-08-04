@@ -23,7 +23,7 @@ A Jarfile is a simple file using a Ruby DSL for defining a project's dependencie
 methods:
 
 * local( path ): Set the local Maven repository
-* repository( url ): Add url of additional remote Maven repository.
+* repository( url ): Add additional urlr of remote Maven repository.
 * map( notation, paths ): Map local paths to a notation.
 * exclude( excludes ): Add a artifact:group that will be excluded from resolved dependencies. A single or Array of excludes can be set.
 * jar( notations, opts = {} ): Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default scope is *compile*, can be specified by setting opts = { :scope => <new_scope> }
