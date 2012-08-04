@@ -49,7 +49,7 @@ Example Jarfile
 ==== Resolving dependencies
 
 * LockJar.lock( *args ): Using a Jarfile, creates a lock file. Depending on the type of arg, a different configuration is set.
-  * An arg of a String will set the Jarfile, e.g. 'Jarfile.different'. Default jarfile is *Jarfile*
+  * An arg of a String will set the Jarfile path, e.g. '/somewhere/Jarfile.different'. Default jarfile is *Jarfile*
   * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
     * :local_repo sets the local repo path
     * :lockfile sets the Jarfile.lock path. Default lockfile is *Jarfile.lock*.
@@ -103,12 +103,12 @@ The Jarfile.lock
 ==== Accessing Jars
 
 * LockJar.list(*args): Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  
-  * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'. Default lock file is *Jarfile.lock*.
+  * An arg of a String will set the Jarfile.lock path, e.g. 'Better.lock'. Default lock file is *Jarfile.lock*.
   * An arg of an Array will set the scopes, e.g. ['compile','test']. Defaults scopes are *compile* and *runtime*.
   * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
     * :local_repo sets the local repo path
-    * :local_paths converts the notations to paths to jars in the local repo path
-    * :resolve to true will make transitive dependences resolve before loading to classpath 
+    * :local_paths converts the notations to paths of jars in the local repo
+    * :resolve to true will make transitive dependences resolve before returning list of jars
   
 * LockJar.load(*args): Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are *compile* and *runtime*. Default lock file is *Jarfile.lock*.
   * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'
