@@ -11,7 +11,7 @@ https://github.com/mguymon/lock_jar
 
 == Install
 
-gem install lock_jar
+  gem install lock_jar
 
 == Usage
 
