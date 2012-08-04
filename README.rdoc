@@ -27,7 +27,7 @@ methods:
 * map( notation, paths ): Map local paths to a notation.
 * exclude( excludes ): Add a artifact:group that will be excluded from resolved dependencies. A single or Array of excludes can be set.
 * jar( notations, opts = {} ): Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default scope is *compile*, can be specified by setting opts = { :scope => <new_scope> }
-* pom( pom_path, opts = {} ): Add local path to a Maven pom, default is to load dependencies for all scopes. To select the scopes to be loaded from the pom, set the opts = { :scopes => <new_scopes> }
+* pom( pom_path, opts = {} ): Add a local Maven pom, default is to load dependencies for all scopes. To select the scopes to be loaded from the pom, set the opts = { :scopes => <new_scopes> }
 * scope( scopes ): Set the scope for nested jar or pom. A single or Array of scopes can be set.
 
 Example Jarfile
