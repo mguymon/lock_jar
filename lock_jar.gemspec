@@ -9,22 +9,26 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Guymon"]
-  s.date = "2012-05-21"
+  s.date = "2012-08-20"
   s.description = "Manage Jar files for Ruby. In the spirit of Bundler, a Jarfile\n  is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test.\n  The Jarfile.lock can be used to populate the classpath"
   s.email = "michael.guymon@gmail.com"
+  s.executables = ["lockjar"]
   s.extra_rdoc_files = [
     "LICENSE",
     "README.rdoc"
   ]
   s.files = [
+    ".gitignore",
     "Gemfile",
     "LICENSE",
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "bin/lockjar",
     "lib/lock_jar.rb",
     "lib/lock_jar/buildr.rb",
     "lib/lock_jar/bundler.rb",
+    "lib/lock_jar/cli.rb",
     "lib/lock_jar/dsl.rb",
     "lib/lock_jar/maven.rb",
     "lib/lock_jar/resolver.rb",
@@ -45,7 +49,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/mguymon/lock_jar"
   s.licenses = ["Apache"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.15"
+  s.rubygems_version = "1.8.24"
   s.summary = "Manage Jar files for Ruby"
 
   if s.respond_to? :specification_version then

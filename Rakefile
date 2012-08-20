@@ -23,6 +23,10 @@ Jeweler::Tasks.new do |gem|
   The Jarfile.lock can be used to populate the classpath"
   gem.email = "michael.guymon@gmail.com"
   gem.authors = ["Michael Guymon"]
+  gem.executable = "lockjar"
+
+  gem.files = `git ls-files`.split("\n") rescue ''
+
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
