@@ -158,6 +158,16 @@ Since you skipped the locking part, mostly likely you will need to resolve the d
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
     end
 
+=== Command line
+
+There is a simple command line helper. You can lock a Jarfile with the following command
+
+    lockjar lock
+
+or list jars in a Jarfile.lock with 
+ 
+   lockjar list
+
 === Bundler Integration
 
 Has been deprecated to https://github.com/mguymon/lock_jar/tree/bundler_support
