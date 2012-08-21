@@ -160,7 +160,7 @@ Since you skipped the locking part, mostly likely you will need to resolve the d
 
 === Bundler Integration
 
-Has been deprecated to <https://github.com/mguymon/lock_jar/tree/bundler_support>
+Has been deprecated to https://github.com/mguymon/lock_jar/tree/bundler_support
   
 === Buildr Integration
 
