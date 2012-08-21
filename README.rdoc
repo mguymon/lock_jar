@@ -158,44 +158,7 @@ Since you skipped the locking part, mostly likely you will need to resolve the d
 
 === Bundler Integration
 
-LockJar integrates with {Bundler}[https://github.com/carlhuda/bundler/] by {modifying}[https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/bundler.rb] the Bundler
-DSL to include LockJar's DSL, generating a Jarfile.lock when Bundler locks, and populating the classpath when Bundler requires.
-
-==== Example
-
-The following Gemfile with LockJar
-
-  # This is what modifies Bundler to trigger LockJar
-  require 'lock_jar/bundler' 
-  
-  gem "naether"
-
-  group :development do
-    gem "rspec", "~> 2.9.0"
-  end
-        
-  # lockjar dsl that is used to generate Jarfile.lock
-  lock_jar do
-    scope :test do
-      jar 'junit:junit:jar:4.10'
-    end
-    
-    pom 'spec/pom.xml', :scope => :compile
-  end
-
-Will produce a Gemfile.lock and Jarfile.lock for
-
-  bundle install
-  
-When Bundler.setup or Bundler.require is called, the jars from the Jarfile.lock are loaded into the classpath.
-
-  require 'rubygems'
-  require 'bundler'
-
-  # This is what modifies Bundler to trigger LockJar
-  require 'lock_jar/bundler' 
-
-  Bundler.require
+Has been deprecated to <https://github.com/mguymon/lock_jar/tree/bundler_support>
   
 === Buildr Integration
 
