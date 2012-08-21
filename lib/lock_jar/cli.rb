@@ -2,15 +2,15 @@ require 'lock_jar'
 
 module LockJar
   class CLI
-    def self.process
-      if ARGV.length > 0
-        ARGV.each do|arg|
+    def self.process( args )
+      if args.length > 0
+        args.each do|arg|
           if arg == "lock"
             LockJar.lock
-          elsif arg == "load"
-            LockJar.load
+            puts "Jarfile.lock created"
           elsif arg == "list"
-            LockJar.list
+            puts "Listing Jarfile.lock jars for scopes compile, runtime"
+            puts LockJar.list.inspect
           end
         end
       else

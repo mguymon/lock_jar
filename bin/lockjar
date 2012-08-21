@@ -3,5 +3,5 @@ require 'rubygems'
 require 'lock_jar'
 require 'lock_jar/cli'
 
-LockJar::CLI.process
+LockJar::CLI.process( ARGV )
 
