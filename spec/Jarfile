@@ -2,7 +2,7 @@ local '~/.m2'
 repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
 
 jar "org.apache.mina:mina-core:2.0.4"
-pom 'spec/pom.xml'
+pom 'pom.xml'
     
 scope 'runtime' do
     jar 'org.apache.tomcat:servlet-api:jar:6.0.35'

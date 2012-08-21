@@ -4,7 +4,14 @@ require 'lock_jar/cli'
 describe LockJar::CLI do
   describe "#process" do
     it "should lock a Jarfile" do
-      LockJar::CLI.process( 'lock' )
+      Dir.chdir( 'spec' ) 
+      LockJar::CLI.process( ['lock'] )
+      
+      File.exists?('Jarfile.lock').should be_true
+      
+      File.delete( 'Jarfile.lock' ) if File.exists?('Jarfile.lock')
+      
+      Dir.chdir( '../' ) 
     end
   end
 end
