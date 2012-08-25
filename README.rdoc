@@ -165,9 +165,15 @@ There is a simple command line helper. You can lock a Jarfile with the following
 
     lockjar lock
 
-or list jars in a Jarfile.lock with 
+List jars in a Jarfile.lock with 
  
    lockjar list
+  
+Download all jars in a Jarfile.lock with
+
+   lockjar install
+  
+`lockjar --help` will give you list of all commands and their options.
 
 === Bundler Integration
 
