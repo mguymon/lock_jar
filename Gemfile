@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "naether", "~> 0.8.2"
+gem "naether", "~> 0.8.3"
 gem "highline", "~> 1.6.13" 
 gem "commander", "~> 4.1.2" 
 
