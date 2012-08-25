@@ -21,7 +21,7 @@ Jeweler::Tasks.new do |gem|
   gem.description = "Manage Jar files for Ruby. In the spirit of Bundler, a Jarfile
   is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test.
   The Jarfile.lock can be used to populate the classpath"
-  gem.email = "michael.guymon@gmail.com"
+  gem.email = "michael@tobedevoured.com"
   gem.authors = ["Michael Guymon"]
   gem.executable = "lockjar"
 
