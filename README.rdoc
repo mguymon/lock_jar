@@ -173,7 +173,7 @@ Download all jars in a Jarfile.lock with
 
    lockjar install
   
-`lockjar --help` will give you list of all commands and their options.
+_lockjar_ _--help_ will give you list of all commands and their options.
 
 === Bundler Integration
 
