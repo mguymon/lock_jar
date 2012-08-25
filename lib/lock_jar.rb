@@ -33,37 +33,29 @@ module LockJar
     Runtime.instance.resolver( opts )
   end
   
-  # Lock a Jarfile and generate a Jarfile.lock. 
-  #
-  # LockJar.lock accepts an Array for parameters. Depending on the type of arg, a different configuration is set.
-  #
-  # * An arg of a String will set the Jarfile, e.g. 'Jarfile.different'. Default Jarfile is *Jarfile*.
-  # * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
-  #   * :local_repo sets the local repo path
-  #   * :lockfile sets the Jarfile.lock path. Default lockfile is *Jarfile.lock*.
-  #
-  # A block can be passed in, overriding values from a Jarfile.
-  #
-  # @return [Hash] Lock data
-  def self.lock( *args, &blk )
-    jarfile = nil
+  def self.install( *args, &blk )
+    lockfile = nil
     opts = {}
+    scopes = ['compile', 'runtime']
       
     args.each do |arg|
       if arg.is_a?(Hash)
         opts.merge!( arg )
-      elsif arg.is_a?( String ) || arg.is_a?( LockJar::Dsl )
-        jarfile = arg
+      elsif arg.is_a?( String )
+        lockfile = arg
+      elsif arg.is_a?( Array )
+        scopes = arg
       end
     end
     
-    # default to Jarfile
-    if blk.nil? && jarfile.nil?
-      jarfile = 'Jarfile'
+    # default to Jarfile.lock
+    if blk.nil? && lockfile.nil?
+      lockfile = 'Jarfile.lock'
     end
     
-    Runtime.instance.lock( jarfile, opts, &blk )
+    Runtime.instance.install( lockfile, scopes, opts, &blk )
   end
+  
   
   # Lists all dependencies as notations for scopes from the Jarfile.lock. Depending on the type of arg, a different configuration is set.
   #
@@ -133,6 +125,39 @@ module LockJar
       Runtime.instance.load( lockfile, scopes, opts, &blk )
   end
   
+  # Lock a Jarfile and generate a Jarfile.lock. 
+  #
+  # LockJar.lock accepts an Array for parameters. Depending on the type of arg, a different configuration is set.
+  #
+  # * An arg of a String will set the Jarfile, e.g. 'Jarfile.different'. Default Jarfile is *Jarfile*.
+  # * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
+  #   * :download_artifacts if true, will download jars to local repo. Defaults to true.
+  #   * :local_repo sets the local repo path
+  #   * :lockfile sets the Jarfile.lock path. Default lockfile is *Jarfile.lock*.
+  #
+  # A block can be passed in, overriding values from a Jarfile.
+  #
+  # @return [Hash] Lock data
+  def self.lock( *args, &blk )
+    jarfile = nil
+    opts = {}
+      
+    args.each do |arg|
+      if arg.is_a?(Hash)
+        opts.merge!( arg )
+      elsif arg.is_a?( String ) || arg.is_a?( LockJar::Dsl )
+        jarfile = arg
+      end
+    end
+    
+    # default to Jarfile
+    if blk.nil? && jarfile.nil?
+      jarfile = 'Jarfile'
+    end
+    
+    Runtime.instance.lock( jarfile, opts, &blk )
+  end
+  
   #
   # Read a Jafile.lock and convert it to a Hash
   #
@@ -142,4 +167,5 @@ module LockJar
     Runtime.instance.read_lockfile( lockfile )
   end
  
+
 end

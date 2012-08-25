@@ -39,7 +39,16 @@ module LockJar
       @current_resolver
     end
     
+    def install( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
+      deps = list( jarfile_lock, scopes, opts, &blk )
+      files = resolver(opts).download( deps )
+      
+      files
+    end
+    
     def lock( jarfile, opts = {}, &blk )
+      
+        opts = {:download => true }.merge( opts )
       
         lock_jar_file = nil
         
@@ -114,7 +123,7 @@ module LockJar
           end
           
           if dependencies.size > 0
-            resolved_notations = resolver(opts).resolve( dependencies )
+            resolved_notations = resolver(opts).resolve( dependencies, opts[:download] == true )
             
             if lock_data['excludes']
               lock_data['excludes'].each do |exclude|

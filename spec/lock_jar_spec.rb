@@ -66,6 +66,28 @@ describe LockJar, "#lock" do
   end
 end
 
+describe LockJar, "#install" do     
+  it "should install jars" do
+    
+    LockJar.lock( "spec/Jarfile", :download_artifacts => false, :local_repo => 'tmp/test-repo-install', :lockfile => 'tmp/Jarfile.lock' )
+          
+    jars = LockJar.install( 'tmp/Jarfile.lock', ['compile'], :local_repo => 'tmp/test-repo-install' )
+    jars.should eql( 
+      [ File.expand_path( "tmp/test-repo-install/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 
+        File.expand_path( "tmp/test-repo-install/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"), 
+        File.expand_path( "tmp/test-repo-install/com/slackworks/modelcitizen/0.2.2/modelcitizen-0.2.2.jar"), 
+        File.expand_path( "tmp/test-repo-install/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"), 
+        File.expand_path( "tmp/test-repo-install/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3.jar" ), 
+        File.expand_path( "tmp/test-repo-install/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" ), 
+        File.expand_path( "tmp/test-repo-install/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar" ), 
+        File.expand_path( "tmp/test-repo-install/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar" ), 
+        File.expand_path( "tmp/test-repo-install/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar" ), 
+        File.expand_path( "tmp/test-repo-install/commons-io/commons-io/1.4/commons-io-1.4.jar" ), 
+        File.expand_path( "tmp/test-repo-install/junit/junit/4.7/junit-4.7.jar" ) ] )
+  end
+  
+end
+
 describe LockJar, "#list" do     
   it "should list jars" do
     
