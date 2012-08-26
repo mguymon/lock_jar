@@ -5,7 +5,7 @@ require 'lock_jar'
 
 # :name is optional, otherwise uses the basename of this executable
 program :name, 'Lock Jar'
-program :version, IO.read( File.expand_path(File.join(File.dirname(__FILE__),'../VERSION')) )
+program :version, LockJar::VERSION
 program :description, 'LockJar manages Java Jars for Ruby'
 
 command :install do |c|
