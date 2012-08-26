@@ -17,7 +17,7 @@ describe LockJar, "#lock" do
     lockfile = LockJar.read('tmp/Jarfile.lock')
     lockfile.should eql( {
        "local_repository" => "~/.m2",
-       "repositories" => ["http://repo1.maven.org/maven2/", "http://repository.jboss.org/nexus/content/groups/public-jboss"],
+       "repositories" => ["http://repo1.maven.org/maven2/", 'http://mirrors.ibiblio.org/pub/mirrors/maven2', "http://repository.jboss.org/nexus/content/groups/public-jboss"],
        "scopes" => {
           "compile"=>{
             "dependencies"=>["org.apache.mina:mina-core:2.0.4", "spec/pom.xml"], 
@@ -44,7 +44,7 @@ describe LockJar, "#lock" do
     LockJar.lock( dsl, :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
     lockfile = LockJar.read('tmp/Jarfile.lock')
     lockfile.should eql( {
-      "repositories" => ["http://repo1.maven.org/maven2/", "http://repository.jboss.org/nexus/content/groups/public-jboss"],
+      "repositories" => ["http://repo1.maven.org/maven2/", 'http://mirrors.ibiblio.org/pub/mirrors/maven2', "http://repository.jboss.org/nexus/content/groups/public-jboss"],
       "maps"=>{"junit:junit:4.10"=>["tmp"]}, 
       "scopes"=>{
         "compile"=>{
@@ -61,7 +61,7 @@ describe LockJar, "#lock" do
     File.exists?( 'tmp/Jarfile.lock' ).should be_true
     lockfile = LockJar.read('tmp/Jarfile.lock')
     lockfile.should eql( {
-      "repositories" => ["http://repo1.maven.org/maven2/", "http://repository.jboss.org/nexus/content/groups/public-jboss"],
+      "repositories" => ["http://repo1.maven.org/maven2/", 'http://mirrors.ibiblio.org/pub/mirrors/maven2', "http://repository.jboss.org/nexus/content/groups/public-jboss"],
       "excludes"=>["commons-logging", "logkit"], 
       "scopes"=>{
         "compile"=>{

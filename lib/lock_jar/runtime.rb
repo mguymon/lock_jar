@@ -88,12 +88,7 @@ module LockJar
             lock_data['local_repository'] = lock_data['local_repository'].force_encoding("UTF-8")
           end
         end
-          
-        lock_data['repositories'] = resolver(opts).remote_repositories.uniq
-        if needs_force_encoding
-          lock_data['repositories'].map! { |repo| repo.force_encoding("UTF-8") }
-        end     
-        
+                
         if lock_jar_file.maps.size > 0
           lock_data['maps'] = lock_jar_file.maps
         end
@@ -121,6 +116,11 @@ module LockJar
           
           if dependencies.size > 0
             resolved_notations = resolver(opts).resolve( dependencies, opts[:download] == true )
+            
+            lock_data['repositories'] = resolver(opts).remote_repositories.uniq
+            if needs_force_encoding
+              lock_data['repositories'].map! { |repo| repo.force_encoding("UTF-8") }
+            end 
             
             if lock_data['excludes']
               lock_data['excludes'].each do |exclude|

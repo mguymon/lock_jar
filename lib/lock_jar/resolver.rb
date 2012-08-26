@@ -73,6 +73,7 @@ module LockJar
       @naether.add_remote_repository( repo )
     end
     
+    
     def resolve( dependencies, download_artifacts = true )
       @naether.dependencies = dependencies
       @naether.resolve_dependencies( download_artifacts )
