@@ -89,13 +89,10 @@ module LockJar
           end
         end
           
-        if lock_jar_file.repositories.size > 0
-          lock_data['repositories'] = resolver(opts).remote_repositories
-            
-          if needs_force_encoding
-            lock_data['repositories'].map! { |repo| repo.force_encoding("UTF-8") }
-          end
-        end
+        lock_data['repositories'] = resolver(opts).remote_repositories
+        if needs_force_encoding
+          lock_data['repositories'].map! { |repo| repo.force_encoding("UTF-8") }
+        end     
         
         if lock_jar_file.maps.size > 0
           lock_data['maps'] = lock_jar_file.maps
