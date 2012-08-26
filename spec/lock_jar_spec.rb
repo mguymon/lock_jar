@@ -32,7 +32,7 @@ describe LockJar, "#lock" do
             "resolved_dependencies"=>["org.apache.tomcat:servlet-api:jar:6.0.35"]},
          "test"=>{
             "dependencies"=>["spec/pom.xml", "junit:junit:jar:4.10"], 
-            "resolved_dependencies"=>["junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"]} } } )
+            "resolved_dependencies"=>["org.jboss.unit:jboss-unit:jar:1.2.4", "junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"]} } } )
   end
   
   it "should not replace dependencies with maps" do

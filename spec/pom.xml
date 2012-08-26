@@ -18,6 +18,12 @@ ttp://maven.apache.org/maven-v4_0_0.xsd ">
       <artifactId>modelcitizen</artifactId>
       <version>0.2.2</version>
     </dependency>
+    <dependency>
+			<groupId>org.jboss.unit</groupId>
+			<artifactId>jboss-unit</artifactId>
+			<version>1.2.4</version>
+      <scope>test</scope>
+		</dependency>
 	  <dependency>
 	      <groupId>junit</groupId>
           <artifactId>junit</artifactId>

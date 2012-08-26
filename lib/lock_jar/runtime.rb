@@ -41,6 +41,12 @@ module LockJar
     
     def install( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
       deps = list( jarfile_lock, scopes, opts, &blk )
+      
+      lock_data = read_lockfile( jarfile_lock )
+      lock_data['repositories'].each do |repo|
+          resolver(opts).add_remote_repository( repo )
+      end
+      
       files = resolver(opts).download( deps )
       
       files
