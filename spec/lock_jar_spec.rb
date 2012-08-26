@@ -14,6 +14,25 @@ describe LockJar, "#lock" do
     LockJar.lock( "spec/Jarfile", :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
     File.exists?( 'tmp/Jarfile.lock' ).should be_true
     
+    lockfile = LockJar.read('tmp/Jarfile.lock')
+    lockfile.should eql( {
+       "local_repository" => "~/.m2",
+       "repositories" => ["http://repository.jboss.org/nexus/content/groups/public-jboss"],
+       "scopes" => {
+          "compile"=>{
+            "dependencies"=>["org.apache.mina:mina-core:2.0.4", "spec/pom.xml"], 
+            "resolved_dependencies"=>["org.apache.mina:mina-core:jar:2.0.4", 
+                "org.slf4j:slf4j-api:jar:1.6.1", "com.slackworks:modelcitizen:jar:0.2.2", 
+                "commons-lang:commons-lang:jar:2.6", "commons-beanutils:commons-beanutils:jar:1.8.3", 
+                "commons-logging:commons-logging:jar:1.1.1", "ch.qos.logback:logback-classic:jar:0.9.24", 
+                "ch.qos.logback:logback-core:jar:0.9.24", "com.metapossum:metapossum-scanner:jar:1.0", 
+                "commons-io:commons-io:jar:1.4", "junit:junit:jar:4.7"]}, 
+         "runtime"=>{
+            "dependencies"=>["spec/pom.xml", "org.apache.tomcat:servlet-api:jar:6.0.35"], 
+            "resolved_dependencies"=>["org.apache.tomcat:servlet-api:jar:6.0.35"]},
+         "test"=>{
+            "dependencies"=>["spec/pom.xml", "junit:junit:jar:4.10"], 
+            "resolved_dependencies"=>["junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"]} } } )
   end
   
   it "should not replace dependencies with maps" do
