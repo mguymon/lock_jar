@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "lock_jar"
-  s.version = "0.4.6"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Guymon"]
@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
     "bin/lockjar",
     "lib/lock_jar.rb",
     "lib/lock_jar/buildr.rb",
+    "lib/lock_jar/cli.rb",
     "lib/lock_jar/dsl.rb",
     "lib/lock_jar/maven.rb",
     "lib/lock_jar/resolver.rb",
@@ -34,6 +35,7 @@ Gem::Specification.new do |s|
     "lib/lock_jar/version.rb",
     "lock_jar.gemspec",
     "spec/Jarfile",
+    "spec/lock_jar/cli_spec.rb",
     "spec/lock_jar/dsl_spec.rb",
     "spec/lock_jar/maven_spec.rb",
     "spec/lock_jar/resolver_spec.rb",
