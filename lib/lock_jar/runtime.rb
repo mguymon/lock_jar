@@ -89,7 +89,7 @@ module LockJar
           end
         end
           
-        lock_data['repositories'] = resolver(opts).remote_repositories
+        lock_data['repositories'] = resolver(opts).remote_repositories.uniq
         if needs_force_encoding
           lock_data['repositories'].map! { |repo| repo.force_encoding("UTF-8") }
         end     
