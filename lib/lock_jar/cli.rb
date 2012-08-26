@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'commander/import'
+require 'lock_jar'
+require 'lock_jar/version'
   
 module LockJar::CLI
 
