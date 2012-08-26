@@ -11,7 +11,4 @@ describe LockJar::CLI do
     LockJar::CLI.commands.keys.should eql( ["help", "install", "list", "lock"] )
   end
   
-  it "should install" do
-    
-  end
 end
