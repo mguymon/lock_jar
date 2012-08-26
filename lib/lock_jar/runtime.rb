@@ -90,7 +90,7 @@ module LockJar
         end
           
         if lock_jar_file.repositories.size > 0
-          lock_data['repositories'] = lock_jar_file.repositories
+          lock_data['repositories'] = resolver(opts).remote_repositories
             
           if needs_force_encoding
             lock_data['repositories'].map! { |repo| repo.force_encoding("UTF-8") }

@@ -65,6 +65,10 @@ module LockJar
       @naether.clear_remote_repositories if opts[:offline]
     end
     
+    def remote_repositories
+      @naether.remote_repository_urls
+    end
+    
     def add_remote_repository( repo )
       @naether.add_remote_repository( repo )
     end

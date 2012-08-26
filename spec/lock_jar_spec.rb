@@ -17,7 +17,7 @@ describe LockJar, "#lock" do
     lockfile = LockJar.read('tmp/Jarfile.lock')
     lockfile.should eql( {
        "local_repository" => "~/.m2",
-       "repositories" => ["http://repository.jboss.org/nexus/content/groups/public-jboss"],
+       "repositories" => ["http://repo1.maven.org/maven2/", "http://repository.jboss.org/nexus/content/groups/public-jboss"],
        "scopes" => {
           "compile"=>{
             "dependencies"=>["org.apache.mina:mina-core:2.0.4", "spec/pom.xml"], 
