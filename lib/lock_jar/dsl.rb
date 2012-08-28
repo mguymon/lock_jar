@@ -13,6 +13,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+require 'lock_jar/maven'
+
 module LockJar
   class Dsl
 
@@ -150,6 +152,7 @@ module LockJar
     def artifact(artifact, opts)
       
       scopes = opts[:scope] || opts[:scopes] || opts[:group]
+      
       if scopes
         
         unless scopes.is_a? Array
@@ -166,7 +169,7 @@ module LockJar
       end
       
       if artifact
-        scopes.each do |scope|
+        scopes.uniq.each do |scope|
           scope = 'compile' if scope.to_s == 'development'
           
           if @notations[scope.to_s]
