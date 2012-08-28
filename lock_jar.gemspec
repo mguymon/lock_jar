@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "lock_jar"
-  s.version = "0.5.4"
+  s.version = "0.5.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Guymon"]
@@ -27,7 +27,6 @@ Gem::Specification.new do |s|
     "bin/lockjar",
     "lib/lock_jar.rb",
     "lib/lock_jar/buildr.rb",
-    "lib/lock_jar/cli.rb",
     "lib/lock_jar/dsl.rb",
     "lib/lock_jar/maven.rb",
     "lib/lock_jar/resolver.rb",
@@ -35,7 +34,6 @@ Gem::Specification.new do |s|
     "lib/lock_jar/version.rb",
     "lock_jar.gemspec",
     "spec/Jarfile",
-    "spec/lock_jar/cli_spec.rb",
     "spec/lock_jar/dsl_spec.rb",
     "spec/lock_jar/maven_spec.rb",
     "spec/lock_jar/resolver_spec.rb",
@@ -55,16 +53,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<naether>, ["~> 0.8.6"])
-      s.add_runtime_dependency(%q<highline>, ["> 1.5.0"])
-      s.add_runtime_dependency(%q<commander>, ["~> 4.0.7"])
+      s.add_runtime_dependency(%q<gli>, ["~> 2.0.0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.9.0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.1.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
       s.add_development_dependency(%q<yard>, ["~> 0.8.0"])
     else
       s.add_dependency(%q<naether>, ["~> 0.8.6"])
-      s.add_dependency(%q<highline>, ["> 1.5.0"])
-      s.add_dependency(%q<commander>, ["~> 4.0.7"])
+      s.add_dependency(%q<gli>, ["~> 2.0.0"])
       s.add_dependency(%q<rspec>, ["~> 2.9.0"])
       s.add_dependency(%q<bundler>, ["~> 1.1.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
@@ -72,8 +68,7 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<naether>, ["~> 0.8.6"])
-    s.add_dependency(%q<highline>, ["> 1.5.0"])
-    s.add_dependency(%q<commander>, ["~> 4.0.7"])
+    s.add_dependency(%q<gli>, ["~> 2.0.0"])
     s.add_dependency(%q<rspec>, ["~> 2.9.0"])
     s.add_dependency(%q<bundler>, ["~> 1.1.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
