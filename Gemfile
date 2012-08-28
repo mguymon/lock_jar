@@ -1,8 +1,8 @@
 source "http://rubygems.org"
 
-gem "naether", "~> 0.8.5"
-gem "highline", "~> 1.6.13" 
-gem "commander", "~> 4.1.2" 
+gem "naether", "~> 0.8.6"
+gem "highline", "> 1.6.0" 
+gem "commander", "> 4.1.0" 
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
