@@ -1,105 +1,108 @@
-<!doctype html>
-<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
-<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
-  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="javascripts/script.js"></script>
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Lock jar : LockJar manages Java Jars for Ruby" />
 
-  <title>Lock jar</title>
-  <meta name="description" content="LockJar manages Java Jars for Ruby">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lock jar</title>
+  </head>
 
-</head>
+  <body>
 
-<body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/mguymon/lock_jar">View on GitHub</a>
 
-  <div class="wrapper">
-    <header>
-      <h1 class="title">Lock jar</h1>
-    </header>
-    <div id="container">
-      <p class="tagline">LockJar manages Java Jars for Ruby</p>
-      <div id="main" role="main">
-        <div class="download-bar">
-        <div class="inner">
-          <a href="https://github.com/mguymon/lock_jar/tarball/master" class="download-button tar"><span>Download</span></a>
-          <a href="https://github.com/mguymon/lock_jar/zipball/master" class="download-button zip"><span>Download</span></a>
-          <a href="https://github.com/mguymon/lock_jar" class="code">View Lock jar on GitHub</a>
-        </div>
-        <span class="blc"></span><span class="trc"></span>
-        </div>
-        <article class="markdown-body">
-          <p>= LockJar</p>
+          <h1 id="project_title">Lock jar</h1>
+          <h2 id="project_tagline">LockJar manages Java Jars for Ruby</h2>
 
-<p>LockJar manages Java Jars for Ruby. Powered by {Naether}[<a href="https://github.com/mguymon/naether">https://github.com/mguymon/naether</a>] to create a frankenstein of 
-Bundler and Maven. A Jarfile ({example}[<a href="https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile%5D">https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile]</a>) is used to 
-generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test. 
-The Jarfile.lock can be used to populate the classpath.</p>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/mguymon/lock_jar/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/mguymon/lock_jar/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>LockJar</h1>
+
+<p>LockJar manages Java Jars for Ruby. Powered by <a href="https://github.com/mguymon/naether">Naether</a> to create a frankenstein of Bundler and Maven. A Jarfile (<a href="https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile">example</a>) is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test. The Jarfile.lock can be used to populate the classpath.</p>
 
 <p>LockJar can be used directly or integrates directly with Bundler and Buildr.</p>
 
 <p><a href="https://github.com/mguymon/lock_jar">https://github.com/mguymon/lock_jar</a></p>
 
-<p>{RDoc}[<a href="http://rubydoc.info/github/mguymon/lock_jar/master/frames">http://rubydoc.info/github/mguymon/lock_jar/master/frames</a>]</p>
+<p><a href="http://rubydoc.info/github/mguymon/lock_jar/master/frames">RDoc</a></p>
 
-<p>== Install</p>
+<h2>Install</h2>
 
-<p>gem install lock_jar</p>
+<pre><code>gem install lock_jar
+</code></pre>
 
-<p>== Usage</p>
+<h2>Usage</h2>
 
-<p>=== Using a Jarfile</p>
-
-<p>==== Jarfile</p>
+<h3>Jarfile</h3>
 
 <p>A Jarfile is a simple file using a Ruby DSL for defining a project's dependencies using the following 
 methods:</p>
 
 <ul>
-<li>local( path ): Set the local Maven repository, this were dependencies are downloaded to. </li>
-<li>repository( url ): Add additional urlr of remote Maven repository.</li>
-<li>map( notation, paths ): Map local compiled class paths to a notation. The map is applied when loading or listing jar. This is useful for local development that overrides an artifact. A single or Array of paths can be set.</li>
-<li>exclude( excludes ): Add a artifact:group that will be excluded from resolved dependencies. A single or Array of excludes can be set.</li>
-<li>jar( notations, opts = {} ): Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default scope is <em>compile</em>, can be specified by setting opts = { :scope =&gt;  }</li>
-<li>pom( pom_path, opts = {} ): Add a local Maven pom, default is to load dependencies for all scopes. To select the scopes to be loaded from the pom, set the opts = { :scopes =&gt;  }</li>
-<li>scope( scopes ): Set the scope for nested jar or pom. A single or Array of scopes can be set.</li>
-</ul><p>Example Jarfile</p>
-
-<p>repository '<a href="http://repository.jboss.org/nexus/content/groups/public-jboss">http://repository.jboss.org/nexus/content/groups/public-jboss</a>'</p>
-
-<p>// Default scope is compile
-  jar "org.apache.mina:mina-core:2.0.4"</p>
-
-<p>scope 'runtime' do
-    jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
-  end</p>
-
-<p>scope 'test' do
-    jar 'junit:junit:jar:4.10'
-  end</p>
-
-<p>==== Resolving dependencies</p>
-
-<ul>
-<li>LockJar.lock( *args ): Using a Jarfile, creates a lock file. Depending on the type of arg, a different configuration is set.
-
-<ul>
-<li>An arg of a String will set the Jarfile path, e.g. '/somewhere/Jarfile.different'. Default jarfile is <em>Jarfile</em>
+<li>
+<strong>local( path )</strong>: Set the local Maven repository, this were dependencies are downloaded to. </li>
+<li>
+<strong>repository( url )</strong>: Add additional urlr of remote Maven repository.</li>
+<li>
+<strong>map( notation, paths )</strong>: Map local compiled class paths to a notation. The map is applied when loading or listing jar. This is useful for local development that overrides an artifact. A single or Array of paths can be set.</li>
+<li>
+<strong>exclude( excludes )</strong>: Add a artifact:group that will be excluded from resolved dependencies. A single or Array of excludes can be set.</li>
+<li>
+<strong>jar( notations, opts = {} )</strong>: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default scope is <em>compile</em>, can be specified by setting <em>opts = { :scope =&gt; ['new_scope'] }</em>
 </li>
-<li>An arg of a Hash will set the options, e.g. { :local_repo =&gt; 'path' }</li>
 <li>
-<em>:download</em> if true, will download jars to local repo. Defaults to true.</li>
+<strong>pom( pom_path, opts = {} )</strong>: Add a local Maven pom, default is to load dependencies for all scopes. To select the scopes to be loaded from the pom, set the <em>opts = { :scopes =&gt; ['new_scope'] }</em>
+</li>
 <li>
-<em>:local_repo</em> sets the local repo path</li>
+<strong>scope( scopes )</strong>: Set the scope for nested jar or pom. A single or Array of scopes can be set.</li>
+</ul><h4>Example Jarfile</h4>
+
+<pre><code>repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
+
+// Default scope is compile
+jar "org.apache.mina:mina-core:2.0.4"
+
+scope 'runtime' do
+  jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
+end
+
+scope 'test' do
+  jar 'junit:junit:jar:4.10'
+end
+</code></pre>
+
+<h3>Resolving dependencies</h3>
+
+<ul>
 <li>
-<em>:lockfile</em> sets the Jarfile.lock path. Default lockfile is <em>Jarfile.lock</em>.</li>
+<strong>LockJar.lock( *args )</strong>: Using a Jarfile, creates a lock file. Depending on the type of arg, a different configuration is set.
+
+<ul>
+<li>An arg of a String will set the Jarfile path, e.g. <em>'/somewhere/Jarfile.different'</em>. Default jarfile is <em>'Jarfile'</em>
+</li>
+<li>An arg of a Hash will set the options, e.g. <em>{ :local_repo =&gt; 'path' }</em>
+</li>
+<li>
+<strong>:download</strong> if true, will download jars to local repo. Defaults to true.</li>
+<li>
+<strong>:local_repo</strong> sets the local repo path</li>
+<li>
+<strong>:lockfile</strong> sets the Jarfile.lock path. Default lockfile is <em>Jarfile.lock</em>.</li>
 </ul>
 </li>
 </ul><p>When the Jarfile is locked, the transitive dependencies are resolved and saved to the Jarfile.lock file.</p>
@@ -109,200 +112,206 @@ methods:</p>
 <pre><code>LockJar.lock
 </code></pre>
 
-<p>==== Jarfile.lock</p>
+<h3>Jarfile.lock</h3>
 
-<p>The Jarfile.lock generated is a YAML file containing the scoped dependencies, their resolved dependencies, and
-the additional Maven repositories.</p>
+<p>The <em>Jarfile.lock</em> generated is a YAML file containing the scoped dependencies, their resolved dependencies, and the additional Maven repositories.</p>
 
-<p>The Jarfile.lock</p>
+<h4>The Jarfile.lock</h4>
 
-<hr><p>repositories: 
-    - <a href="http://repository.jboss.org/nexus/content/groups/public-jboss">http://repository.jboss.org/nexus/content/groups/public-jboss</a>
-  scopes: 
-    compile: 
-      dependencies: 
-        - org.apache.mina:mina-core:2.0.4
-      resolved_dependencies: 
-        - org.apache.mina:mina-core:jar:2.0.4
-        - org.slf4j:slf4j-api:jar:1.6.1
-        - com.slackworks:modelcitizen:jar:0.2.2
-        - commons-lang:commons-lang:jar:2.6
-        - commons-beanutils:commons-beanutils:jar:1.8.3
-        - commons-logging:commons-logging:jar:1.1.1
-        - ch.qos.logback:logback-classic:jar:0.9.24
-        - ch.qos.logback:logback-core:jar:0.9.24
-        - com.metapossum:metapossum-scanner:jar:1.0
-        - commons-io:commons-io:jar:1.4
-        - junit:junit:jar:4.7
-    runtime: 
-      dependencies: 
-        - org.apache.tomcat:servlet-api:jar:6.0.35
-      resolved_dependencies: 
-        - org.apache.tomcat:servlet-api:jar:6.0.35
-    test: 
-      dependencies: 
-        - junit:junit:jar:4.10
-      resolved_dependencies: 
-        - junit:junit:jar:4.10
-        - org.hamcrest:hamcrest-core:jar:1.1</p>
+<pre><code>--- 
+repositories: 
+  - http://repository.jboss.org/nexus/content/groups/public-jboss
+scopes: 
+  compile: 
+    dependencies: 
+      - org.apache.mina:mina-core:2.0.4
+    resolved_dependencies: 
+      - org.apache.mina:mina-core:jar:2.0.4
+      - org.slf4j:slf4j-api:jar:1.6.1
+      - com.slackworks:modelcitizen:jar:0.2.2
+      - commons-lang:commons-lang:jar:2.6
+      - commons-beanutils:commons-beanutils:jar:1.8.3
+      - commons-logging:commons-logging:jar:1.1.1
+      - ch.qos.logback:logback-classic:jar:0.9.24
+      - ch.qos.logback:logback-core:jar:0.9.24
+      - com.metapossum:metapossum-scanner:jar:1.0
+      - commons-io:commons-io:jar:1.4
+      - junit:junit:jar:4.7
+  runtime: 
+    dependencies: 
+      - org.apache.tomcat:servlet-api:jar:6.0.35
+    resolved_dependencies: 
+      - org.apache.tomcat:servlet-api:jar:6.0.35
+  test: 
+    dependencies: 
+      - junit:junit:jar:4.10
+    resolved_dependencies: 
+      - junit:junit:jar:4.10
+      - org.hamcrest:hamcrest-core:jar:1.1
+</code></pre>
 
-<p>==== Accessing Jars</p>
-
-<ul>
-<li>
-<p>LockJar.list(*args): Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  </p>
+<h3>Accessing Jars</h3>
 
 <ul>
-<li>An arg of a String will set the Jarfile.lock path, e.g. 'Better.lock'. Default lock file is <em>Jarfile.lock</em>.</li>
-<li>An arg of an Array will set the scopes, e.g. ['compile','test']. Defaults scopes are <em>compile</em> and <em>runtime</em>.</li>
-<li>An arg of a Hash will set the options, e.g. { :local_repo =&gt; 'path' }</li>
 <li>
-<em>:local_repo</em> sets the local repo path</li>
+<p><strong>LockJar.list(*args)</strong>: Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  </p>
+
+<ul>
+<li>An arg of a String will set the Jarfile.lock path, e.g. <em>Better.lock</em>. Default lock file is <em>Jarfile.lock</em>.</li>
+<li>An arg of an Array will set the scopes, e.g. <em>['compile','test']</em>. Defaults scopes are <em>compile</em> and <em>runtime</em>.</li>
+<li>An arg of a Hash will set the options, e.g. <em>{ :local_repo =&gt; 'path' }</em>
+</li>
 <li>
-<em>:local_paths</em> converts the notations to paths of jars in the local repo</li>
+<strong>:local_repo</strong> sets the local repo path</li>
 <li>
-<em>:resolve</em> to true will make transitive dependences resolve before returning list of jars</li>
+<strong>:local_paths</strong> converts the notations to paths of jars in the local repo</li>
+<li>
+<strong>:resolve</strong> to true will make transitive dependences resolve before returning list of jars</li>
 </ul>
 </li>
 <li>
-<p>LockJar.load(<em>args): Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are *compile</em> and <em>runtime</em>. Default lock file is <em>Jarfile.lock</em>.</p>
+<p><strong>LockJar.load(*args)</strong>: Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are <em>compile</em> and <em>runtime</em>. Default lock file is <em>Jarfile.lock</em>.</p>
 
 <ul>
-<li>An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'</li>
-<li>An arg of an Array will set the scopes, e.g. ['compile','test']</li>
-<li>An arg of a Hash will set the options, e.g. { :local_repo =&gt; 'path' }</li>
+<li>An arg of a String will set the Jarfile.lock, e.g. <em>'Better.lock'</em>
+</li>
+<li>An arg of an Array will set the scopes, e.g. <em>['compile','test']</em>
+</li>
+<li>An arg of a Hash will set the options, e.g. <em>{ :local_repo =&gt; 'path' }</em>
+</li>
 <li>
-<em>:local_repo</em> sets the local repo path</li>
+<strong>:local_repo</strong> sets the local repo path</li>
 <li>
-<em>:resolve</em> to true will make transitive dependences resolve before loading to classpath </li>
+<strong>:resolve</strong> to true will make transitive dependences resolve before loading to classpath </li>
 </ul>
 </li>
-</ul><p>Once a Jarfile.lock is generated, you can list all resolved jars by</p>
+</ul><p>Once a <em>Jarfile.lock</em> is generated, you can list all resolved jars by</p>
 
-<p>jars = LockJar.list</p>
+<pre><code>jars = LockJar.list
+</code></pre>
 
 <p>or directly load all Jars into the classpath</p>
 
-<p>jars = LockJar.load  </p>
+<pre><code>jars = LockJar.load  
+</code></pre>
 
-<p>Do not forget, if you change your Jarfile, you have to re-generate the Jarfile.lock.</p>
+<p>Do not forget, if you change your <em>Jarfile</em>, you have to re-generate the <em>Jarfile.lock</em>.</p>
 
-<p>==== Skipping the Jarfile</p>
+<h3>Shortcuts</h3>
 
-<p>You can skip the Jarfile and Jarfile.lock to directly play with dependencies by passing a block to LockJar.lock, LockJar.list, LockJar.load</p>
+<h4>Skipping the Jarfile</h4>
 
-<p>===== Lock without a Jarfile</p>
+<p>You can skip the <em>Jarfile</em> and <em>Jarfile.lock</em> to directly play with dependencies by passing a block to <em>LockJar.lock</em>, <em>LockJar.list</em>, and <em>LockJar.load</em></p>
+
+<h4>Lock without a Jarfile</h4>
 
 <pre><code>LockJar.lock do
   jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
 end
 </code></pre>
 
-<p>===== List without a Jarfile.lock</p>
+<h4>List without a Jarfile.lock</h4>
 
 <pre><code>LockJar.list do
   jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
 end
 </code></pre>
 
-<p>===== Load without a Jarfile.lock</p>
+<h4>Load without a Jarfile.lock</h4>
 
 <pre><code>LockJar.load do
   jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
 end
 </code></pre>
 
-<p>Since you skipped the locking part, mostly likely you will need to resolve the dependences in the block, just pass the 
-:resolve =&gt; true option to enable dependency resolution (also works for LockJar.list).</p>
+<p>Since you skipped the locking part, mostly likely you will need to resolve the dependences in the block, just pass the <em>:resolve =&gt; true</em> option to enable dependency resolution (also works for <em>LockJar.list</em>).</p>
 
 <pre><code>LockJar.load( :resolve =&gt; true ) do
   jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
 end
 </code></pre>
 
-<p>=== Command line</p>
+<h2>Command line</h2>
 
-<p>There is a simple command line helper. You can lock a Jarfile with the following command</p>
+<p>There is a simple command line helper. You can lock a <em>Jarfile</em> with the following command</p>
 
 <pre><code>lockjar lock
 </code></pre>
 
-<p>List jars in a Jarfile.lock with </p>
+<p>List jars in a <em>Jarfile.lock</em> with </p>
 
-<p>lockjar list</p>
+<pre><code>lockjar list
+</code></pre>
 
-<p>Download all jars in a Jarfile.lock with</p>
+<p>Download all jars in a <em>Jarfile.lock</em> with</p>
 
-<p>lockjar install</p>
+<pre><code>lockjar install
+</code></pre>
 
 <p><em>lockjar</em> <em>--help</em> will give you list of all commands and their options.</p>
 
-<p>=== Bundler Integration</p>
+<h2>Bundler Integration</h2>
 
 <p>Has been deprecated to <a href="https://github.com/mguymon/lock_jar/tree/bundler_support">https://github.com/mguymon/lock_jar/tree/bundler_support</a></p>
 
-<p>=== Buildr Integration</p>
+<h2>Buildr Integration</h2>
 
-<p>LockJar integrates with {Buildr}[<a href="http://buildr.apache.org/">http://buildr.apache.org/</a>] using an {Addon}[<a href="https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/buildr.rb">https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/buildr.rb</a>].
-This allows the Jarfile to be defined directly into a buildfile. A global LockJar definition can be set and
-is inherited to all projects. Each project may have its own LockJar definition. A lock file is generated per project based
-on the project name.</p>
+<p>LockJar integrates with <a href="http://buildr.apache.org/">Buildr</a> using an <a href="https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/buildr.rb">Addon</a>. This allows the Jarfile to be defined directly into a <em>buildfile</em>. A global LockJar definition can be set and is inherited to all projects. Each project may have its own LockJar definition. A lock file is generated per project based on the project name.</p>
 
 <p>A new Buildr task is added to generate the lockfile for all projects</p>
 
-<p>buildr lock_jar:lock</p>
+<pre><code>buildr lock_jar:lock
+</code></pre>
 
 <p>and a task per project to generate the lockfile for a single project</p>
 
-<p>buildr ::lock_jar:lock</p>
+<pre><code>buildr &lt;app&gt;:&lt;project&gt;:lock_jar:lock
+</code></pre>
 
-<p>In a project, you can access an Array of notations using the <em>lock_jars</em> method, accepts same parameters as {LockJar.list}[<a href="https://github.com/mguymon/lock_jar#accessing-jars">https://github.com/mguymon/lock_jar#accessing-jars</a>]</p>
+<p>In a project, you can access an Array of notations using the <strong>lock_jars</strong> method, accepts same parameters as <a href="https://github.com/mguymon/lock_jar#accessing-jars">LockJar.list</a></p>
 
-<p>lock_jars()</p>
+<pre><code>lock_jars()
+</code></pre>
 
-<p>The compile scoped dependencies are automatically added to the classpath for compiling. The test scoped dependencies are
-automatically added to the classpath for tests. Do not forget, if you change the lock_jar
-definitions, you have to rerun the <em>lock_jar:lock</em> task.</p>
+<p>The <em>compile</em> scoped dependencies are automatically added to the classpath for compiling. The test scoped dependencies are automatically added to the classpath for tests. Do not forget, if you change the LockJar definitions, you have to rerun the <strong>lock_jar:lock</strong> task.</p>
 
-<p>==== Example</p>
+<h3>Example</h3>
 
 <p>Sample buildfile with LockJar</p>
 
-<p>require 'lock_jar/buildr'</p>
+<pre><code>require 'lock_jar/buildr'
 
-<p># app definition, inherited into all projects
-  lock_jar do</p>
+# app definition, inherited into all projects
+lock_jar do
 
-<pre><code>   scope 'test' do
-     jar 'junit:junit:jar:4.10'
+     scope 'test' do
+       jar 'junit:junit:jar:4.10'
+     end
+end
+
+define 'app' do
+
+   def 'project1' do
+     lock_jar do
+       jar  "org.apache.mina:mina-core:2.0.4"
+     end
    end
+
+   def 'project2' do
+      lock_jar do
+        pom 'pom.xml'
+      end
+   end
+
+end
 </code></pre>
 
-<p>end</p>
-
-<p>define 'app' do</p>
-
-<pre><code> def 'project1' do
-   lock_jar do
-     jar  "org.apache.mina:mina-core:2.0.4"
-   end
- end
-
- def 'project2' do
-    lock_jar do
-      pom 'pom.xml'
-    end
- end
-</code></pre>
-
-<p>end</p>
-
-<p>Generated the following lock files using lock_jar:lock</p>
+<p>Generated the following lock files using <strong>lock_jar:lock</strong></p>
 
 <ul>
-<li>project1.lock - contains junit and mina jars.</li>
-<li>project2.lock - contains junit and pom.xml jars.</li>
-</ul><p>== License</p>
+<li>project1.lock - contains <em>junit</em> and <em>mina</em> jars.</li>
+<li>project2.lock - contains <em>junit</em> and <em>pom.xml</em> jars.</li>
+</ul><h2>License</h2>
 
 <p>Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with this
@@ -318,26 +327,18 @@ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
 License for the specific language governing permissions and limitations under
 the License.</p>
-        </article>
-      </div>
+      </section>
     </div>
-    <footer>
-      <div class="owner">
-      <p><a href="https://github.com/mguymon" class="avatar"><img src="https://secure.gravatar.com/avatar/a56f389f4893384d38ed2a3ea161b66e?s=30&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png" width="48" height="48"/></a> <a href="https://github.com/mguymon">mguymon</a> maintains <a href="https://github.com/mguymon/lock_jar">Lock jar</a></p>
 
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Lock jar maintained by <a href="https://github.com/mguymon">mguymon</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
 
-      </div>
-      <div class="creds">
-        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br/>theme by <a href="http://twitter.com/jonrohan/">Jon Rohan</a></small>
-      </div>
-    </footer>
-  </div>
-  <div class="current-section">
-    <a href="#top">Scroll to top</a>
-    <a href="https://github.com/mguymon/lock_jar/tarball/master" class="tar">tar</a><a href="https://github.com/mguymon/lock_jar/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
-    <p class="name"></p>
-  </div>
+    
 
-  
-</body>
+  </body>
 </html>
