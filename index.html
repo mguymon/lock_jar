@@ -96,13 +96,16 @@ end
 <li>An arg of a String will set the Jarfile path, e.g. <em>'/somewhere/Jarfile.different'</em>. Default jarfile is <em>'Jarfile'</em>
 </li>
 <li>An arg of a Hash will set the options, e.g. <em>{ :local_repo =&gt; 'path' }</em>
-</li>
+
+<ul>
 <li>
 <strong>:download</strong> if true, will download jars to local repo. Defaults to true.</li>
 <li>
 <strong>:local_repo</strong> sets the local repo path</li>
 <li>
 <strong>:lockfile</strong> sets the Jarfile.lock path. Default lockfile is <em>Jarfile.lock</em>.</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul><p>When the Jarfile is locked, the transitive dependencies are resolved and saved to the Jarfile.lock file.</p>
@@ -160,13 +163,16 @@ scopes:
 <li>An arg of a String will set the Jarfile.lock path, e.g. <em>Better.lock</em>. Default lock file is <em>Jarfile.lock</em>.</li>
 <li>An arg of an Array will set the scopes, e.g. <em>['compile','test']</em>. Defaults scopes are <em>compile</em> and <em>runtime</em>.</li>
 <li>An arg of a Hash will set the options, e.g. <em>{ :local_repo =&gt; 'path' }</em>
-</li>
+
+<ul>
 <li>
 <strong>:local_repo</strong> sets the local repo path</li>
 <li>
 <strong>:local_paths</strong> converts the notations to paths of jars in the local repo</li>
 <li>
 <strong>:resolve</strong> to true will make transitive dependences resolve before returning list of jars</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>
@@ -178,11 +184,14 @@ scopes:
 <li>An arg of an Array will set the scopes, e.g. <em>['compile','test']</em>
 </li>
 <li>An arg of a Hash will set the options, e.g. <em>{ :local_repo =&gt; 'path' }</em>
-</li>
+
+<ul>
 <li>
 <strong>:local_repo</strong> sets the local repo path</li>
 <li>
 <strong>:resolve</strong> to true will make transitive dependences resolve before loading to classpath </li>
+</ul>
+</li>
 </ul>
 </li>
 </ul><p>Once a <em>Jarfile.lock</em> is generated, you can list all resolved jars by</p>
