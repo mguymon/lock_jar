@@ -103,16 +103,16 @@ The _Jarfile.lock_ generated is a YAML file containing the scoped dependencies, 
   * An arg of a String will set the Jarfile.lock path, e.g. _Better.lock_. Default lock file is _Jarfile.lock_.
   * An arg of an Array will set the scopes, e.g. _['compile','test']_. Defaults scopes are _compile_ and _runtime_.
   * An arg of a Hash will set the options, e.g. _{ :local_repo => 'path' }_
-    * **:local_repo** sets the local repo path
-    * **:local_paths** converts the notations to paths of jars in the local repo
-    * **:resolve** to true will make transitive dependences resolve before returning list of jars
+      * **:local_repo** sets the local repo path
+      * **:local_paths** converts the notations to paths of jars in the local repo
+      * **:resolve** to true will make transitive dependences resolve before returning list of jars
   
 * **LockJar.load(*args)**: Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are _compile_ and _runtime_. Default lock file is _Jarfile.lock_.
   * An arg of a String will set the Jarfile.lock, e.g. _'Better.lock'_
   * An arg of an Array will set the scopes, e.g. _['compile','test']_
   * An arg of a Hash will set the options, e.g. _{ :local_repo => 'path' }_
-    * **:local_repo** sets the local repo path
-    * **:resolve** to true will make transitive dependences resolve before loading to classpath 
+     * **:local_repo** sets the local repo path
+     * **:resolve** to true will make transitive dependences resolve before loading to classpath 
 
 Once a _Jarfile.lock_ is generated, you can list all resolved jars by
   
