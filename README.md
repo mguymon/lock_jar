@@ -48,9 +48,9 @@ methods:
 * **LockJar.lock( *args )**: Using a Jarfile, creates a lock file. Depending on the type of arg, a different configuration is set.
   * An arg of a String will set the Jarfile path, e.g. _'/somewhere/Jarfile.different'_. Default jarfile is _'Jarfile'_
   * An arg of a Hash will set the options, e.g. _{ :local_repo => 'path' }_
-    * **:download** if true, will download jars to local repo. Defaults to true.
-    * **:local_repo** sets the local repo path
-    * **:lockfile** sets the Jarfile.lock path. Default lockfile is _Jarfile.lock_.
+      * **:download** if true, will download jars to local repo. Defaults to true.
+      * **:local_repo** sets the local repo path
+      * **:lockfile** sets the Jarfile.lock path. Default lockfile is _Jarfile.lock_.
 
 When the Jarfile is locked, the transitive dependencies are resolved and saved to the Jarfile.lock file.
 
