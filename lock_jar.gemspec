@@ -57,14 +57,14 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<thor>, ["> 0.14.0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.9.0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.1.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
+      s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_development_dependency(%q<yard>, ["~> 0.8.0"])
     else
       s.add_dependency(%q<naether>, ["~> 0.8.6"])
       s.add_dependency(%q<thor>, ["> 0.14.0"])
       s.add_dependency(%q<rspec>, ["~> 2.9.0"])
       s.add_dependency(%q<bundler>, ["~> 1.1.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
+      s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_dependency(%q<yard>, ["~> 0.8.0"])
     end
   else
@@ -72,7 +72,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<thor>, ["> 0.14.0"])
     s.add_dependency(%q<rspec>, ["~> 2.9.0"])
     s.add_dependency(%q<bundler>, ["~> 1.1.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
+    s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
     s.add_dependency(%q<yard>, ["~> 0.8.0"])
   end
 end
