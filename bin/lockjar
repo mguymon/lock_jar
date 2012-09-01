@@ -1,64 +1,6 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-require 'gli'
-require 'lock_jar'
-require 'lock_jar/version'
+require 'thor'
+require 'lock_jar/cli'
 
-include  GLI::App
-
-program_desc 'LockJar manages Java Jars for Ruby'
-
-version LockJar::VERSION
-
-desc 'Install Jars from a Jarfile.lock'
-command :install do |c|
-  c.desc 'Path to Jarfile.lock'
-  c.default_value 'Jarfile.lock'
-  c.flag :lockfile
-  
-  c.desc "Scopes to install from Jarfile.lock"
-  c.default_value 'compile, runtime'
-  c.flag :scopes
-  
-  c.action do |global_options,options,args|
-    scopes = options[:scopes].split(',').map{ |scope| scope.strip }
-    puts "Installing Jars from #{options[:lockfile]} for #{scopes.inspect}"
-    LockJar.install( options[:lockfile], scopes )
-  end
-end
-
-desc 'List Jars from a Jarfile.lock'
-command :list do |c|
-  c.desc 'Path to Jarfile.lock'
-  c.default_value 'Jarfile.lock'
-  c.flag :lockfile
-  
-  c.desc "Scopes to install from Jarfile.lock"
-  c.default_value 'compile, runtime'
-  c.flag :scopes
-  
-  c.action do |global_options,options,args|
-    scopes = options[:scopes].split(',').map{ |scope| scope.strip }
-    puts "Listing Jars from #{options[:lockfile]} for #{scopes.inspect}"
-    puts LockJar.list( options[:lockfile], scopes ).inspect
-  end
-end
-
-desc 'Lock Jars in a Jarfile.lock'
-command :lock do |c|
-  c.desc 'Path to Jarfile'
-  c.default_value 'Jarfile'
-  c.flag :jarfile
-  
-  c.desc "Path to Jarfile.lock"
-  c.default_value 'Jarfile.lock'
-  c.flag :lockfile
-  
-  c.action do |global_options,options,args|
-    puts "Locking #{options[:jarfile]} to #{options[:lockfile]}"
-    LockJar.lock( options[:jarfile], { :lockfile => options[:lockfile] } )
-  end
-end
-
-
-exit run(ARGV)
+LockJar::CLI.start
