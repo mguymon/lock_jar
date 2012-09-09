@@ -176,7 +176,7 @@ Download all jars in a _Jarfile.lock_ with
   
 _lockjar_ _--help_ will give you list of all commands and their options.
 
-## Installing Jars when a Gem is installed
+## Gem Integration
 
 LockJar can be triggered when a Gem is installed by using a [Gem extension](http://docs.rubygems.org/read/chapter/20#extensions)
 of type Rakefile. The cavaet is the task to install the jars must be the default 
