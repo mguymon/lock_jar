@@ -157,6 +157,21 @@ scopes:
 
 <ul>
 <li>
+<p><strong>LockJar.install(<em>args</em>)</strong>: Download Jars in the Jarfile.lock</p>
+
+<ul>
+<li>An arg of a String will set the Jarfile.lock path, e.g. <em>Better.lock</em>. Default lock file is <em>Jarfile.lock</em>.</li>
+<li>An arg of an Array will set the scopes, e.g. <em>['compile','test']</em>. Defaults scopes are <em>compile</em> and <em>runtime</em>.</li>
+<li>An arg of a Hash will set the options, e.g. <em>{ :local_repo =&gt; 'path' }</em>
+
+<ul>
+<li>
+<strong>:local_repo</strong> sets the local repo path</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
 <p><strong>LockJar.list(*args)</strong>: Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  </p>
 
 <ul>
@@ -259,6 +274,41 @@ end
 
 <p><em>lockjar</em> <em>--help</em> will give you list of all commands and their options.</p>
 
+<h2>Installing Jars when a Gem is installed</h2>
+
+<p>LockJar can be triggered when a Gem is installed by using a <a href="http://docs.rubygems.org/read/chapter/20#extensions">Gem extension</a>
+of type Rakefile. The cavaet is the task to install the jars must be the default 
+for the Rakefile.</p>
+
+<p>A Gem spec with <em>Rakefile</em> extension:</p>
+
+<pre><code>Gem::Specification.new do |s|
+  s.extensions = ["Rakefile"]
+end
+</code></pre>
+
+<p>Rakefile with default to install Jars using LockJar:</p>
+
+<pre><code>task :default =&gt; :prepare
+
+task :prepare do
+  require 'lock_jar'
+
+  # get jarfile relative the gem dir
+  lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
+
+  LockJar.install( :jarfile =&gt; lockfile )
+end
+</code></pre>
+
+<h3>Work around for Rakefile default</h3>
+
+<p>The downside of using the Gem extension Rakefile is it requires the default to 
+point at the task to download the jars (from the example Rakefile, 
+<code>task :default =&gt; :prepare</code>). To get around this, I used a Rakefile called 
+<em>PostInstallRakefile</em> to handle the <code>task :prepare</code> and when the gem is created 
+renamed it to <code>Rakefile</code>.</p>
+
 <h2>Bundler Integration</h2>
 
 <p>Has been deprecated to <a href="https://github.com/mguymon/lock_jar/tree/bundler_support">https://github.com/mguymon/lock_jar/tree/bundler_support</a></p>
@@ -347,7 +397,17 @@ the License.</p>
       </footer>
     </div>
 
-    
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-34340702-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
 
   </body>
 </html>
