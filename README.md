@@ -99,6 +99,12 @@ The _Jarfile.lock_ generated is a YAML file containing the scoped dependencies, 
   
 ### Accessing Jars
 
+* **LockJar.install(*args*)**: Download Jars in the Jarfile.lock
+  * An arg of a String will set the Jarfile.lock path, e.g. _Better.lock_. Default lock file is _Jarfile.lock_.
+  * An arg of an Array will set the scopes, e.g. _['compile','test']_. Defaults scopes are _compile_ and _runtime_.
+  * An arg of a Hash will set the options, e.g. _{ :local_repo => 'path' }_
+      * **:local_repo** sets the local repo path
+  
 * **LockJar.list(*args)**: Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  
   * An arg of a String will set the Jarfile.lock path, e.g. _Better.lock_. Default lock file is _Jarfile.lock_.
   * An arg of an Array will set the scopes, e.g. _['compile','test']_. Defaults scopes are _compile_ and _runtime_.
@@ -170,10 +176,43 @@ Download all jars in a _Jarfile.lock_ with
   
 _lockjar_ _--help_ will give you list of all commands and their options.
 
+## Installing Jars when a Gem is installed
+
+LockJar can be triggered when a Gem is installed by using a [Gem extension](http://docs.rubygems.org/read/chapter/20#extensions)
+of type Rakefile. The cavaet is the task to install the jars must be the default 
+for the Rakefile.
+
+A Gem spec with _Rakefile_ extension:
+
+    Gem::Specification.new do |s|
+      s.extensions = ["Rakefile"]
+    end
+
+Rakefile with default to install Jars using LockJar:
+
+    task :default => :prepare
+
+    task :prepare do
+      require 'lock_jar'
+      
+      # get jarfile relative the gem dir
+      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
+      
+      LockJar.install( :jarfile => lockfile )
+    end
+    
+### Work around for Rakefile default
+
+The downside of using the Gem extension Rakefile is it requires the default to 
+point at the task to download the jars (from the example Rakefile, 
+`task :default => :prepare`). To get around this, I used a Rakefile called 
+_PostInstallRakefile_ to handle the `task :prepare` and when the gem is created 
+renamed it to `Rakefile`.
+
 ## Bundler Integration
 
 Has been deprecated to https://github.com/mguymon/lock_jar/tree/bundler_support
-  
+
 ## Buildr Integration
 
 LockJar integrates with [Buildr](http://buildr.apache.org/) using an [Addon](https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/buildr.rb). This allows the Jarfile to be defined directly into a _buildfile_. A global LockJar definition can be set and is inherited to all projects. Each project may have its own LockJar definition. A lock file is generated per project based on the project name.
