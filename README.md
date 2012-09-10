@@ -196,7 +196,7 @@ Rakefile with default to install Jars using LockJar:
       # get jarfile relative the gem dir
       lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
       
-      LockJar.install( :jarfile => lockfile )
+      LockJar.install( :lockfile => lockfile )
     end
     
 ### Work around for Rakefile default
