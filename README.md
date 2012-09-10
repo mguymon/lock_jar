@@ -2,7 +2,7 @@
 
 LockJar manages Java Jars for Ruby. Powered by [Naether](https://github.com/mguymon/naether) to create a frankenstein of Bundler and Maven. A Jarfile ([example](https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile)) is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test. The Jarfile.lock can be used to populate the classpath.
 
-LockJar can be used directly or integrates with Buildr.
+LockJar can be used directly, from the command line, triggered from a Gem install, and integrates with Buildr.
 
 https://github.com/mguymon/lock_jar
 
@@ -12,7 +12,7 @@ https://github.com/mguymon/lock_jar
 
     gem install lock_jar
 
-## Usage
+## Ruby Usage
 
 ### Jarfile
 
@@ -38,9 +38,7 @@ methods:
       jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
     end
   
-    scope 'test' do
-      jar 'junit:junit:jar:4.10'
-    end
+    jar 'junit:junit:jar:4.10', :scope => 'test'
   
 	
 ### Resolving dependencies
