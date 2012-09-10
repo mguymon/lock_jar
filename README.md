@@ -207,10 +207,6 @@ point at the task to download the jars (from the example Rakefile,
 _PostInstallRakefile_ to handle the `task :prepare` and when the gem is created 
 renamed it to `Rakefile`.
 
-## Bundler Integration
-
-Has been deprecated to https://github.com/mguymon/lock_jar/tree/bundler_support
-
 ## Buildr Integration
 
 LockJar integrates with [Buildr](http://buildr.apache.org/) using an [Addon](https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/buildr.rb). This allows the Jarfile to be defined directly into a _buildfile_. A global LockJar definition can be set and is inherited to all projects. Each project may have its own LockJar definition. A lock file is generated per project based on the project name.
@@ -266,6 +262,10 @@ Generated the following lock files using **lock_jar:lock**
 * project1.lock - contains _junit_ and _mina_ jars.
 * project2.lock - contains _junit_ and _pom.xml_ jars.
   
+## Bundler Integration
+
+Direct Bundler integration has been deprecated to https://github.com/mguymon/lock_jar/tree/bundler_support. 
+Waiting for [Bundler plugin support](https://github.com/carlhuda/bundler/issues/1945)
 
 ## License
 
