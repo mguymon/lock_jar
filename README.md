@@ -95,27 +95,27 @@ The _Jarfile.lock_ generated is a YAML file containing the scoped dependencies, 
   
   
 ### Accessing Jars
-
-* **LockJar.install(*args*)**: Download Jars in the Jarfile.lock
-  * _[String]_ will set the Jarfile.lock path, e.g. `'Better.lock'`. Default lock file is `'Jarfile.lock'`.
-  * _[Array<String>]_ will set the scopes, e.g. `['compile','test']`. Defaults scopes are _compile_ and _runtime_.
-  * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
-      * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
+**LockJar.install(*args*)**: Download Jars in the Jarfile.lock
+* _[String]_ will set the Jarfile.lock path, e.g. `'Better.lock'`. Default lock file is `'Jarfile.lock'`.
+* _[Array<String>]_ will set the scopes, e.g. `['compile','test']`. Defaults scopes are _compile_ and _runtime_.
+* _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
+  * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
   
-* **LockJar.list(*args)**: Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  
-  * _[String]_ will set the Jarfile.lock path, e.g. `'Better.lock'`. Default lock file is `'Jarfile.lock'`.
-  * _[Array<String>]_ will set the scopes, e.g. `['compile','test']`. Defaults scopes are _compile_ and _runtime_.
-  * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
-      * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
-      * **:local_paths** _[Boolean]_ converts the notations to paths of jars in the local repo
-      * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before returning list of jars
+LockJar.list
+**LockJar.list(*args)**: Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  
+* _[String]_ will set the Jarfile.lock path, e.g. `'Better.lock'`. Default lock file is `'Jarfile.lock'`.
+* _[Array<String>]_ will set the scopes, e.g. `['compile','test']`. Defaults scopes are _compile_ and _runtime_.
+* _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
+  * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
+  * **:local_paths** _[Boolean]_ converts the notations to paths of jars in the local repo
+  * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before returning list of jars
   
-* **LockJar.load(*args)**: Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are _compile_ and _runtime_. Default lock file is _Jarfile.lock_.
-  * _[String]_ will set the Jarfile.lock, e.g. `'Better.lock'`
-  * _[Array<String>]_ will set the scopes, e.g. `['compile','test']`
-  * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
-     * **:local_repo** _[String]_ sets the local repo path
-     * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before loading to classpath 
+**LockJar.load(*args)**: Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are _compile_ and _runtime_. Default lock file is _Jarfile.lock_.
+* _[String]_ will set the Jarfile.lock, e.g. `'Better.lock'`
+* _[Array<String>]_ will set the scopes, e.g. `['compile','test']`
+* _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
+  * **:local_repo** _[String]_ sets the local repo path
+  * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before loading to classpath 
 
 Once a _Jarfile.lock_ is generated, you can list all resolved jars by
   
