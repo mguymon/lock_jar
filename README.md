@@ -6,7 +6,7 @@ LockJar can be used directly, from the command line, triggered from a Gem instal
 
 https://github.com/mguymon/lock_jar
 
-[RDoc](http://rubydoc.info/github/mguymon/lock_jar/master/frames)
+[RDoc](http://rubydoc.info/gems/lock_jar/frames)
 
 ## Install
 
