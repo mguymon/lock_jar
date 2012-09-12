@@ -2,7 +2,7 @@
 
 LockJar manages Java Jars for Ruby. Powered by [Naether](https://github.com/mguymon/naether) to create a frankenstein of Bundler and Maven. A Jarfile ([example](https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile)) is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test. The Jarfile.lock can be used to populate the classpath.
 
-LockJar can be used directly, from the command line, triggered from a Gem install, and integrates with Buildr.
+LockJar can be used directly, from the [command line](https://github.com/mguymon/lock_jar/blob/master/README.md#command-line), [triggered from a Gem install](https://github.com/mguymon/lock_jar/blob/master/README.md#gem-integration), and [integrates with Buildr](https://github.com/mguymon/lock_jar/blob/master/README.md#buildr-integration).
 
 https://github.com/mguymon/lock_jar
 
@@ -21,7 +21,6 @@ methods:
 
 * **local( path )**: Set the local Maven repository, this were dependencies are downloaded to. 
 * **repository( url )**: Add additional urlr of remote Maven repository.
-* **map( notation, paths )**: Map local compiled class paths to a notation. The map is applied when loading or listing jar. This is useful for local development that overrides an artifact. A single or Array of paths can be set.
 * **exclude( excludes )**: Add a artifact:group that will be excluded from resolved dependencies. A single or Array of excludes can be set.
 * **jar( notations, opts = {} )**: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default scope is _compile_, can be specified by setting _opts = { :scope => ['new_scope'] }_
 * **pom( pom_path, opts = {} )**: Add a local Maven pom, default is to load dependencies for all scopes. To select the scopes to be loaded from the pom, set the _opts = { :scopes => ['new_scope'] }_
@@ -43,12 +42,12 @@ methods:
 	
 ### Resolving dependencies
 
-* **LockJar.lock( *args )**: Using a Jarfile, creates a lock file. Depending on the type of arg, a different configuration is set.
-  * An arg of a String will set the Jarfile path, e.g. _'/somewhere/Jarfile.different'_. Default jarfile is _'Jarfile'_
-  * An arg of a Hash will set the options, e.g. _{ :local_repo => 'path' }_
-      * **:download** if true, will download jars to local repo. Defaults to true.
-      * **:local_repo** sets the local repo path
-      * **:lockfile** sets the Jarfile.lock path. Default lockfile is _Jarfile.lock_.
+**LockJar.lock( *args )**: Using a Jarfile, creates a lock file. Depending on the type of arg, a different configuration is set.
+* _[String]_ will set the Jarfile path, e.g. `'/somewhere/Jarfile.different'`. Default jarfile is `'Jarfile'`
+* _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
+  * **:download** _[Boolean]_ if true, will download jars to local repo. Defaults to true.
+  * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
+  * **:lockfile** _[String]_ sets the Jarfile.lock path. Default lockfile is `'Jarfile.lock'`.
 
 When the Jarfile is locked, the transitive dependencies are resolved and saved to the Jarfile.lock file.
 
@@ -96,27 +95,26 @@ The _Jarfile.lock_ generated is a YAML file containing the scoped dependencies, 
   
   
 ### Accessing Jars
-
-* **LockJar.install(*args*)**: Download Jars in the Jarfile.lock
-  * An arg of a String will set the Jarfile.lock path, e.g. _Better.lock_. Default lock file is _Jarfile.lock_.
-  * An arg of an Array will set the scopes, e.g. _['compile','test']_. Defaults scopes are _compile_ and _runtime_.
-  * An arg of a Hash will set the options, e.g. _{ :local_repo => 'path' }_
-      * **:local_repo** sets the local repo path
+**LockJar.install(*args)**: Download Jars in the Jarfile.lock
+* _[String]_ will set the Jarfile.lock path, e.g. `'Better.lock'`. Default lock file is `'Jarfile.lock'`.
+* _[Array<String>]_ will set the scopes, e.g. `['compile','test']`. Defaults scopes are _compile_ and _runtime_.
+* _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
+  * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
   
-* **LockJar.list(*args)**: Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  
-  * An arg of a String will set the Jarfile.lock path, e.g. _Better.lock_. Default lock file is _Jarfile.lock_.
-  * An arg of an Array will set the scopes, e.g. _['compile','test']_. Defaults scopes are _compile_ and _runtime_.
-  * An arg of a Hash will set the options, e.g. _{ :local_repo => 'path' }_
-      * **:local_repo** sets the local repo path
-      * **:local_paths** converts the notations to paths of jars in the local repo
-      * **:resolve** to true will make transitive dependences resolve before returning list of jars
+**LockJar.list(*args)**: Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  
+* _[String]_ will set the Jarfile.lock path, e.g. `'Better.lock'`. Default lock file is `'Jarfile.lock'`.
+* _[Array<String>]_ will set the scopes, e.g. `['compile','test']`. Defaults scopes are _compile_ and _runtime_.
+* _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
+  * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
+  * **:local_paths** _[Boolean]_ converts the notations to paths of jars in the local repo
+  * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before returning list of jars
   
-* **LockJar.load(*args)**: Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are _compile_ and _runtime_. Default lock file is _Jarfile.lock_.
-  * An arg of a String will set the Jarfile.lock, e.g. _'Better.lock'_
-  * An arg of an Array will set the scopes, e.g. _['compile','test']_
-  * An arg of a Hash will set the options, e.g. _{ :local_repo => 'path' }_
-     * **:local_repo** sets the local repo path
-     * **:resolve** to true will make transitive dependences resolve before loading to classpath 
+**LockJar.load(*args)**: Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are _compile_ and _runtime_. Default lock file is _Jarfile.lock_.
+* _[String]_ will set the Jarfile.lock, e.g. `'Better.lock'`
+* _[Array<String>]_ will set the scopes, e.g. `['compile','test']`
+* _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
+  * **:local_repo** _[String]_ sets the local repo path
+  * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before loading to classpath 
 
 Once a _Jarfile.lock_ is generated, you can list all resolved jars by
   
@@ -177,8 +175,7 @@ _lockjar_ _--help_ will give you list of all commands and their options.
 ## Gem Integration
 
 LockJar can be triggered when a Gem is installed by using a [Gem extension](http://docs.rubygems.org/read/chapter/20#extensions)
-of type Rakefile. The cavaet is the task to install the jars must be the default 
-for the Rakefile.
+of type _Rakefile_. The cavaet is the task to install the jars must be the default for the Rakefile.
 
 A Gem spec with _Rakefile_ extension:
 
@@ -196,7 +193,7 @@ Rakefile with default to install Jars using LockJar:
       # get jarfile relative the gem dir
       lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
       
-      LockJar.install( :jarfile => lockfile )
+      LockJar.install( :lockfile => lockfile )
     end
     
 ### Work around for Rakefile default
@@ -204,12 +201,8 @@ Rakefile with default to install Jars using LockJar:
 The downside of using the Gem extension Rakefile is it requires the default to 
 point at the task to download the jars (from the example Rakefile, 
 `task :default => :prepare`). To get around this, I used a Rakefile called 
-_PostInstallRakefile_ to handle the `task :prepare` and when the gem is created 
-renamed it to `Rakefile`.
-
-## Bundler Integration
-
-Has been deprecated to https://github.com/mguymon/lock_jar/tree/bundler_support
+_PostInstallRakefile_ to handle the `task :prepare`. When packaging the gem, _PostInstallRakefile_ is
+renamed to `Rakefile`.
 
 ## Buildr Integration
 
@@ -263,9 +256,13 @@ Sample buildfile with LockJar
 
 Generated the following lock files using **lock_jar:lock**
 
-* project1.lock - contains _junit_ and _mina_ jars.
-* project2.lock - contains _junit_ and _pom.xml_ jars.
+* _project1.lock_ - contains _junit_ and _mina_ jars.
+* _project2.lock_ - contains _junit_ and _pom.xml_ jars.
   
+## Bundler Integration
+
+Direct Bundler integration has been deprecated to https://github.com/mguymon/lock_jar/tree/bundler_support. 
+Waiting for [Bundler plugin support](https://github.com/carlhuda/bundler/issues/1945)
 
 ## License
 
