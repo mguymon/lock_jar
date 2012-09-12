@@ -543,9 +543,10 @@ h3 {
 }
 
 a {
-  color: #3CBE2B;
-  font-weight: 400;
+  color: #1E440F;
+  font-weight: bold;
   text-decoration: none;
+  
 }
 
 a small {
