@@ -21,7 +21,6 @@ methods:
 
 * **local( path )**: Set the local Maven repository, this were dependencies are downloaded to. 
 * **repository( url )**: Add additional urlr of remote Maven repository.
-* **map( notation, paths )**: Map local compiled class paths to a notation. The map is applied when loading or listing jar. This is useful for local development that overrides an artifact. A single or Array of paths can be set.
 * **exclude( excludes )**: Add a artifact:group that will be excluded from resolved dependencies. A single or Array of excludes can be set.
 * **jar( notations, opts = {} )**: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default scope is _compile_, can be specified by setting _opts = { :scope => ['new_scope'] }_
 * **pom( pom_path, opts = {} )**: Add a local Maven pom, default is to load dependencies for all scopes. To select the scopes to be loaded from the pom, set the _opts = { :scopes => ['new_scope'] }_
@@ -259,8 +258,8 @@ Sample buildfile with LockJar
 
 Generated the following lock files using **lock_jar:lock**
 
-* project1.lock - contains _junit_ and _mina_ jars.
-* project2.lock - contains _junit_ and _pom.xml_ jars.
+* _project1.lock_ - contains _junit_ and _mina_ jars.
+* _project2.lock_ - contains _junit_ and _pom.xml_ jars.
   
 ## Bundler Integration
 
