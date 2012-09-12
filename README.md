@@ -175,7 +175,7 @@ _lockjar_ _--help_ will give you list of all commands and their options.
 ## Gem Integration
 
 LockJar can be triggered when a Gem is installed by using a [Gem extension](http://docs.rubygems.org/read/chapter/20#extensions)
-of type Rakefile. The cavaet is the task to install the jars must be the default for the Rakefile.
+of type _Rakefile_. The cavaet is the task to install the jars must be the default for the Rakefile.
 
 A Gem spec with _Rakefile_ extension:
 
@@ -201,8 +201,8 @@ Rakefile with default to install Jars using LockJar:
 The downside of using the Gem extension Rakefile is it requires the default to 
 point at the task to download the jars (from the example Rakefile, 
 `task :default => :prepare`). To get around this, I used a Rakefile called 
-_PostInstallRakefile_ to handle the `task :prepare` and when the gem is created 
-renamed it to `Rakefile`.
+_PostInstallRakefile_ to handle the `task :prepare`. When packaging the gem, _PostInstallRakefile_ is
+renamed to `Rakefile`.
 
 ## Buildr Integration
 
