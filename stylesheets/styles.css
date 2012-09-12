@@ -503,8 +503,8 @@ table {
 }
 
 body {
-  font: 14px/22px "Quattrocento Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #666;
+  font: 16px/24px "Quattrocento Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: black;
   font-weight: 300;
   margin: 0px;
   padding: 0px 0 20px 0px;
@@ -584,8 +584,12 @@ blockquote {
 code {
   font-family: "Lucida Sans", Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
   font-size: 13px;
-  color: #efefef;
-  text-shadow: 0px 1px 0px #000;
+  color: #3CBE2B;
+  text-shadow: 0px 1px 0px #1E440F;
+  margin: 0 2px;
+}
+
+pre code { 
   margin: 0 4px;
   padding: 2px 6px;
   background: #333;
