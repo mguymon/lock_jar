@@ -208,7 +208,7 @@ renamed to `Rakefile`.
 
 ### Loading
 
-Loading the classpath for the Gem is simple, as part of the load process for the Gem add:
+With the Jars already installed, loading the classpath for the Gem is simple. As part of the load process for the Gem add (entry file that is required, etc):
 
       #get jarfile relative the gem dir
       lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
