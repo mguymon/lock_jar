@@ -1,4 +1,4 @@
-local '~/.m2'
+local '~/.m2/repository'
 repository 'http://mirrors.ibiblio.org/pub/mirrors/maven2'
 
 jar "org.apache.mina:mina-core:2.0.4"

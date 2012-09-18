@@ -31,8 +31,9 @@ module LockJar
         opts[:local_repo] = File.expand_path(opts[:local_repo])
       end
       
-      # XXX: opts for a method will cause resolver to reload
-      if @current_resolver.nil? || opts != @current_resolver.opts
+      # XXX: Caches the resolver by the options. Passing in nil opts will replay
+      #      from the cache. This need to change.
+      if @current_resolver.nil? || (!opts.nil? && opts != @current_resolver.opts)
         @current_resolver = LockJar::Resolver.new( opts )
       end
       

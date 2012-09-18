@@ -24,44 +24,17 @@ module LockJar
     attr_reader :naether
     
     def initialize( opts = {} )
+
       @opts = opts
       local_repo = opts[:local_repo] || Naether::Bootstrap.default_local_repo
         
       # Bootstrap Naether
-      jars = []
-      temp_jar_dir = File.join(local_repo, '.lock_jar', 'naether' )
-      deps = Naether::Bootstrap.check_local_repo_for_deps( local_repo )
-      if deps[:missing].size > 0
-        deps = Naether::Bootstrap.download_dependencies( temp_jar_dir, deps.merge( :local_repo => local_repo ) )
-        if deps[:downloaded].size > 0
-                    
-          unless File.directory?( temp_jar_dir )
-            FileUtils.mkdir_p jar_dir
-          end
-          
-          @naether = Naether::Bootstrap.install_dependencies_to_local_repo( temp_jar_dir, :local_repo => local_repo )
-          jars = jars + deps[:downloaded].map{ |jar| jar.values[0] }
-        else
-          # XXX: download failed?            
-        end
-        
-      # Remove bootstrap jars, they have been installed to the local repo
-      elsif File.exists?( temp_jar_dir )        
-        FileUtils.rm_rf temp_jar_dir
-      end
+      Naether::Bootstrap.bootstrap_local_repo( local_repo, opts )
       
-      jars = jars + deps[:exists].map{ |jar| jar.values[0] }
-        
       # Bootstrapping naether will create an instance from downloaded jars. 
       # If jars exist locally already, create manually
-      if @naether.nil?  
-        jars << Naether::JAR_PATH
-        @naether = Naether.create_from_jars( jars )
-      end
-      
-      @naether.local_repo_path = opts[:local_repo].to_s if opts[:local_repo]
-      
-      
+      @naether = Naether.new
+      @naether.local_repo_path = local_repo if local_repo
       @naether.clear_remote_repositories if opts[:offline]
     end
     
@@ -77,7 +50,7 @@ module LockJar
     def resolve( dependencies, download_artifacts = true )
       @naether.dependencies = dependencies
       @naether.resolve_dependencies( download_artifacts )
-      @naether.dependenciesNotation
+      @naether.dependencies_notation
     end
     
     def download( dependencies )
@@ -112,7 +85,7 @@ module LockJar
       Naether::Java.load_paths( dirs )
       
       jars = @naether.to_local_paths( jars )
-      Naether::Java.load_jars( jars )
+      Naether::Java.load_paths( jars )
       
       dirs + jars
     end

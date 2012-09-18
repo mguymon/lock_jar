@@ -14,6 +14,7 @@
 # the License.
 
 require 'lock_jar/runtime'
+require 'naether/maven'
 
 module LockJar
   
@@ -33,18 +34,42 @@ module LockJar
       #
       # @return [String] version of POM
       #
-      def pom_version( pom_path, opts = {} )
-        Runtime.instance.resolver(opts).naether.pom_version( pom_path )
+      def pom_version( pom_path )
+        maven = Naether::Maven.create_from_pom( pom_path )
+        maven.version()
       end
       
       #
       # Write a POM from list of notations
       #
-      # @param [Array] notations 
+      # @param [String] pom notation
       # @param [String] file_path path of new pom
-      # @param [Hash] options
-      def write_pom( notations, file_path, opts = {} )
-        Runtime.instance.resolver(opts).naether.write_pom( notations, file_path )
+      # @param [Hash] opts
+      # @option opts [Boolean] :include_resolved to add dependencies of resolve dependencies from Jarfile.lock. Default is true.
+      # @option opts [Array] :dependencies Array of of mixed dependencies:
+      #  * [String] Artifact notation, such as groupId:artifactId:version, e.g. 'junit:junit:4.7' 
+      #  * [Hash] of a single artifaction notation => scope - { 'junit:junit:4.7' => 'test' }
+      #
+      def write_pom( notation, file_path, opts = {} )
+        opts = {:include_resolved => true}.merge( opts )
+        
+        maven = Naether::Maven.create_from_notataion( notation )
+        
+        if opts[:include_resolved]
+          # Passes in nil to the resolver to get the cache
+          maven.load_naether( Runtime.instance.resolver.naether )
+        end
+        
+        if opts[:dependencies]
+          opts[:dependencies].each do |dep|
+            if dep.is_a? Array
+              maven.add_dependency(dep[0], dep[1])
+            else
+              maven.add_dependency(dep)
+            end
+          end
+        end
+        maven.write_pom( file_path )
       end
       
       #
