@@ -4,6 +4,11 @@ require 'lib/lock_jar/maven'
 require 'naether'
 
 describe LockJar::Maven do
+  before do
+    # Bootstrap Naether
+    Naether::Bootstrap.bootstrap_local_repo
+  end
+  
   context "Class" do
     it "should get pom version" do
       LockJar::Maven.pom_version( "spec/pom.xml" ).should eql( "3" )
