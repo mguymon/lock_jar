@@ -1,0 +1,12 @@
+---
+scopes:
+  compile:
+    dependencies:
+    - org.apache.commons:commons-email:1.2
+    resolved_dependencies:
+    - javax.activation:activation:jar:1.1
+    - org.apache.commons:commons-email:jar:1.2
+    - javax.mail:mail:jar:1.4.1
+repositories:
+- http://repo1.maven.org/maven2/
+...
