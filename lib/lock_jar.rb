@@ -64,9 +64,9 @@ module LockJar
   # * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'.  Default lock file is *Jarfile.lock*.
   # * An arg of an Array will set the scopes, e.g. ['compile','test'].  Defaults scopes are *compile* and *runtime*
   # * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
-  #   * :local_repo sets the local repo path
-  #   * :local_paths converts the notations to paths to jars in the local repo path
-  #   * :resolve to true will make transitive dependences resolve before loading to classpath
+  #   * :local_repo [String] sets the local repo path
+  #   * :local_paths [Boolean] to true converts the notations to paths to jars in the local repo path
+  #   * :resolve [Boolean] to true will make transitive dependences resolve before loading to classpath
   # 
   # A block can be passed in, overriding values from a Jarfile.lock.
   #
