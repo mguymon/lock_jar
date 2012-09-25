@@ -20,6 +20,7 @@ require 'thread'
 require 'lock_jar/resolver'
 require 'lock_jar/dsl'
 require 'lock_jar/runtime'
+require 'lock_jar/registry'
 
 module LockJar
   class Runtime
@@ -217,7 +218,7 @@ module LockJar
           end
         end
         
-        dependencies = list( jarfile_lock, scopes, opts, &blk )
+        dependencies = LockJar::Registry.instance.register_jars( list( jarfile_lock, scopes, opts, &blk ) )
                 
         resolver(opts).load_to_classpath( dependencies )
       end
