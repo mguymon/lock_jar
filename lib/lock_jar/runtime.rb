@@ -16,6 +16,7 @@
 require 'rubygems'
 require "yaml"
 require 'singleton'
+require 'thread'
 require 'lock_jar/resolver'
 require 'lock_jar/dsl'
 require 'lock_jar/runtime'
@@ -25,6 +26,10 @@ module LockJar
     include Singleton
     
     attr_reader :current_resolver
+    
+    def initialize
+      @mutex = Mutex.new
+    end
     
     def resolver( opts = {} )
       if opts[:local_repo]

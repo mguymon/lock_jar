@@ -28,8 +28,8 @@ describe LockJar, "#lock" do
             "com.slackworks:modelcitizen:jar:0.2.2", "org.slf4j:slf4j-api:jar:1.6.1", 
             "commons-io:commons-io:jar:1.4"]}, 
         "runtime"=>{
-          "dependencies"=>["spec/pom.xml", "org.apache.tomcat:servlet-api:jar:6.0.35"], 
-          "resolved_dependencies"=>["org.apache.tomcat:servlet-api:jar:6.0.35"]}, 
+          "dependencies"=>["spec/pom.xml", "com.typesafe:config:jar:0.5.0"], 
+          "resolved_dependencies"=>["com.typesafe:config:jar:0.5.0"]}, 
         "test"=>{
           "dependencies"=>["spec/pom.xml", "junit:junit:jar:4.10"], 
           "resolved_dependencies"=>["junit:junit:jar:4.10", "org.jboss.unit:jboss-unit:jar:1.2.4",
@@ -137,7 +137,7 @@ describe LockJar, "#list" do
       "commons-logging:commons-logging:jar:1.1.1", "junit:junit:jar:4.7", 
       "ch.qos.logback:logback-core:jar:0.9.24", "commons-lang:commons-lang:jar:2.6", 
       "com.slackworks:modelcitizen:jar:0.2.2", "org.slf4j:slf4j-api:jar:1.6.1", 
-      "commons-io:commons-io:jar:1.4", "org.apache.tomcat:servlet-api:jar:6.0.35" ])
+      "commons-io:commons-io:jar:1.4", "com.typesafe:config:jar:0.5.0" ])
   end
   
   it "should replace dependencies with maps" do
@@ -187,7 +187,7 @@ describe LockJar, "#load" do
       File.expand_path("tmp/test-repo/com/slackworks/modelcitizen/0.2.2/modelcitizen-0.2.2.jar"), 
       File.expand_path("tmp/test-repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"), 
       File.expand_path("tmp/test-repo/commons-io/commons-io/1.4/commons-io-1.4.jar"), 
-      File.expand_path("tmp/test-repo/org/apache/tomcat/servlet-api/6.0.35/servlet-api-6.0.35.jar") ]
+      File.expand_path("tmp/test-repo/com/typesafe/config/0.5.0/config-0.5.0.jar") ]
     )
     if Naether.platform == 'java'
       lambda { include_class 'org.apache.mina.core.IoUtil' }.should_not raise_error

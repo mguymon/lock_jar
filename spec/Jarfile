@@ -5,7 +5,7 @@ jar "org.apache.mina:mina-core:2.0.4"
 pom 'spec/pom.xml'
     
 scope 'runtime' do
-    jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
+    jar 'com.typesafe:config:jar:0.5.0'
 end
 
 scope 'test' do

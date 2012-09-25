@@ -6,7 +6,10 @@ describe LockJar::Dsl do
       jarfile = LockJar::Dsl.evaluate( "spec/Jarfile" )
       
       jarfile.local_repository.should eql '~/.m2/repository'
-      jarfile.notations.should eql( {"compile"=>["org.apache.mina:mina-core:2.0.4", "spec/pom.xml"], "runtime"=>["spec/pom.xml", "org.apache.tomcat:servlet-api:jar:6.0.35"], "test"=>["spec/pom.xml", "junit:junit:jar:4.10"]}  )
+      jarfile.notations.should eql( {
+        "compile"=>["org.apache.mina:mina-core:2.0.4", "spec/pom.xml"], 
+        "runtime"=>["spec/pom.xml", "com.typesafe:config:jar:0.5.0"], 
+        "test"=>["spec/pom.xml", "junit:junit:jar:4.10"]}  )
       jarfile.repositories.should eql( ['http://mirrors.ibiblio.org/pub/mirrors/maven2'] )
     end
     

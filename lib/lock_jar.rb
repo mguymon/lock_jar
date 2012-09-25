@@ -19,6 +19,7 @@ require 'lock_jar/resolver'
 require 'lock_jar/dsl'
 require 'lock_jar/runtime'
 require 'lock_jar/version'
+require 'lock_jar/rubygems'
 
 #
 # LockJar manages Java Jars for Ruby.
@@ -168,5 +169,6 @@ module LockJar
     Runtime.instance.read_lockfile( lockfile )
   end
  
-
 end
+
+#include LockJar::Rubygems::Kernel
