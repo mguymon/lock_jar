@@ -10,7 +10,10 @@ module LockJar::Rubygems
       alias :_pre_lockjar_require :require
   
       def require( filename )
-        lock_jar_registry.load_jars_for_gems
+        spec = Gem::Specification.find_by_path( filename )
+        if spec
+          lock_jar_registry.load_gem( spec )
+        end
         _pre_lockjar_require( filename )
       end
     end

@@ -21,24 +21,28 @@ class LockJar::Registry
       end
     end
     
+    def load_gem( spec )
+      if @loaded_gems[spec.name].nil?
+        @loaded_gems[spec.name] = spec
+        gem_dir = spec.gem_dir
+  		
+        lockfile = File.join( gem_dir, "Jarfile.lock" )
+       	
+        if File.exists?( lockfile )
+       	  puts "#{spec.name} has Jarfile.lock, loading jars"
+          LockJar.load( lockfile )
+        end 
+      end
+    end
+    
     def load_jars_for_gems      
       specs = Gem.loaded_specs
       if specs 
         gems_to_check = specs.keys - @loaded_gems.keys
         if gems_to_check.size > 0
-          @loaded_gems.replace( specs )
-          
           gems_to_check.each do |key|
             spec = specs[key]
-            
-            gem_dir = spec.gem_dir
-     		
-            lockfile = File.join( gem_dir, "Jarfile.lock" )
-           	
-            if File.exists?( lockfile )
-           	  puts "#{key} #{spec.name} has Jarfile.lock, loading jars"
-              LockJar.load( lockfile )
-            end  
+            load_gem( spec )
           end 
         end
       end

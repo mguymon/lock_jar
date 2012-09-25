@@ -16,10 +16,9 @@ describe LockJar::Rubygems do
       require 'solr_sail'
     end
     
-    it "should have loaded jars" do
-      # these will match everything in the Gemfile.lock
-      lock_jar_registry.loaded_gems.keys.should eql( 
-        ["rubygems-bundler", "bundler", "rake", "diff-lcs", "git", "json", "rdoc", "jeweler", "naether", "thor", "lock_jar", "rspec-core", "rspec-expectations", "rspec-mocks", "rspec", "solr_sail", "yard"] )
+    it "should have only loaded jars for solr_sail" do
+     lock_jar_registry.loaded_gems.keys.should eql( 
+        ["solr_sail"] )
     end
     
     it "should set classpath" do
