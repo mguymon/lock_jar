@@ -27,5 +27,7 @@ describe LockJar::ClassLoader, "#isolate" do
     unless $CLASSPATH.nil?
       $CLASSPATH.to_a.join(' ').should_not =~ /commons-email-1\.2\.jar/
     end
+    
+    expect { org.apache.commons.mail.SimpleEmail.new }.to raise_error
   end
 end

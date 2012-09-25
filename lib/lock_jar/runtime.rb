@@ -16,7 +16,6 @@
 require 'rubygems'
 require "yaml"
 require 'singleton'
-require 'thread'
 require 'lock_jar/resolver'
 require 'lock_jar/dsl'
 require 'lock_jar/runtime'
@@ -28,18 +27,24 @@ module LockJar
     
     attr_reader :current_resolver
     
-    def initialize
-      @mutex = Mutex.new
-    end
-    
     def resolver( opts = {} )
-      if opts[:local_repo]
-        opts[:local_repo] = File.expand_path(opts[:local_repo])
-      end
       
       # XXX: Caches the resolver by the options. Passing in nil opts will replay
       #      from the cache. This need to change.
-      if @current_resolver.nil? || (!opts.nil? && opts != @current_resolver.opts)
+      
+      unless opts.nil?
+        if opts[:local_repo]
+          opts[:local_repo] = File.expand_path(opts[:local_repo])
+        end
+      else
+        if @current_resolver
+          opts = @current_resolver.opts
+        else
+          opts = {}
+        end
+      end
+      
+      if @current_resolver.nil? || opts != @current_resolver.opts
         @current_resolver = LockJar::Resolver.new( opts )
       end
       
