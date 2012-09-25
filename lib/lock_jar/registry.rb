@@ -4,7 +4,6 @@ class LockJar::Registry
     
     attr_accessor :loaded_gems
     attr_accessor :loaded_jars
-    attr_accessor :checked_filenames
     
     def initialize
       @loaded_gems = {}
