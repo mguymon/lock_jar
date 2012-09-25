@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "lock_jar"
-  s.version = "0.6.1"
+  s.version = "0.6.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Guymon"]
@@ -54,20 +54,20 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<naether>, ["~> 0.9.0"])
-      s.add_runtime_dependency(%q<thor>, ["~> 0.14.6"])
+      s.add_runtime_dependency(%q<thor>, ["> 0.14.0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.9.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_development_dependency(%q<yard>, ["~> 0.8.0"])
     else
       s.add_dependency(%q<naether>, ["~> 0.9.0"])
-      s.add_dependency(%q<thor>, ["~> 0.14.6"])
+      s.add_dependency(%q<thor>, ["> 0.14.0"])
       s.add_dependency(%q<rspec>, ["~> 2.9.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_dependency(%q<yard>, ["~> 0.8.0"])
     end
   else
     s.add_dependency(%q<naether>, ["~> 0.9.0"])
-    s.add_dependency(%q<thor>, ["~> 0.14.6"])
+    s.add_dependency(%q<thor>, ["> 0.14.0"])
     s.add_dependency(%q<rspec>, ["~> 2.9.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
     s.add_dependency(%q<yard>, ["~> 0.8.0"])
