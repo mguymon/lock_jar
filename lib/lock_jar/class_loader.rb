@@ -7,7 +7,7 @@ module LockJar
       # XXX: ensure Naether has been loaded, this should be handled less
       #     clumsily
       LockJar::Runtime.instance.resolver(nil)
-      @class_loader = com.tobedevoured.naether.PathClassLoader.new
+      @class_loader = com.tobedevoured.naether.PathClassLoader.new(JRuby.runtime.jruby_class_loader)
       
       jars = LockJar.list( lockfile, :local_paths => true )
       jars.each do |jar|
@@ -19,8 +19,9 @@ module LockJar
       instance_eval(&blk)      
     end
     
-    def create( clazz, *args )
+    def new_instance( clazz, *args )
       @class_loader.newInstance( clazz, *args )      
     end
+    
   end
 end
