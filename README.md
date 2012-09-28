@@ -126,6 +126,8 @@ or directly load all Jars into the classpath
 
 Do not forget, if you change your _Jarfile_, you have to re-generate the _Jarfile.lock_.
   
+See also [loading Jars into a custom ClassLoader](https://github.com/mguymon/lock_jar/wiki/ClassLoader).
+
 ### Shortcuts
 
 #### Skipping the Jarfile
