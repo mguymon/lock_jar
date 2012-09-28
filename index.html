@@ -225,6 +225,8 @@ scopes:
 
 <p>Do not forget, if you change your <em>Jarfile</em>, you have to re-generate the <em>Jarfile.lock</em>.</p>
 
+<p>See also <a href="https://github.com/mguymon/lock_jar/wiki/ClassLoader">loading Jars into a custom ClassLoader</a>.</p>
+
 <h3>Shortcuts</h3>
 
 <h4>Skipping the Jarfile</h4>
@@ -280,6 +282,8 @@ end
 
 <h2>Gem Integration</h2>
 
+<h3>Installing</h3>
+
 <p>LockJar can be triggered when a Gem is installed by using a <a href="http://docs.rubygems.org/read/chapter/20#extensions">Gem extension</a>
 of type <em>Rakefile</em>. The cavaet is the task to install the jars must be the default for the Rakefile.</p>
 
@@ -304,13 +308,24 @@ task :prepare do
 end
 </code></pre>
 
-<h3>Work around for Rakefile default</h3>
+<h4>Work around for Rakefile default</h4>
 
 <p>The downside of using the Gem extension Rakefile is it requires the default to 
 point at the task to download the jars (from the example Rakefile, 
 <code>task :default =&gt; :prepare</code>). To get around this, I used a Rakefile called 
 <em>PostInstallRakefile</em> to handle the <code>task :prepare</code>. When packaging the gem, <em>PostInstallRakefile</em> is
 renamed to <code>Rakefile</code>.</p>
+
+<h3>Loading</h3>
+
+<p>With the Jars already installed, loading the classpath for the Gem is simple. 
+As part of the load process for the Gem (an entry file that is required, etc) use the following:</p>
+
+<pre><code>  #get jarfile relative the gem dir
+  lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
+
+  LockJar.load( :lockfile =&gt; lockfile )
+</code></pre>
 
 <h2>Buildr Integration</h2>
 
