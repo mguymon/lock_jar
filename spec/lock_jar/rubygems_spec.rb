@@ -32,9 +32,12 @@ describe LockJar::Rubygems do
       
       # Start and stop solr
       # XXX: an assertion that the java is properly being called
-      @server = com.tobedevoured.solrsail.JettyServer.new( 'tmp/solr' )
-      @server.start
-      @server.stop
+      config = com.tobedevoured.solrsail.SolrConfig.new( 'tmp/solr')
+      config.install
+      
+      server = com.tobedevoured.solrsail.JettyServer.new( 'tmp/solr' )
+      server.start
+      server.stop
     end
   end
 end
