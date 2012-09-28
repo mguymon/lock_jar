@@ -38,8 +38,8 @@ describe LockJar::ClassLoader, "#isolate" do
       
       map = LockJar::ClassLoader.new( 'tmp/IsolateJarfile.lock' ).isolate do
           factory = new_instance( 'com.fasterxml.jackson.core.JsonFactory' )
-          mapper = new_instance( 'com.fasterxml.jackson.databind.ObjectMapper', factory); 
-          mapper.readValue(json, java.util.Map.java_class); 
+          mapper = new_instance( 'com.fasterxml.jackson.databind.ObjectMapper', factory) 
+          mapper.readValue(json, java.util.Map.java_class)
       end
       
       map.get('test1').should eql "1test1"
