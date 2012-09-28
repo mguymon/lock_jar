@@ -52,7 +52,7 @@ module LockJar
     # @param [String] path of Jar or directory to add to ClassLoader
     # @return [Boolean] if added
     def add_path( path )
-      @class_loader.addPath( jar )
+      @class_loader.addPath( path )
     end
     
     #
