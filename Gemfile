@@ -10,4 +10,5 @@ group :development do
   gem "jeweler", "~> 1.8.4"
   gem "yard", "~> 0.8.0"
   gem 'solr_sail', '~>0.0.6'
+  gem 'jruby-openssl',   :platforms => :jruby
 end
