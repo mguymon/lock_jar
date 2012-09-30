@@ -4,10 +4,22 @@ class LockJar::Registry
     
     attr_accessor :loaded_gems
     attr_accessor :loaded_jars
+    attr_accessor :loaded_lockfiles
     
     def initialize
       @loaded_gems = {}
       @loaded_jars = []
+      @loaded_lockfiles = []
+    end
+    
+    def lockfile_registered?( lockfile )
+      @loaded_lockfiles.include? lockfile
+    end
+    
+    def register_lockfile( lockfile )
+      unless lockfile_registered? lockfile
+        @loaded_lockfiles << lockfile
+      end
     end
     
     def register_jars( jars )

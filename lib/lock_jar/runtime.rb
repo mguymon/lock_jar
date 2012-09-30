@@ -206,10 +206,22 @@ module LockJar
         end
       end
       
+      # Load paths from a lockfile or block. Paths are loaded once per lockfile.
+      # 
+      # @param [String] jarfile_lock the lockfile
+      # @param [Array] scopes to load into classpath
+      # @param [Hash] opts
+      # @param [Block] blk
       def load( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
+        
+        # lockfile is only loaded once
+        if !jarfile_lock.nil? && LockJar::Registry.instance.lockfile_registered?( jarfile_lock )
+          return  
+        end
+        
         if jarfile_lock
           lockfile = read_lockfile( jarfile_lock )
-  
+          
           if opts[:local_repo].nil? && lockfile['local_repo']
             opts[:local_repo] = lockfile['local_repo']
           end
@@ -223,6 +235,7 @@ module LockJar
           end
         end
         
+        LockJar::Registry.instance.register_lockfile( jarfile_lock )
         dependencies = LockJar::Registry.instance.register_jars( list( jarfile_lock, scopes, opts, &blk ) )
                 
         resolver(opts).load_to_classpath( dependencies )
