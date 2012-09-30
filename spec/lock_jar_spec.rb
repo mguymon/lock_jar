@@ -38,7 +38,7 @@ describe LockJar, "#lock" do
     })
   end
   
-  it "should not replace dependencies with maps" do
+  it "should replace dependencies with map" do
     dsl = LockJar::Dsl.evaluate do
       map 'junit:junit:4.10', 'tmp'
       jar 'junit:junit:4.10'
@@ -173,8 +173,10 @@ describe LockJar, "#load" do
     
 
     LockJar.lock( "spec/Jarfile", :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
-          
+    
     jars = LockJar.load( 'tmp/Jarfile.lock', ['compile', 'runtime'], :local_repo => 'tmp/test-repo' )
+    LockJar::Registry.instance.lockfile_registered?( "tmp/Jarfile.lock" ).should be_true
+    
     jars.should eql( [
       File.expand_path("tmp/test-repo/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar"), 
       File.expand_path("tmp/test-repo/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 

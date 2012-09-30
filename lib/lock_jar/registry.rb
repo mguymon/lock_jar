@@ -13,12 +13,14 @@ class LockJar::Registry
     end
     
     def lockfile_registered?( lockfile )
-      @loaded_lockfiles.include? lockfile
+      if lockfile
+        @loaded_lockfiles.include? File.expand_path( lockfile )
+      end
     end
     
     def register_lockfile( lockfile )
-      unless lockfile_registered? lockfile
-        @loaded_lockfiles << lockfile
+      if lockfile && !lockfile_registered?( lockfile )
+        @loaded_lockfiles << File.expand_path( lockfile )
       end
     end
     

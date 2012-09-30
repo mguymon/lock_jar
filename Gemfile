@@ -9,6 +9,6 @@ group :development do
   gem "rspec", "~> 2.9.0"
   gem "jeweler", "~> 1.8.4"
   gem "yard", "~> 0.8.0"
-  gem 'solr_sail', '~>0.0.6'
+  gem 'solr_sail', '~>0.0.6',   :platforms => :jruby
   gem 'jruby-openssl',   :platforms => :jruby
 end
