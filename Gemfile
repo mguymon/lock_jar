@@ -1,3 +1,5 @@
+require 'lib/lock_jar/bundler'
+
 source "http://rubygems.org"
 
 gem "naether", "~> 0.9.0"
