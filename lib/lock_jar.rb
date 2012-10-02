@@ -16,10 +16,11 @@
 require "yaml"
 require 'rubygems'
 require 'lock_jar/resolver'
-require 'lock_jar/dsl'
 require 'lock_jar/runtime'
 require 'lock_jar/version'
 require 'lock_jar/rubygems'
+require 'lock_jar/domain/lockfile'
+require 'lock_jar/domain/dsl'
 
 #
 # LockJar manages Java Jars for Ruby.
@@ -161,12 +162,12 @@ module LockJar
   end
   
   #
-  # Read a Jafile.lock and convert it to a Hash
+  # Read a Jafile.lock and convert it to a LockJar::Domain::Lockfile
   #
   # @param [String] lockfile path to lockfile
   # @return [Hash] Lock Data
   def self.read( lockfile )
-    Runtime.instance.read_lockfile( lockfile )
+    LockJar::Domain::Lockfile.read( lockfile )
   end
  
 end

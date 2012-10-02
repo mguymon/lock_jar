@@ -15,7 +15,8 @@ describe LockJar, "#lock" do
     File.exists?( 'tmp/Jarfile.lock' ).should be_true
     
     lockfile = LockJar.read('tmp/Jarfile.lock')
-    lockfile.should eql( {
+    lockfile.to_hash.should eql( {
+      "version" => 1.0,
       "local_repository"=>"~/.m2/repository", 
       "scopes"=>{
         "compile"=>{
@@ -46,7 +47,8 @@ describe LockJar, "#lock" do
     
     LockJar.lock( dsl, :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
     lockfile = LockJar.read('tmp/Jarfile.lock')
-    lockfile.should eql( {
+    lockfile.to_hash.should eql( {
+      "version" => 1.0,
       "repositories" => ["http://repo1.maven.org/maven2/", 'http://mirrors.ibiblio.org/pub/mirrors/maven2', "http://repository.jboss.org/nexus/content/groups/public-jboss"],
       "maps"=>{"junit:junit:4.10"=>["tmp"]}, 
       "scopes"=>{
@@ -63,7 +65,8 @@ describe LockJar, "#lock" do
     LockJar.lock( dsl, :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
     File.exists?( 'tmp/Jarfile.lock' ).should be_true
     lockfile = LockJar.read('tmp/Jarfile.lock')
-    lockfile.should eql( {
+    lockfile.to_hash.should eql( {
+      "version" => 1.0,
       "excludes"=>["commons-logging", "logkit"], 
       "scopes"=>{
           "compile"=>{
@@ -87,7 +90,8 @@ describe LockJar, "#lock" do
     File.exists?( 'tmp/NoRepoJarfile.lock' ).should be_true
     
     lockfile = LockJar.read('tmp/NoRepoJarfile.lock')
-    lockfile.should eql( {
+    lockfile.to_hash.should eql( {
+      "version" => 1.0,
       "scopes"=>{
         "compile"=>{
           "dependencies"=>["org.eclipse.jetty:jetty-servlet:8.1.3.v20120416"], 

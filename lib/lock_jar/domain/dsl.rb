@@ -16,7 +16,7 @@
 require 'lock_jar/maven'
 
 module LockJar
-  class Dsl
+  class Domain::Dsl
 
     attr_reader :notations
     attr_reader :repositories
