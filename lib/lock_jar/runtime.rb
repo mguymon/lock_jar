@@ -155,7 +155,8 @@ module LockJar
         end
 
         File.open( opts[:lockfile] || "Jarfile.lock", "w") do |f|
-          f.write( I18nYamlSorter::Sorter.new(StringIO.new(lock_data.to_yaml)).sort )
+          #f.write( I18nYamlSorter::Sorter.new(StringIO.new(lock_data.to_yaml)).sort )
+          f.write( lock_data.to_yaml )
         end
         
         lock_data

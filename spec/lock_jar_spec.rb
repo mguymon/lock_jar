@@ -20,20 +20,21 @@ describe LockJar, "#lock" do
       "scopes"=>{
         "compile"=>{
           "dependencies"=>["org.apache.mina:mina-core:2.0.4", "spec/pom.xml"], 
-          "resolved_dependencies"=>["com.metapossum:metapossum-scanner:jar:1.0", 
-            "org.apache.mina:mina-core:jar:2.0.4", "commons-beanutils:commons-beanutils:jar:1.8.3", 
-            "ch.qos.logback:logback-classic:jar:0.9.24", 
-            "commons-logging:commons-logging:jar:1.1.1", "junit:junit:jar:4.7", 
-            "ch.qos.logback:logback-core:jar:0.9.24", "commons-lang:commons-lang:jar:2.6", 
-            "com.slackworks:modelcitizen:jar:0.2.2", "org.slf4j:slf4j-api:jar:1.6.1", 
-            "commons-io:commons-io:jar:1.4"]}, 
+          "resolved_dependencies"=>[
+            "ch.qos.logback:logback-classic:jar:0.9.24", "ch.qos.logback:logback-core:jar:0.9.24", 
+            "com.metapossum:metapossum-scanner:jar:1.0", "com.slackworks:modelcitizen:jar:0.2.2", 
+            "commons-beanutils:commons-beanutils:jar:1.8.3", "commons-io:commons-io:jar:1.4", 
+            "commons-lang:commons-lang:jar:2.6", "commons-logging:commons-logging:jar:1.1.1",
+            "junit:junit:jar:4.7", "org.apache.mina:mina-core:jar:2.0.4", 
+            "org.slf4j:slf4j-api:jar:1.6.1"]}, 
         "runtime"=>{
-          "dependencies"=>["spec/pom.xml", "com.typesafe:config:jar:0.5.0"], 
+          "dependencies"=>["com.typesafe:config:jar:0.5.0", "spec/pom.xml"], 
           "resolved_dependencies"=>["com.typesafe:config:jar:0.5.0"]}, 
         "test"=>{
-          "dependencies"=>["spec/pom.xml", "junit:junit:jar:4.10"], 
-          "resolved_dependencies"=>["junit:junit:jar:4.10", "org.jboss.unit:jboss-unit:jar:1.2.4",
-            "org.hamcrest:hamcrest-core:jar:1.1"]}}, 
+          "dependencies"=>["junit:junit:jar:4.10", "spec/pom.xml"], 
+          "resolved_dependencies"=>[
+            "junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1", 
+            "org.jboss.unit:jboss-unit:jar:1.2.4"]}}, 
       "repositories"=>["http://repo1.maven.org/maven2/", "http://mirrors.ibiblio.org/pub/mirrors/maven2", "http://repository.jboss.org/nexus/content/groups/public-jboss"]
     })
   end
@@ -68,9 +69,10 @@ describe LockJar, "#lock" do
       "scopes"=>{
           "compile"=>{
             "dependencies"=>["opensymphony:oscache:jar:2.4.1"], 
-            "resolved_dependencies"=>["log4j:log4j:jar:1.2.12", "javax.jms:jms:jar:1.1", 
-              "opensymphony:oscache:jar:2.4.1", "javax.servlet:servlet-api:jar:2.3", 
-              "avalon-framework:avalon-framework:jar:4.1.3"]}}, 
+            "resolved_dependencies"=>[
+              "avalon-framework:avalon-framework:jar:4.1.3", "javax.jms:jms:jar:1.1", 
+              "javax.servlet:servlet-api:jar:2.3", "log4j:log4j:jar:1.2.12", 
+              "opensymphony:oscache:jar:2.4.1"]}}, 
       "repositories"=>["http://repo1.maven.org/maven2/", 
         "http://mirrors.ibiblio.org/pub/mirrors/maven2", 
         "http://repository.jboss.org/nexus/content/groups/public-jboss"]
@@ -91,14 +93,15 @@ describe LockJar, "#lock" do
       "scopes"=>{
         "compile"=>{
           "dependencies"=>["org.eclipse.jetty:jetty-servlet:8.1.3.v20120416"], 
-          "resolved_dependencies"=>["org.eclipse.jetty:jetty-util:jar:8.1.3.v20120416", 
-            "org.eclipse.jetty:jetty-io:jar:8.1.3.v20120416", 
+          "resolved_dependencies"=>[
             "org.eclipse.jetty.orbit:javax.servlet:jar:3.0.0.v201112011016", 
-            "org.eclipse.jetty:jetty-security:jar:8.1.3.v20120416", 
             "org.eclipse.jetty:jetty-continuation:jar:8.1.3.v20120416", 
-            "org.eclipse.jetty:jetty-servlet:jar:8.1.3.v20120416", 
+            "org.eclipse.jetty:jetty-http:jar:8.1.3.v20120416", 
+            "org.eclipse.jetty:jetty-io:jar:8.1.3.v20120416", 
+            "org.eclipse.jetty:jetty-security:jar:8.1.3.v20120416", 
             "org.eclipse.jetty:jetty-server:jar:8.1.3.v20120416", 
-            "org.eclipse.jetty:jetty-http:jar:8.1.3.v20120416"]}}, 
+            "org.eclipse.jetty:jetty-servlet:jar:8.1.3.v20120416",
+            "org.eclipse.jetty:jetty-util:jar:8.1.3.v20120416"]}}, 
       "repositories"=>["http://repo1.maven.org/maven2/"]})
   end
 end
@@ -109,18 +112,20 @@ describe LockJar, "#install" do
     LockJar.lock( "spec/Jarfile", :download_artifacts => false, :local_repo => 'tmp/test-repo-install', :lockfile => 'tmp/Jarfile.lock' )
           
     jars = LockJar.install( 'tmp/Jarfile.lock', ['compile'], :local_repo => 'tmp/test-repo-install' )
-    jars.should eql( 
-      [ File.expand_path( "tmp/test-repo-install/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar"), 
-        File.expand_path( "tmp/test-repo-install/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3.jar"), 
-        File.expand_path( "tmp/test-repo-install/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 
-        File.expand_path( "tmp/test-repo-install/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar" ), 
-        File.expand_path( "tmp/test-repo-install/junit/junit/4.7/junit-4.7.jar"), 
-        File.expand_path( "tmp/test-repo-install/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"), 
-        File.expand_path( "tmp/test-repo-install/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar"), 
-        File.expand_path( "tmp/test-repo-install/com/slackworks/modelcitizen/0.2.2/modelcitizen-0.2.2.jar"), 
-        File.expand_path( "tmp/test-repo-install/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"), 
-        File.expand_path( "tmp/test-repo-install/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"), 
-        File.expand_path( "tmp/test-repo-install/commons-io/commons-io/1.4/commons-io-1.4.jar")] )
+    jars.should eql([
+      File.expand_path("tmp/test-repo-install/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar"), 
+      File.expand_path("tmp/test-repo-install/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar"), 
+      File.expand_path("tmp/test-repo-install/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar"), 
+      File.expand_path("tmp/test-repo-install/com/slackworks/modelcitizen/0.2.2/modelcitizen-0.2.2.jar"), 
+      File.expand_path("tmp/test-repo-install/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3.jar"), 
+      File.expand_path("tmp/test-repo-install/commons-io/commons-io/1.4/commons-io-1.4.jar"), 
+      File.expand_path("tmp/test-repo-install/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"), 
+      File.expand_path("tmp/test-repo-install/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"), 
+      File.expand_path("tmp/test-repo-install/junit/junit/4.7/junit-4.7.jar"), 
+      File.expand_path("tmp/test-repo-install/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 
+      File.expand_path("tmp/test-repo-install/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar") 
+
+    ])
   end
   
 end
@@ -132,12 +137,12 @@ describe LockJar, "#list" do
           
     jars = LockJar.list( 'tmp/Jarfile.lock', ['compile', 'runtime', 'bad scope'], :local_repo => 'tmp/test-repo' )
     jars.should eql([
-      "com.metapossum:metapossum-scanner:jar:1.0", "org.apache.mina:mina-core:jar:2.0.4", 
-      "commons-beanutils:commons-beanutils:jar:1.8.3", "ch.qos.logback:logback-classic:jar:0.9.24", 
-      "commons-logging:commons-logging:jar:1.1.1", "junit:junit:jar:4.7", 
-      "ch.qos.logback:logback-core:jar:0.9.24", "commons-lang:commons-lang:jar:2.6", 
-      "com.slackworks:modelcitizen:jar:0.2.2", "org.slf4j:slf4j-api:jar:1.6.1", 
-      "commons-io:commons-io:jar:1.4", "com.typesafe:config:jar:0.5.0" ])
+      "ch.qos.logback:logback-classic:jar:0.9.24", "ch.qos.logback:logback-core:jar:0.9.24", 
+       "com.metapossum:metapossum-scanner:jar:1.0", "com.slackworks:modelcitizen:jar:0.2.2", 
+       "commons-beanutils:commons-beanutils:jar:1.8.3", "commons-io:commons-io:jar:1.4", 
+       "commons-lang:commons-lang:jar:2.6", "commons-logging:commons-logging:jar:1.1.1", 
+       "junit:junit:jar:4.7", "org.apache.mina:mina-core:jar:2.0.4", 
+       "org.slf4j:slf4j-api:jar:1.6.1", "com.typesafe:config:jar:0.5.0" ])
   end
   
   it "should replace dependencies with maps" do
@@ -177,20 +182,20 @@ describe LockJar, "#load" do
     jars = LockJar.load( 'tmp/Jarfile.lock', ['compile', 'runtime'], :local_repo => 'tmp/test-repo' )
     LockJar::Registry.instance.lockfile_registered?( "tmp/Jarfile.lock" ).should be_true
     
-    jars.should eql( [
-      File.expand_path("tmp/test-repo/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar"), 
-      File.expand_path("tmp/test-repo/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 
-      File.expand_path("tmp/test-repo/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3.jar"), 
+    jars.should eql([
       File.expand_path("tmp/test-repo/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar"), 
+      File.expand_path("tmp/test-repo/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar"), 
+      File.expand_path("tmp/test-repo/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar"), 
+      File.expand_path("tmp/test-repo/com/slackworks/modelcitizen/0.2.2/modelcitizen-0.2.2.jar"), 
+      File.expand_path("tmp/test-repo/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3.jar"), 
+      File.expand_path("tmp/test-repo/commons-io/commons-io/1.4/commons-io-1.4.jar"), 
+      File.expand_path("tmp/test-repo/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"), 
       File.expand_path("tmp/test-repo/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"), 
       File.expand_path("tmp/test-repo/junit/junit/4.7/junit-4.7.jar"), 
-      File.expand_path("tmp/test-repo/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar"), 
-      File.expand_path("tmp/test-repo/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"), 
-      File.expand_path("tmp/test-repo/com/slackworks/modelcitizen/0.2.2/modelcitizen-0.2.2.jar"), 
+      File.expand_path("tmp/test-repo/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 
       File.expand_path("tmp/test-repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"), 
-      File.expand_path("tmp/test-repo/commons-io/commons-io/1.4/commons-io-1.4.jar"), 
-      File.expand_path("tmp/test-repo/com/typesafe/config/0.5.0/config-0.5.0.jar") ]
-    )
+      File.expand_path("tmp/test-repo/com/typesafe/config/0.5.0/config-0.5.0.jar"),
+    ])
     if Naether.platform == 'java'
       lambda { include_class 'org.apache.mina.core.IoUtil' }.should_not raise_error
     else
