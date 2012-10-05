@@ -147,8 +147,8 @@ module LockJar
             end
             
             lock_data['scopes'][scope] = { 
-              'dependencies' => notations,
-              'resolved_dependencies' => resolved_notations } 
+              'dependencies' => notations.sort,
+              'resolved_dependencies' => resolved_notations.sort } 
           end
         end
     
