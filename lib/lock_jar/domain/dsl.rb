@@ -16,169 +16,138 @@
 require 'lock_jar/maven'
 
 module LockJar
-  class Domain::Dsl
-
-    attr_reader :notations
-    attr_reader :repositories
-    attr_reader :local_repository
-    attr_reader :scopes
-    attr_reader :maps
-    attr_reader :excludes
-    
-    class << self
-    
-      def evaluate(jarfile = nil, &blk)
-        if jarfile.nil? && blk.nil?
-          raise "jarfile or block must be set"
-        end
-        
-        
-        builder = new
-        
-        if jarfile
-          builder.instance_eval(builder.read_file(jarfile.to_s), jarfile.to_s, 1)
-        end      
-            
-        if blk
-          builder.instance_eval(&blk)
-        end      
-        
-        builder
-      end
-      
-      def scopes
-        ['compile', 'runtime', 'test']
-      end
-    end
-    
-    def initialize
-
-      @repositories = []
-      @notations = {}
-       
-      @scope_changed = false
-        
-      LockJar::Dsl.scopes.each do |scope|
-        @notations[scope] = []
-      end
-        
-      @present_scope = 'compile'
-      
-      @local_repository = nil
-      @maps = {}
-      @excludes = []
-    end
-    
-    def exclude(*notations)
-      @excludes += notations
-    end
-    
-    def jar(notation, *args)
-      opts = {}
-      if args.last.is_a? Hash
-        opts.merge!( args.last )
-      end
-      
-      artifact( notation, opts )
-    end
-
-    def local( path )
-      @local_repository = path
-    end
-    
-    def merge( dsl )
-      @repositories = (@repositories + dsl.repositories).uniq
-      
-      dsl.notations.each do |scope, notations|
-        @notations[scope] = (@notations[scope] + notations).uniq         
-      end
-      
-      dsl.maps.each do |notation,paths|
-        existing_map = @maps[notation]
-        if existing_map
-          @maps[notation] = (existing_map + paths).uniq
-        else
-          @maps[notation] = paths
-        end
-      end
-      
-      dsl.excludes.each do |exclude|
-        @excludes << exclude
-      end
-      
-      self
-    end
+  module Domain
+    class Dsl
   
-    # Map a dependency to another dependency or local directory.
-    def map( notation, *args )
-      @maps[notation] = args
-    end
-    
-    # Pom default to all scopes, unless nested in a scope
-    def pom(path, *args)
-      opts = { }
-        
-      if args.last.is_a? Hash
-        opts.merge!( args.last )
-      end
+      DEFAULT_GROUP = ['default']
       
-      # if not scope opts and default scope, set to all
-      unless opts[:scope] || opts[:scopes] || @scope_changed
-        opts[:scope] = Dsl.scopes
-      end
+      attr_accessor :notations, :repositories, :local_repository, :groups,
+                    :maps, :excludes
       
-      artifact( path, opts )
-    end
-
-    def read_file(file)
-      File.open(file, "rb") { |f| f.read }
-    end
-    
-    def repository( url, opts = {} )
-      @repositories << url
-    end
-
-    def scope(*scopes, &blk)
-       @scope_changed = true
-       scopes.each do |scope|
-         @present_scope = scope.to_s
-         yield
-       end
-       @scope_changed = false
-       @present_scope = 'compile'
-    end   
-    
-    private 
-    def artifact(artifact, opts)
+      class << self
       
-      scopes = opts[:scope] || opts[:scopes] || opts[:group]
-      
-      if scopes
-        
-        unless scopes.is_a? Array
-          scopes = [scopes]
-        end
-        
-        # include present scope if within a scope block
-        if @scope_changed
-          scopes << @present_scope
-        end
-        
-      else
-        scopes = [@present_scope]
-      end
-      
-      if artifact
-        scopes.uniq.each do |scope|
-          scope = 'compile' if scope.to_s == 'development'
+        def evaluate(jarfile = nil, &blk)
+          if jarfile.nil? && blk.nil?
+            raise "jarfile or block must be set"
+          end
           
-          if @notations[scope.to_s]
-            @notations[scope.to_s] << artifact
+          
+          builder = new
+          
+          if jarfile
+            builder.instance_eval(builder.read_file(jarfile.to_s), jarfile.to_s, 1)
+          end      
+              
+          if blk
+            builder.instance_eval(&blk)
+          end      
+          
+          builder
+        end
+        
+      end
+      
+      def initialize
+  
+        @repositories = []
+        @notations = { 'default' => [] }
+         
+        @group_changed = false
+          
+        @present_group = 'default'
+        
+        @local_repository = nil
+        @maps = {}
+        @excludes = []
+      end
+      
+      def exclude(*notations)
+        @excludes += notations
+      end
+      
+      def jar(notation, *args)
+        opts = {}
+        if args.last.is_a? Hash
+          opts.merge!( args.last )
+        end
+        
+        artifact( notation, opts )
+      end
+  
+      def local_repo( path )
+        @local_repository = path
+      end
+      
+      # Map a dependency to another dependency or local directory.
+      def map( notation, *args )
+        @maps[notation] = args
+      end
+      
+      # 
+      def pom(path, *args)
+        if @group_changed
+          warn "Changing group has no affect on pom"
+        end
+        
+        opts = { }
+          
+        if args.last.is_a? Hash
+          opts.merge!( args.last )
+        end
+        
+        artifact( path, opts )
+      end
+  
+      def repository( url, opts = {} )
+        @repositories << url
+      end
+  
+      def group(*groups, &blk)
+         @group_changed = true
+         groups.each do |group|
+           @present_group = group.to_s
+           yield
+         end
+         @group_changed = false
+         @present_group = 'default'
+      end   
+      
+      # @deprecated Please use {#group} instead
+      def scope(*scopes, &blk)
+        warn "[DEPRECATION] `scope` is deprecated.  Please use `group` instead."
+        group(*scopes,&blk)
+      end
+      
+      private 
+      def artifact(artifact, opts)
+        
+        groups = opts[:group] || opts[:groups] || opts[:group]
+        
+        if groups
+          
+          unless groups.is_a? Array
+            groups = [groups]
+          end
+          
+          # include present group if within a group block
+          if @group_changed
+            groups << @present_group
+          end
+          
+        else
+          groups = [@present_group]
+        end
+        
+        if artifact
+          groups.uniq.each do |group|
+            group_key = group.to_s
+            @notations[group_key] = [] unless @notations[group_key]
+            @notations[group_key] << artifact
           end
         end
+        
       end
       
     end
-    
   end
 end

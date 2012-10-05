@@ -14,12 +14,11 @@
 # the License.
 
 require 'rubygems'
-require "yaml"
 require 'singleton'
 require 'lock_jar/resolver'
-require 'lock_jar/dsl'
 require 'lock_jar/runtime'
 require 'lock_jar/registry'
+require 'lock_jar/domain/dsl'
 require 'lock_jar/domain/lockfile'
 
 module LockJar
@@ -72,15 +71,15 @@ module LockJar
         lock_jar_file = nil
         
         if jarfile
-          if jarfile.is_a? LockJar::Dsl
+          if jarfile.is_a? LockJar::Domain::Dsl
             lock_jar_file = jarfile
           else
-            lock_jar_file = LockJar::Dsl.evaluate( jarfile )
+            lock_jar_file = LockJar::Domain::Dsl.evaluate( jarfile )
           end
         end
         
         unless blk.nil?
-          dsl = LockJar::Dsl.evaluate(&blk)
+          dsl = LockJar::Domain::Dsl.evaluate(&blk)
           if lock_jar_file.nil?
             lock_jar_file = dsl
           else
@@ -152,7 +151,7 @@ module LockJar
         end
         
         unless blk.nil?
-          dsl = LockJar::Dsl.evaluate(&blk)
+          dsl = LockJar::Domain::Dsl.evaluate(&blk)
           dependencies += dsl_dependencies( dsl, scopes )
           maps = dsl.maps
         end
@@ -210,7 +209,7 @@ module LockJar
         end
         
         unless blk.nil?
-          dsl = LockJar::Dsl.evaluate(&blk)
+          dsl = LockJar::Domain::Dsl.evaluate(&blk)
           
           if opts[:local_repo].nil? && dsl.local_repository
             opts[:local_repo] = dsl.local_repository
