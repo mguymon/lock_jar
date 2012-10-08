@@ -7,7 +7,7 @@ module LockJar
       DEFAULT_VERSION = 1.0
       
       attr_accessor :local_repository, :maps, :excludes,
-                    :repositories, :version, :scopes
+                    :repositories, :version, :groups
       attr_reader :force_utf8
       
       
@@ -21,7 +21,7 @@ module LockJar
         lockfile.local_repository = lock_data['local_repository']
         lockfile.maps = lock_data['maps'] || []
         lockfile.excludes = lock_data['excludes'] || []
-        lockfile.scopes = lock_data['scopes'] || {}
+        lockfile.groups = lock_data['groups'] || {}
         lockfile.repositories = lock_data['repositories'] || []
         
         lockfile
@@ -29,7 +29,7 @@ module LockJar
       
       def initialize
         @force_utf8 ||= RUBY_VERSION =~ /^1.9/
-        @scopes = {}
+        @groups = {}
         @maps = []
         @excludes = []
         @repositories = []
@@ -60,11 +60,11 @@ module LockJar
           end
         end
         
-        lock_data['scopes'] = scopes
+        lock_data['groups'] = groups
         
         #if @force_utf8
-        #  lock_data['scopes'].each do |scope, scope_notations|
-        #    scope_notations.map! { |notation| notation.force_encoding("UTF-8") }
+        #  lock_data['groups'].each do |group, group_notations|
+        #    group_notations.map! { |notation| notation.force_encoding("UTF-8") }
         #  end
         #end
         

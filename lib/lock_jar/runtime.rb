@@ -14,6 +14,7 @@
 # the License.
 
 require 'rubygems'
+require "yaml"
 require 'singleton'
 require 'lock_jar/resolver'
 require 'lock_jar/runtime'
@@ -51,8 +52,8 @@ module LockJar
       @current_resolver
     end
     
-    def install( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
-      deps = list( jarfile_lock, scopes, opts, &blk )
+    def install( jarfile_lock, groups = ['compile', 'runtime'], opts = {}, &blk )
+      deps = list( jarfile_lock, groups, opts, &blk )
       
       lockfile = LockJar::Domain::Lockfile.read( jarfile_lock )
       lockfile.repositories.each do |repo|
@@ -115,13 +116,19 @@ module LockJar
         default_resolved_notations = []
         if default_notations && !default_notations.empty?
            default_resolved_notations = resolver(opts).resolve( default_notations, opts[:download] == true )
-        
-          lockfile.scopes['default'] = { 
-              'dependencies' => notations,
-              'resolved_dependencies' => resolved_notations } 
+          
+          if lockfile.excludes
+            lockfile.excludes.each do |exclude|
+              default_resolved_notations.delete_if { |dep| dep =~ /#{exclude}/ }
+            end
+          end
+          
+          lockfile.groups['default'] = { 
+              'dependencies' => sort_notations(default_notations),
+              'resolved_dependencies' => default_resolved_notations.sort } 
         end
         
-        lock_jar_file.notations.each do |scope, notations|
+        lock_jar_file.notations.each do |group, notations|
           
           dependencies = []
           notations.each do |notation|
@@ -148,9 +155,9 @@ module LockJar
               end
             end
             
-            lockfile.scopes[scope] = { 
-              'dependencies' => notations,
-              'resolved_dependencies' => resolved_notations } 
+            lockfile.groups[group] = { 
+              'dependencies' => sort_notations(notations),
+              'resolved_dependencies' => resolved_notations.sort } 
           end
         end
     
@@ -159,19 +166,19 @@ module LockJar
         lockfile
       end
     
-      def list( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
+      def list( jarfile_lock, groups = ['default'], opts = {}, &blk )
         dependencies = []
         maps = []
             
         if jarfile_lock
           lockfile = LockJar::Domain::Lockfile.read( jarfile_lock)
-          dependencies += lockfile_dependencies( lockfile, scopes )
+          dependencies += lockfile_dependencies( lockfile, groups )
           maps = lockfile.maps
         end
         
         unless blk.nil?
           dsl = LockJar::Domain::Dsl.evaluate(&blk)
-          dependencies += dsl_dependencies( dsl, scopes )
+          dependencies += dsl_dependencies( dsl, groups )
           maps = dsl.maps
         end
         
@@ -209,10 +216,10 @@ module LockJar
       # Load paths from a lockfile or block. Paths are loaded once per lockfile.
       # 
       # @param [String] jarfile_lock the lockfile
-      # @param [Array] scopes to load into classpath
+      # @param [Array] groups to load into classpath
       # @param [Hash] opts
       # @param [Block] blk
-      def load( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
+      def load( jarfile_lock, groups = ['default'], opts = {}, &blk )
         
         # lockfile is only loaded once
         if !jarfile_lock.nil? && LockJar::Registry.instance.lockfile_registered?( jarfile_lock )
@@ -236,30 +243,44 @@ module LockJar
         end
         
         LockJar::Registry.instance.register_lockfile( jarfile_lock )
-        dependencies = LockJar::Registry.instance.register_jars( list( jarfile_lock, scopes, opts, &blk ) )
+        dependencies = LockJar::Registry.instance.register_jars( list( jarfile_lock, groups, opts, &blk ) )
                 
         resolver(opts).load_to_classpath( dependencies )
       end
       
       private
       
-      def lockfile_dependencies( lockfile, scopes)
+      def sort_notations(notations)
+        notations.sort_by! do |x,y|
+          if x.is_a? Hash
+            unless y.is_a? Hash
+              -1
+            end
+          elsif y.is_a? Hash
+            1
+          end
+          
+          x <=> y
+        end
+      end
+      
+      def lockfile_dependencies( lockfile, groups)
         dependencies = []
          
-        scopes.each do |scope|
-          if lockfile.scopes[scope]
-            dependencies += lockfile.scopes[scope]['resolved_dependencies']
+        groups.each do |group|
+          if lockfile.groups[group]
+            dependencies += lockfile.groups[group]['resolved_dependencies']
           end
         end
         
         dependencies
       end
       
-      def dsl_dependencies( dsl, scopes )
+      def dsl_dependencies( dsl, groups )
         
         dependencies = []
          
-        dsl.notations.each do |scope,notations|
+        dsl.notations.each do |group,notations|
           if notations && notations.size > 0
             dependencies += notations
           end

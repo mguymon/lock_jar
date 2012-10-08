@@ -11,11 +11,11 @@ describe LockJar::Domain::DslHelper do
         jar "org.apache.mina:mina-core:2.0.4"
         pom 'spec/pom.xml'
             
-        scope 'runtime' do
+        group 'runtime' do
             jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
         end
         
-        scope 'test' do
+        group 'test' do
             jar 'junit:junit:jar:4.10'
         end
       end
@@ -27,20 +27,25 @@ describe LockJar::Domain::DslHelper do
         jar "org.apache.mina:mina-core:2.0.4"
         jar "compile-jar"
             
-        scope 'runtime' do
+        group 'runtime' do
             jar 'runtime-jar'
-            pom 'runtime-pom'
+            pom 'runtime-pom.xml'
         end
         
-        scope 'test' do
+        group 'test' do
             jar 'test-jar'
-            pom 'test-pom'
+            pom 'test-pom.xml'
         end
       end
       
       dsl = LockJar::Domain::DslHelper.merge( block1, block2 )
       
-      dsl.notations.should eql( {"compile"=>["org.apache.mina:mina-core:2.0.4", "spec/pom.xml", "compile-jar"], "runtime"=>["spec/pom.xml", "org.apache.tomcat:servlet-api:jar:6.0.35", "runtime-jar", "runtime-pom"], "test"=>["spec/pom.xml", "junit:junit:jar:4.10", "test-jar", "test-pom"]}  )
+      dsl.notations.should eql({
+        "default" => ["org.apache.mina:mina-core:2.0.4", {"spec/pom.xml"=>["runtime", "compile"]}, "compile-jar"], 
+        "runtime" => ["org.apache.tomcat:servlet-api:jar:6.0.35", "runtime-jar", {"runtime-pom.xml"=>["runtime", "compile"]}], 
+        "test" => ["junit:junit:jar:4.10", "test-jar", {"test-pom.xml"=>["runtime", "compile"]}]
+      })
+      
       dsl.repositories.should eql( ["http://repository.jboss.org/nexus/content/groups/public-jboss", 'http://new-repo'] )
             
     end

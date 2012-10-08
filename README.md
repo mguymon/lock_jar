@@ -176,7 +176,7 @@ _lockjar_ _--help_ will give you list of all commands and their options.
 
 ## Gem Integration
 
-### Installing
+### Installing Jars with a Gem
 
 LockJar can be triggered when a Gem is installed by using a [Gem extension](http://docs.rubygems.org/read/chapter/20#extensions)
 of type _Rakefile_. The cavaet is the task to install the jars must be the default for the Rakefile.
@@ -208,15 +208,29 @@ point at the task to download the jars (from the example Rakefile,
 _PostInstallRakefile_ to handle the `task :prepare`. When packaging the gem, _PostInstallRakefile_ is
 renamed to `Rakefile`.
 
+### Manually installing Jars
+
+Instead of rely in a Rakefile to install Jars when the Gem is installed, Jars can be manually installed. The following
+Ruby needs to be called before calling `LockJar.load`. Only Jars that are missing are downloaded.
+
+      #get jarfile relative the gem dir
+      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
+      
+      # Download any missing Jars
+      LockJar.install( lockfile )
+
 ### Loading
 
-With the Jars already installed, loading the classpath for the Gem is simple. 
+With the Jars installed, loading the classpath for the Gem is simple. 
 As part of the load process for the Gem (an entry file that is required, etc) use the following:
 
       #get jarfile relative the gem dir
       lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
       
+      # Loads the ClassPath with Jars from the lockfile
       LockJar.load( :lockfile => lockfile )
+
+See also [loading Jars into a custom ClassLoader](https://github.com/mguymon/lock_jar/wiki/ClassLoader).
 
 ## Buildr Integration
 
