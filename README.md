@@ -19,8 +19,8 @@ https://github.com/mguymon/lock_jar
 A Jarfile is a simple file using a Ruby DSL for defining a project's dependencies using the following 
 methods:
 
-* **local( path )**: Set the local Maven repository, this were dependencies are downloaded to. 
-* **repository( url )**: Add additional urlr of remote Maven repository.
+* **local_repo( path )**: Set the local Maven repository, this were dependencies are downloaded to. 
+* **remote_repo( url )**: Add additional url of remote Maven repository.
 * **exclude( excludes )**: Add a artifact:group that will be excluded from resolved dependencies. A single or Array of excludes can be set.
 * **jar( notations, opts = {} )**: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default scope is _compile_, can be specified by setting _opts = { :scope => ['new_scope'] }_
 * **pom( pom_path, opts = {} )**: Add a local Maven pom, default is to load dependencies for all scopes. To select the scopes to be loaded from the pom, set the _opts = { :scopes => ['new_scope'] }_
