@@ -110,10 +110,12 @@ module LockJar
         artifact( {path => opts[:scopes] }, opts )
       end
   
-      def repository( url, opts = {} )
+      def remote_repo( url, opts = {} )
         @repositories << url
       end
-  
+      alias_method :remote_repository, :remote_repo
+      alias_method :repository, :remote_repo
+      
       def group(*groups, &blk)
          @group_changed = true
          groups.each do |group|
