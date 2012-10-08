@@ -14,6 +14,7 @@
 # the License.
 
 require 'lock_jar/maven'
+require 'lock_jar/domain/dsl_helper'
 
 module LockJar
   module Domain
@@ -35,7 +36,7 @@ module LockJar
           builder = new
           
           if jarfile
-            builder.instance_eval(builder.read_file(jarfile.to_s), jarfile.to_s, 1)
+            builder.instance_eval(DslHelper.read_file(jarfile.to_s), jarfile.to_s, 1)
           end      
               
           if blk
@@ -73,10 +74,21 @@ module LockJar
         
         artifact( notation, opts )
       end
+      
+      def local( *args )
+        if !args.empty? && File.directory?( File.expand_path( args.first ) )
+          warn "[DEPRECATION] `local` to set local_repository is deprecated.  Please use `local_repo` instead."
+          local_repo(args.first)
+        else
+          # XXX: support local artifacts
+        end
+      end
   
       def local_repo( path )
         @local_repository = path
       end
+      
+      alias_method :name, :local_repository
       
       # Map a dependency to another dependency or local directory.
       def map( notation, *args )
@@ -85,17 +97,17 @@ module LockJar
       
       # 
       def pom(path, *args)
-        if @group_changed
-          warn "Changing group has no affect on pom"
+        unless path =~ /\.xml$/i
+          raise "#{path} is an invalid pom path"  
         end
         
-        opts = { }
+        opts = { :scopes => ['runtime', 'compile'] }
           
         if args.last.is_a? Hash
-          opts.merge!( args.last )
+          opts.merge! args.last
         end
         
-        artifact( path, opts )
+        artifact( {path => opts[:scopes] }, opts )
       end
   
       def repository( url, opts = {} )

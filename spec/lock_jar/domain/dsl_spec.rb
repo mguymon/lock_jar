@@ -15,7 +15,7 @@ describe LockJar::Domain::Dsl do
     
     it "should load a block" do
       block = LockJar::Domain::Dsl.evaluate  do
-        local '~/.m2'
+        local_repo '~/.m2'
         repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
         
         jar "org.apache.mina:mina-core:2.0.4"

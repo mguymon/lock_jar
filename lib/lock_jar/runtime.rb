@@ -111,15 +111,34 @@ module LockJar
           lockfile.excludes = lock_jar_file.excludes
         end
         
+        default_notations = lock_jar_file.notations.delete( 'default' )
+        default_resolved_notations = []
+        if default_notations && !default_notations.empty?
+           default_resolved_notations = resolver(opts).resolve( default_notations, opts[:download] == true )
+        
+          lockfile.scopes['default'] = { 
+              'dependencies' => notations,
+              'resolved_dependencies' => resolved_notations } 
+        end
+        
         lock_jar_file.notations.each do |scope, notations|
           
           dependencies = []
           notations.each do |notation|
-            dependencies << {notation => scope}
+            dependencies << notation
           end
           
           if dependencies.size > 0
+            # remove duplicated deps
+            dependencies -= default_notations
+            
+            # add defaults to deps
+            dependencies += default_notations
+            
             resolved_notations = resolver(opts).resolve( dependencies, opts[:download] == true )
+            
+            # remove duplicated resolved deps
+            resolved_notations -= default_resolved_notations
             
             lockfile.repositories = resolver(opts).remote_repositories.uniq
             

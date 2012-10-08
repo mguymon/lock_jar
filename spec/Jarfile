@@ -1,13 +1,13 @@
-local '~/.m2/repository'
+local_repo '~/.m2/repository'
 repository 'http://mirrors.ibiblio.org/pub/mirrors/maven2'
 
 jar "org.apache.mina:mina-core:2.0.4"
 pom 'spec/pom.xml'
     
-scope 'runtime' do
+group 'development' do
     jar 'com.typesafe:config:jar:0.5.0'
 end
 
-scope 'test' do
+group 'test' do
     jar 'junit:junit:jar:4.10'
 end

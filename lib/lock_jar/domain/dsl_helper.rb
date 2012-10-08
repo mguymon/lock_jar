@@ -42,14 +42,11 @@ module LockJar
           
           into_dsl
         end
-        
+      
+        def read_file(file)
+          File.open(file, "rb") { |f| f.read }
+        end
       end
-      
-      #def read_file(file)
-      #  File.open(file, "rb") { |f| f.read }
-      #end
-      
-      
     end
   end
 end
