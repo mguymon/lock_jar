@@ -11,7 +11,7 @@ describe LockJar::Domain::Dsl do
         "development" => ["com.typesafe:config:jar:0.5.0"], 
         "test" => ["junit:junit:jar:4.10"]
       })
-      jarfile.repositories.should eql( ['http://mirrors.ibiblio.org/pub/mirrors/maven2'] )
+      jarfile.remote_repositories.should eql( ['http://mirrors.ibiblio.org/pub/mirrors/maven2'] )
     end
     
     it "should load a block" do
@@ -37,7 +37,7 @@ describe LockJar::Domain::Dsl do
         "pirate" => ["org.apache.tomcat:servlet-api:jar:6.0.35"], 
         "test" => ["junit:junit:jar:4.10"]
       })
-      block.repositories.should eql( ["http://repository.jboss.org/nexus/content/groups/public-jboss"] )
+      block.remote_repositories.should eql( ["http://repository.jboss.org/nexus/content/groups/public-jboss"] )
           
     end
     

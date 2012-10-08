@@ -35,7 +35,7 @@ describe LockJar, "#lock" do
           "test"=>{
             "dependencies"=>["junit:junit:jar:4.10"], 
             "resolved_dependencies"=>["junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"]}}, 
-          "repositories"=>[
+          "remote_repositories"=>[
             "http://repo1.maven.org/maven2/", "http://mirrors.ibiblio.org/pub/mirrors/maven2", 
             "http://repository.jboss.org/nexus/content/groups/public-jboss"]
       })

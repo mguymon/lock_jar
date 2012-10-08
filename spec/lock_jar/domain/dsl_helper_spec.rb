@@ -46,7 +46,7 @@ describe LockJar::Domain::DslHelper do
         "test" => ["junit:junit:jar:4.10", "test-jar", {"test-pom.xml"=>["runtime", "compile"]}]
       })
       
-      dsl.repositories.should eql( ["http://repository.jboss.org/nexus/content/groups/public-jboss", 'http://new-repo'] )
+      dsl.remote_repositories.should eql( ["http://repository.jboss.org/nexus/content/groups/public-jboss", 'http://new-repo'] )
             
     end
 end

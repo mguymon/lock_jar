@@ -7,7 +7,7 @@ module LockJar
       DEFAULT_VERSION = 1.0
       
       attr_accessor :local_repository, :maps, :excludes,
-                    :repositories, :version, :groups
+                    :remote_repositories, :version, :groups
       attr_reader :force_utf8
       
       
@@ -21,8 +21,8 @@ module LockJar
         lockfile.local_repository = lock_data['local_repository']
         lockfile.maps = lock_data['maps'] || []
         lockfile.excludes = lock_data['excludes'] || []
-        lockfile.groups = lock_data['groups'] || {}
-        lockfile.repositories = lock_data['repositories'] || []
+        lockfile.groups = lock_data['groups'] || lock_data['scopes'] || {}
+        lockfile.remote_repositories = lock_data['remote_repositories'] || lock_data['repositories'] || []
         
         lockfile
       end
@@ -32,7 +32,7 @@ module LockJar
         @groups = {}
         @maps = []
         @excludes = []
-        @repositories = []
+        @remote_repositories = []
         
         @version = DEFAULT_VERSION # default version
       end
@@ -68,8 +68,8 @@ module LockJar
         #  end
         #end
         
-        if repositories.size > 0
-          lock_data['repositories'] = repositories
+        if remote_repositories.size > 0
+          lock_data['remote_repositories'] = remote_repositories
         end
         
         lock_data

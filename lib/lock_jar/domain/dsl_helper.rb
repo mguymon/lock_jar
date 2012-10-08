@@ -20,7 +20,7 @@ module LockJar
       class << self
       
         def merge( into_dsl, from_dsl )
-          into_dsl.repositories = (into_dsl.repositories + from_dsl.repositories).uniq
+          into_dsl.remote_repositories = (into_dsl.remote_repositories + from_dsl.remote_repositories).uniq
           
           from_dsl.notations.each do |group, notations|
             group_notations = into_dsl.notations[group] || []

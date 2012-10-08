@@ -22,7 +22,7 @@ module LockJar
   
       DEFAULT_GROUP = ['default']
       
-      attr_accessor :notations, :repositories, :local_repository, :groups,
+      attr_accessor :notations, :remote_repositories, :local_repository, :groups,
                     :maps, :excludes
       
       class << self
@@ -50,7 +50,7 @@ module LockJar
       
       def initialize
   
-        @repositories = []
+        @remote_repositories = []
         @notations = { 'default' => [] }
          
         @group_changed = false
@@ -111,7 +111,7 @@ module LockJar
       end
   
       def remote_repo( url, opts = {} )
-        @repositories << url
+        @remote_repositories << url
       end
       alias_method :remote_repository, :remote_repo
       alias_method :repository, :remote_repo

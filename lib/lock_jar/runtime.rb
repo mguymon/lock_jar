@@ -56,7 +56,7 @@ module LockJar
       deps = list( jarfile_lock, groups, opts, &blk )
       
       lockfile = LockJar::Domain::Lockfile.read( jarfile_lock )
-      lockfile.repositories.each do |repo|
+      lockfile.remote_repositories.each do |repo|
           resolver(opts).add_remote_repository( repo )
       end
       
@@ -94,7 +94,7 @@ module LockJar
           opts[:local_repo] = lock_jar_file.local_repository 
         end
         
-        lock_jar_file.repositories.each do |repo|
+        lock_jar_file.remote_repositories.each do |repo|
           resolver(opts).add_remote_repository( repo )
         end
         
@@ -147,7 +147,7 @@ module LockJar
             # remove duplicated resolved deps
             resolved_notations -= default_resolved_notations
             
-            lockfile.repositories = resolver(opts).remote_repositories.uniq
+            lockfile.remote_repositories = resolver(opts).remote_repositories.uniq
             
             if lockfile.excludes
               lockfile.excludes.each do |exclude|
