@@ -64,7 +64,7 @@ module Buildr
       def lock_jars( *args )
         lockfile = Buildr.project_to_lockfile(project)
         opts = {}
-        scopes = ['compile','runtime']
+        groups = ['compile','runtime']
           
         args.each do |arg|
           if arg.is_a?(Hash)
@@ -72,11 +72,11 @@ module Buildr
           elsif arg.is_a?( String )
             lockfile = arg
           elsif arg.is_a?( Array )
-            scopes = arg
+            groups = arg
           end
         end
           
-        ::LockJar.list( lockfile, scopes, opts )
+        ::LockJar.list( lockfile, groups, opts )
       end
       
       def lockjar_dsl
@@ -101,7 +101,7 @@ module Buildr
                 end
                 ::LockJar.lock( dsl, :lockfile => "#{project.name}.lock" )
               else
-                # XXX: output that there were not dependencies to lock
+                # XXX: output that there were no dependencies to lock
                 puts "No lock_jar dependencies to lock for #{project.name}" 
               end              
             end      

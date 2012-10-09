@@ -52,7 +52,7 @@ module LockJar
       @current_resolver
     end
     
-    def install( jarfile_lock, groups = ['compile', 'runtime'], opts = {}, &blk )
+    def install( jarfile_lock, groups = ['default'], opts = {}, &blk )
       deps = list( jarfile_lock, groups, opts, &blk )
       
       lockfile = LockJar::Domain::Lockfile.read( jarfile_lock )
