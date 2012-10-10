@@ -23,17 +23,19 @@ module LockJar
       DEFAULT_GROUP = ['default']
       
       attr_accessor :notations, :remote_repositories, :local_repository, :groups,
-                    :maps, :excludes
+                    :maps, :excludes, :relative_path
       
       class << self
       
-        def evaluate(jarfile = nil, &blk)
+        def create(jarfile = nil, &blk)
+          builder = new
+          evaluate(builder, jarfile, &blk)
+        end
+        
+        def evaluate(builder, jarfile = nil, &blk)
           if jarfile.nil? && blk.nil?
             raise "jarfile or block must be set"
           end
-          
-          
-          builder = new
           
           if jarfile
             builder.instance_eval(DslHelper.read_file(jarfile.to_s), jarfile.to_s, 1)

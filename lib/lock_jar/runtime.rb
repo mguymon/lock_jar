@@ -268,8 +268,8 @@ module LockJar
         dependencies = []
          
         groups.each do |group|
-          if lockfile.groups[group]
-            dependencies += lockfile.groups[group]['resolved_dependencies']
+          if lockfile.groups[group.to_s]
+            dependencies += lockfile.groups[group.to_s]['resolved_dependencies']
           end
         end
         
@@ -280,9 +280,9 @@ module LockJar
         
         dependencies = []
          
-        dsl.notations.each do |group,notations|
-          if notations && notations.size > 0
-            dependencies += notations
+        groups.each do |group|
+          if notations[group.to_s]
+            dependencies += notations[group.to_s]
           end
         end
         
