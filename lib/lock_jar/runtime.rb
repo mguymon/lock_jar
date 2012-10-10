@@ -75,12 +75,12 @@ module LockJar
           if jarfile.is_a? LockJar::Domain::Dsl
             lock_jar_file = jarfile
           else
-            lock_jar_file = LockJar::Domain::Dsl.evaluate( jarfile )
+            lock_jar_file = LockJar::Domain::Dsl.create( jarfile )
           end
         end
         
         unless blk.nil?
-          dsl = LockJar::Domain::Dsl.evaluate(&blk)
+          dsl = LockJar::Domain::Dsl.create(&blk)
           if lock_jar_file.nil?
             lock_jar_file = dsl
           else
@@ -177,7 +177,7 @@ module LockJar
         end
         
         unless blk.nil?
-          dsl = LockJar::Domain::Dsl.evaluate(&blk)
+          dsl = LockJar::Domain::Dsl.create(&blk)
           dependencies += dsl_dependencies( dsl, groups )
           maps = dsl.maps
         end
@@ -235,7 +235,7 @@ module LockJar
         end
         
         unless blk.nil?
-          dsl = LockJar::Domain::Dsl.evaluate(&blk)
+          dsl = LockJar::Domain::Dsl.create(&blk)
           
           if opts[:local_repo].nil? && dsl.local_repository
             opts[:local_repo] = dsl.local_repository
@@ -281,8 +281,8 @@ module LockJar
         dependencies = []
          
         groups.each do |group|
-          if notations[group.to_s]
-            dependencies += notations[group.to_s]
+          if dsl.notations[group.to_s]
+            dependencies += dsl.notations[group.to_s]
           end
         end
         

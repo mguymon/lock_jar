@@ -42,7 +42,7 @@ describe LockJar, "#lock" do
   end
   
   it "should replace dependencies with map" do
-    dsl = LockJar::Domain::Dsl.evaluate do
+    dsl = LockJar::Domain::Dsl.create do
       map 'junit:junit:4.10', 'tmp'
       jar 'junit:junit:4.10'
     end
@@ -62,7 +62,7 @@ describe LockJar, "#lock" do
   end
   
   it "should exclude excludes from dependencies" do
-    dsl = LockJar::Domain::Dsl.evaluate do
+    dsl = LockJar::Domain::Dsl.create do
       exclude 'commons-logging', 'logkit'
       jar 'opensymphony:oscache:jar:2.4.1'
     end
@@ -156,7 +156,7 @@ describe LockJar, "#list" do
   end
   
   it "should replace dependencies with maps" do
-    dsl = LockJar::Domain::Dsl.evaluate do
+    dsl = LockJar::Domain::Dsl.create do
       map 'junit:junit', 'tmp'
       jar 'junit:junit:4.10'
     end
@@ -167,7 +167,7 @@ describe LockJar, "#list" do
   end
   
   it "should replace dependencies with maps and get local paths" do
-    dsl = LockJar::Domain::Dsl.evaluate do
+    dsl = LockJar::Domain::Dsl.create do
       map 'junit:junit', 'tmp'
       jar 'junit:junit:4.10'
     end

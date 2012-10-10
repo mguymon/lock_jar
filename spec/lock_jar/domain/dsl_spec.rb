@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__),'../../spec_helper'))
 describe LockJar::Domain::Dsl do
   context "Instance" do
     it "should load a Jarfile" do
-      jarfile = LockJar::Domain::Dsl.evaluate( "spec/Jarfile" )
+      jarfile = LockJar::Domain::Dsl.create( "spec/Jarfile" )
       
       jarfile.local_repository.should eql '~/.m2/repository'
       jarfile.notations.should eql({
@@ -15,7 +15,7 @@ describe LockJar::Domain::Dsl do
     end
     
     it "should load a block" do
-      block = LockJar::Domain::Dsl.evaluate  do
+      block = LockJar::Domain::Dsl.create  do
         local_repo '~/.m2'
         repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
         
@@ -42,7 +42,7 @@ describe LockJar::Domain::Dsl do
     end
     
     it "should raise an error without arguments" do
-      lambda { LockJar::Domain::Dsl.evaluate }.should raise_error
+      lambda { LockJar::Domain::Dsl.create }.should raise_error
     end
     
   end

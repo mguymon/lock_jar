@@ -5,7 +5,7 @@ require 'lock_jar/domain/dsl_helper'
 describe LockJar::Domain::DslHelper do
     
     it "should merge dsl" do
-      block1 = LockJar::Domain::Dsl.evaluate  do
+      block1 = LockJar::Domain::Dsl.create  do
         repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
         
         jar "org.apache.mina:mina-core:2.0.4"
@@ -20,7 +20,7 @@ describe LockJar::Domain::DslHelper do
         end
       end
       
-      block2 = LockJar::Domain::Dsl.evaluate  do
+      block2 = LockJar::Domain::Dsl.create  do
         repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
         repository 'http://new-repo'
         
