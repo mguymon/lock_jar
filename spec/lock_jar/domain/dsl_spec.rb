@@ -1,16 +1,21 @@
 require File.expand_path(File.join(File.dirname(__FILE__),'../../spec_helper'))
-
+require 'lock_jar/domain/artifact'
 describe LockJar::Domain::Dsl do
   context "Instance" do
     it "should load a Jarfile" do
       jarfile = LockJar::Domain::Dsl.create( "spec/Jarfile" )
       
       jarfile.local_repository.should eql '~/.m2/repository'
-      jarfile.notations.should eql({
-        "default" => ["org.apache.mina:mina-core:2.0.4", {"spec/pom.xml"=>["runtime", "compile"]}], 
-        "development" => ["com.typesafe:config:jar:0.5.0"], 
-        "test" => ["junit:junit:jar:4.10"]
-      })
+      jarfile.artifacts["default"][0].should == LockJar::Domain::Jar.new("org.apache.mina:mina-core:2.0.4")
+      jarfile.artifacts["default"][1].should == LockJar::Domain::Pom.new("spec/pom.xml", ["compile", "runtime"])
+      jarfile.artifacts["default"][2].should be_nil
+      
+      jarfile.artifacts["development"][0].should == LockJar::Domain::Jar.new("com.typesafe:config:jar:0.5.0") 
+      jarfile.artifacts["development"][1].should be_nil
+      
+      jarfile.artifacts["test"][0].should == LockJar::Domain::Jar.new("junit:junit:jar:4.10")
+      jarfile.artifacts["test"][1].should be_nil
+      
       jarfile.remote_repositories.should eql( ['http://mirrors.ibiblio.org/pub/mirrors/maven2'] )
     end
     
@@ -32,11 +37,11 @@ describe LockJar::Domain::Dsl do
       end
       
       block.local_repository.should eql '~/.m2'
-      block.notations.should eql({
-        "default" => ["org.apache.mina:mina-core:2.0.4", {"spec/pom.xml"=>["runtime", "compile"]}], 
-        "pirate" => ["org.apache.tomcat:servlet-api:jar:6.0.35"], 
-        "test" => ["junit:junit:jar:4.10"]
-      })
+      block.artifacts.should == {
+        "default" => [LockJar::Domain::Jar.new("org.apache.mina:mina-core:2.0.4"), LockJar::Domain::Pom.new("spec/pom.xml")], 
+        "pirate" => [LockJar::Domain::Jar.new("org.apache.tomcat:servlet-api:jar:6.0.35")], 
+        "test" => [LockJar::Domain::Jar.new("junit:junit:jar:4.10")]
+      }
       block.remote_repositories.should eql( ["http://repository.jboss.org/nexus/content/groups/public-jboss"] )
           
     end

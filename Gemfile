@@ -2,7 +2,7 @@
 
 source "http://rubygems.org"
 
-gem "naether", "~> 0.9.0"
+gem "naether", "~> 0.10.0"
 gem "thor",     "~> 0.14.6"
 
 # Add dependencies to develop your gem here.
@@ -11,6 +11,6 @@ group :development do
   gem "rspec", "~> 2.9.0"
   gem "jeweler", "~> 1.8.4"
   gem "yard", "~> 0.8.0"
-  gem 'solr_sail', '~>0.0.6',   :platforms => :jruby
+  gem 'solr_sail', '~>0.0.7',   :platforms => :jruby
   gem 'jruby-openssl',   :platforms => :jruby
 end

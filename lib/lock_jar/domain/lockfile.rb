@@ -1,13 +1,13 @@
 
 require "yaml"
+require 'lock_jar/version'
 
 module LockJar
   module Domain
     class Lockfile
-      DEFAULT_VERSION = 1.0
       
-      attr_accessor :local_repository, :maps, :excludes,
-                    :remote_repositories, :version, :groups
+      attr_accessor :local_repository, :maps, :excludes, :remote_repositories, 
+                    :version, :groups, :gems
       attr_reader :force_utf8
       
       
@@ -16,14 +16,14 @@ module LockJar
         
         lock_data = YAML.load_file( path )
         
-        lockfile.version = lock_data['version'] || lockfile.version = DEFAULT_VERSION
+        lockfile.version = lock_data['version'] || LockJar::VERSION
         
         lockfile.local_repository = lock_data['local_repository']
         lockfile.maps = lock_data['maps'] || []
         lockfile.excludes = lock_data['excludes'] || []
         lockfile.groups = lock_data['groups'] || lock_data['scopes'] || {}
         lockfile.remote_repositories = lock_data['remote_repositories'] || lock_data['repositories'] || []
-        
+        lockfile.gems = lock_data['gems'] || []
         lockfile
       end
       
@@ -33,8 +33,9 @@ module LockJar
         @maps = []
         @excludes = []
         @remote_repositories = []
+        @gems = []
         
-        @version = DEFAULT_VERSION # default version
+        @version = LockJar::VERSION # default version
       end
       
       def to_hash
@@ -58,6 +59,10 @@ module LockJar
           if @force_utf8
             lock_data['excludes'].map! { |exclude| exclude.force_encoding("UTF-8") }
           end
+        end
+        
+        unless gems.empty?
+          lock_data['gems'] = gems
         end
         
         lock_data['groups'] = groups

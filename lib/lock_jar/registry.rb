@@ -34,9 +34,17 @@ class LockJar::Registry
       end
     end
     
+    def register_gem( spec )
+      @loaded_gems[spec.name] = spec
+    end
+    
+    def gem_registered?( spec )
+      !@loaded_gems[spec.name].nil?
+    end
+    
     def load_gem( spec )
-      if @loaded_gems[spec.name].nil?
-        @loaded_gems[spec.name] = spec
+      unless gem_registered?( spec )
+        register_gem(spec)
         gem_dir = spec.gem_dir
   		
         lockfile = File.join( gem_dir, "Jarfile.lock" )
@@ -51,9 +59,9 @@ class LockJar::Registry
     def load_jars_for_gems      
       specs = Gem.loaded_specs
       if specs 
-        gems_to_check = specs.keys - @loaded_gems.keys
-        if gems_to_check.size > 0
-          gems_to_check.each do |key|
+        gems = specs.keys - @loaded_gems.keys
+        if gems.size > 0
+          gems.each do |key|
             spec = specs[key]
             load_gem( spec )
           end 

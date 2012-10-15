@@ -22,17 +22,22 @@ module LockJar
         def merge( into_dsl, from_dsl )
           into_dsl.remote_repositories = (into_dsl.remote_repositories + from_dsl.remote_repositories).uniq
           
-          from_dsl.notations.each do |group, notations|
-            group_notations = into_dsl.notations[group] || []
-            into_dsl.notations[group] = (group_notations + notations).uniq         
+          from_dsl.artifacts.each do |group, artifacts|
+            group_artifacts = into_dsl.artifacts[group] || []
+            artifacts.each do |art|
+              unless group_artifacts.include? art
+                group_artifacts << art
+              end
+            end
+            into_dsl.artifacts[group] = group_artifacts
           end
           
-          from_dsl.maps.each do |notation,paths|
-            existing_map = into_dsl.maps[notation]
+          from_dsl.maps.each do |artifact,paths|
+            existing_map = into_dsl.maps[artifact]
             if existing_map
-              into_dsl.maps[notation] = (existing_map + paths).uniq
+              into_dsl.maps[artifact] = (existing_map + paths).uniq
             else
-              into_dsl.maps[notation] = paths
+              into_dsl.maps[artifact] = paths
             end
           end
           

@@ -84,7 +84,7 @@ module Bundler
         end
   
         puts "[LockJar] Locking Jars for Gems: #{gems_with_jars.inspect}"
-        LockJar.lock(dsl)
+        LockJar.lock(dsl, :gems => gems_with_jars )
       elsif ENV["DEBUG"]
         puts "[LockJar] Locking skiped, Gemfile has not changed"
       end      

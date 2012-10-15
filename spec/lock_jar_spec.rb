@@ -17,28 +17,55 @@ describe LockJar, "#lock" do
     
     lockfile = LockJar.read('tmp/Jarfile.lock')
     lockfile.to_hash.should eql({
-      "version"=>1.0, 
+      "version"=> LockJar::VERSION, 
       "local_repository"=>"~/.m2/repository", 
       "groups"=>{
         "default"=>{
-          "dependencies"=>["org.apache.mina:mina-core:2.0.4", {"spec/pom.xml"=>["runtime", "compile"]}], 
-          "resolved_dependencies"=>[
-            "ch.qos.logback:logback-classic:jar:0.9.24", "ch.qos.logback:logback-core:jar:0.9.24", 
-            "com.metapossum:metapossum-scanner:jar:1.0", "com.slackworks:modelcitizen:jar:0.2.2", 
+          "dependencies"=>["ch.qos.logback:logback-classic:jar:0.9.24", 
+            "ch.qos.logback:logback-core:jar:0.9.24", "com.metapossum:metapossum-scanner:jar:1.0",
+            "com.slackworks:modelcitizen:jar:0.2.2", 
             "commons-beanutils:commons-beanutils:jar:1.8.3", "commons-io:commons-io:jar:1.4", 
             "commons-lang:commons-lang:jar:2.6", "commons-logging:commons-logging:jar:1.1.1", 
             "junit:junit:jar:4.7", "org.apache.mina:mina-core:jar:2.0.4", 
-            "org.slf4j:slf4j-api:jar:1.6.1"]}, 
-          "development"=>{
-            "dependencies"=>["com.typesafe:config:jar:0.5.0"], 
-            "resolved_dependencies"=>["com.typesafe:config:jar:0.5.0"]}, 
-          "test"=>{
-            "dependencies"=>["junit:junit:jar:4.10"], 
-            "resolved_dependencies"=>["junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"]}}, 
-          "remote_repositories"=>[
-            "http://repo1.maven.org/maven2/", "http://mirrors.ibiblio.org/pub/mirrors/maven2", 
-            "http://repository.jboss.org/nexus/content/groups/public-jboss"]
-      })
+            "org.slf4j:slf4j-api:jar:1.6.1"], 
+          "artifacts"=>[{
+            "jar:org.apache.mina:mina-core:jar:2.0.4"=>{
+              "transitive"=>{"org.slf4j:slf4j-api:jar:1.6.1"=>{}}
+            }
+          }, {
+            "pom:spec/pom.xml"=>{
+              "scopes"=>["runtime", "compile"], 
+              "transitive"=>{
+                "com.metapossum:metapossum-scanner:jar:1.0"=>{
+                  "junit:junit:jar:4.7"=>{}, 
+                  "commons-io:commons-io:jar:1.4"=>{}
+                }, 
+                "commons-beanutils:commons-beanutils:jar:1.8.3"=>{
+                  "commons-logging:commons-logging:jar:1.1.1"=>{}
+                }, 
+                "ch.qos.logback:logback-classic:jar:0.9.24"=>{
+                  "ch.qos.logback:logback-core:jar:0.9.24"=>{}
+                }, 
+                "commons-lang:commons-lang:jar:2.6"=>{}
+              }
+            }
+          }]
+        }, 
+        "development"=>{
+          "dependencies"=>["com.typesafe:config:jar:0.5.0"], 
+          "artifacts"=>[{
+            "jar:com.typesafe:config:jar:0.5.0"=>{"transitive"=>{}}
+          }]
+        }, 
+        "test"=>{
+          "dependencies"=>["junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"], 
+          "artifacts"=>[{
+            "jar:junit:junit:jar:4.10"=>{
+              "transitive"=>{"org.hamcrest:hamcrest-core:jar:1.1"=>{}}}
+          }]
+        }
+      }
+    })
   end
   
   it "should replace dependencies with map" do
@@ -50,12 +77,15 @@ describe LockJar, "#lock" do
     LockJar.lock( dsl, :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
     lockfile = LockJar.read('tmp/Jarfile.lock')
     lockfile.to_hash.should eql({
-      "version"=>1.0, 
+      "version"=> LockJar::VERSION, 
       "maps"=>{"junit:junit:4.10"=>["tmp"]}, 
       "groups"=>{
         "default"=>{
-          "dependencies"=>["junit:junit:4.10"], 
-          "resolved_dependencies"=>["junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"]
+          "dependencies"=>["junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"], 
+          "artifacts"=>[{
+            "jar:junit:junit:jar:4.10"=>{
+              "transitive"=>{"org.hamcrest:hamcrest-core:jar:1.1"=>{}}}
+          }]
         }
       }
     })      
@@ -71,15 +101,27 @@ describe LockJar, "#lock" do
     File.exists?( 'tmp/Jarfile.lock' ).should be_true
     lockfile = LockJar.read('tmp/Jarfile.lock')
     lockfile.to_hash.should eql({
-      "version"=>1.0, 
+      "version"=>"0.7.0", 
       "excludes"=>["commons-logging", "logkit"], 
       "groups"=>{
         "default"=>{
-          "dependencies"=>["opensymphony:oscache:jar:2.4.1"], 
-          "resolved_dependencies"=>[
+          "dependencies"=>[
             "avalon-framework:avalon-framework:jar:4.1.3", "javax.jms:jms:jar:1.1", 
-            "javax.servlet:servlet-api:jar:2.3", "log4j:log4j:jar:1.2.12", "opensymphony:oscache:jar:2.4.1"
-          ]
+            "javax.servlet:servlet-api:jar:2.3", "log4j:log4j:jar:1.2.12", 
+            "opensymphony:oscache:jar:2.4.1"], 
+          "artifacts"=>[{
+            "jar:opensymphony:oscache:jar:2.4.1"=>{
+              "transitive"=>{
+                "commons-logging:commons-logging:jar:1.1"=>{
+                  "logkit:logkit:jar:1.0.1"=>{}, 
+                  "log4j:log4j:jar:1.2.12"=>{}, 
+                  "avalon-framework:avalon-framework:jar:4.1.3"=>{}
+                }, 
+                "javax.jms:jms:jar:1.1"=>{}, 
+                "javax.servlet:servlet-api:jar:2.3"=>{}
+              }
+            }
+          }]
         }
       }
     })
@@ -96,20 +138,34 @@ describe LockJar, "#lock" do
     
     lockfile = LockJar.read('tmp/NoRepoJarfile.lock')
     lockfile.to_hash.should eql({
-      "version"=>1.0, 
+      "version"=>"0.7.0", 
       "groups"=>{
         "default"=>{
-          "dependencies"=>["org.eclipse.jetty:jetty-servlet:8.1.3.v20120416"], 
-          "resolved_dependencies"=>[
-            "org.eclipse.jetty.orbit:javax.servlet:jar:3.0.0.v201112011016", 
+          "dependencies"=>["org.eclipse.jetty.orbit:javax.servlet:jar:3.0.0.v201112011016", 
             "org.eclipse.jetty:jetty-continuation:jar:8.1.3.v20120416", 
             "org.eclipse.jetty:jetty-http:jar:8.1.3.v20120416", 
             "org.eclipse.jetty:jetty-io:jar:8.1.3.v20120416", 
             "org.eclipse.jetty:jetty-security:jar:8.1.3.v20120416", 
             "org.eclipse.jetty:jetty-server:jar:8.1.3.v20120416", 
             "org.eclipse.jetty:jetty-servlet:jar:8.1.3.v20120416", 
-            "org.eclipse.jetty:jetty-util:jar:8.1.3.v20120416"
-          ]
+            "org.eclipse.jetty:jetty-util:jar:8.1.3.v20120416"], 
+          "artifacts"=>[{
+            "jar:org.eclipse.jetty:jetty-servlet:jar:8.1.3.v20120416"=>{
+              "transitive"=>{
+                "org.eclipse.jetty:jetty-security:jar:8.1.3.v20120416"=>{
+                  "org.eclipse.jetty:jetty-server:jar:8.1.3.v20120416"=>{
+                    "org.eclipse.jetty.orbit:javax.servlet:jar:3.0.0.v201112011016"=>{}, 
+                    "org.eclipse.jetty:jetty-continuation:jar:8.1.3.v20120416"=>{}, 
+                    "org.eclipse.jetty:jetty-http:jar:8.1.3.v20120416"=>{
+                      "org.eclipse.jetty:jetty-io:jar:8.1.3.v20120416"=>{
+                        "org.eclipse.jetty:jetty-util:jar:8.1.3.v20120416"=>{}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }]
         }
       }
     })

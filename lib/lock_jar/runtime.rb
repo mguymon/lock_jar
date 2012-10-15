@@ -112,52 +112,24 @@ module LockJar
           lockfile.excludes = lock_jar_file.excludes
         end
         
-        default_notations = lock_jar_file.notations.delete( 'default' )
-        default_resolved_notations = []
-        if default_notations && !default_notations.empty?
-           default_resolved_notations = resolver(opts).resolve( default_notations, opts[:download] == true )
-          
-          if lockfile.excludes
-            lockfile.excludes.each do |exclude|
-              default_resolved_notations.delete_if { |dep| dep =~ /#{exclude}/ }
-            end
-          end
-          
-          lockfile.groups['default'] = { 
-              'dependencies' => sort_notations(default_notations),
-              'resolved_dependencies' => default_resolved_notations.sort } 
+        default_artifacts = lock_jar_file.artifacts.delete( 'default' )
+        if default_artifacts && !default_artifacts.empty?
+           lockfile.groups['default'] = resolve_dependencies( [], [], default_artifacts, lockfile.excludes, opts )
         end
-        
-        lock_jar_file.notations.each do |group, notations|
+         
+        lock_jar_file.artifacts.each do |group, artifacts|
           
-          dependencies = []
-          notations.each do |notation|
-            dependencies << notation
-          end
+          group_artifacts = artifacts
           
-          if dependencies.size > 0
+          if group_artifacts.size > 0
+            
             # remove duplicated deps
-            dependencies -= default_notations
+            group_artifacts -= default_artifacts
             
             # add defaults to deps
-            dependencies += default_notations
+            group_artifacts += default_artifacts
             
-            resolved_notations = resolver(opts).resolve( dependencies, opts[:download] == true )
-            
-            # remove duplicated resolved deps
-            resolved_notations -= default_resolved_notations
-            
-            lockfile.remote_repositories = resolver(opts).remote_repositories.uniq
-            
-            if lockfile.excludes
-              lockfile.excludes.each do |exclude|
-                resolved_notations.delete_if { |dep| dep =~ /#{exclude}/ }
-              end
-            end
-            
-            lockfile.groups[group] = { 
-              'dependencies' => sort_notations(notations),
-              'resolved_dependencies' => resolved_notations.sort } 
+            lockfile.groups[group] = resolve_dependencies( default_artifacts, lockfile.groups['default']['dependencies'], group_artifacts, lockfile.excludes, opts )
           end
         end
     
@@ -178,7 +150,7 @@ module LockJar
         
         unless blk.nil?
           dsl = LockJar::Domain::Dsl.create(&blk)
-          dependencies += dsl_dependencies( dsl, groups )
+          dependencies += dsl_dependencies( dsl, groups ).map(&:to_dep)
           maps = dsl.maps
         end
         
@@ -206,10 +178,10 @@ module LockJar
         
         if opts[:local_paths]
           opts.delete( :local_paths ) # remove list opts so resolver is not reset
-          resolver(opts).to_local_paths( dependencies.uniq )
+          resolver(opts).to_local_paths( dependencies )
           
         else
-          dependencies.uniq
+          dependencies
         end
       end
       
@@ -250,26 +222,12 @@ module LockJar
       
       private
       
-      def sort_notations(notations)
-        notations.sort_by! do |x,y|
-          if x.is_a? Hash
-            unless y.is_a? Hash
-              -1
-            end
-          elsif y.is_a? Hash
-            1
-          end
-          
-          x <=> y
-        end
-      end
-      
       def lockfile_dependencies( lockfile, groups)
         dependencies = []
          
         groups.each do |group|
           if lockfile.groups[group.to_s]
-            dependencies += lockfile.groups[group.to_s]['resolved_dependencies']
+            dependencies += lockfile.groups[group.to_s]['dependencies']
           end
         end
         
@@ -281,13 +239,61 @@ module LockJar
         dependencies = []
          
         groups.each do |group|
-          if dsl.notations[group.to_s]
-            dependencies += dsl.notations[group.to_s]
+          if dsl.artifacts[group.to_s]
+            dependencies += dsl.artifacts[group.to_s]
           end
         end
         
         dependencies
       end
+      
+      def resolve_dependencies( default_artifacts, default_notations, artifacts, excludes, opts = {} )
+        resolved_notations = []
+        if artifacts && !artifacts.empty?
+           resolved_notations = resolver(opts).resolve( artifacts.map(&:to_dep), opts[:download] == true )
+          
+          if excludes
+            excludes.each do |exclude|
+              resolved_notations.delete_if { |dep| dep =~ /#{exclude}/ }
+            end
+          end
+          
+          lock_data = { 'dependencies' => (resolved_notations - default_notations).sort }
+          lock_data['artifacts'] = []
+          artifacts.each do |artifact,deps|
+            
+            if default_artifacts.include? artifact
+              next
+            end
+            
+            artifact_data = {}
+            if artifact.is_a? LockJar::Domain::Jar
+              artifact_data["transitive"] = resolver(opts).dependencies_graph[artifact.notation].to_hash
+              
+            elsif artifact.is_a? LockJar::Domain::Pom
+              artifact_data['scopes'] = artifact.scopes
+              
+              # iterate each dependency in Pom to map transitive dependencies
+              transitive = {}
+              artifact.notations.each do |notation| 
+                transitive.merge!( resolver(opts).dependencies_graph[notation] )
+              end
+              artifact_data["transitive"] = transitive
+              
+            elsif artifact.is_a? LockJar::Domain::Local
+              # xXX: support local artifacts
+            else
+              # XXX: handle unsupported artifact
+              
+            end
+            
+            # xxX: set required_by ?
+            
+            lock_data['artifacts'] << { artifact.to_urn => artifact_data }
+          end
+          
+          lock_data
+      end
+    end
   end
-  
 end

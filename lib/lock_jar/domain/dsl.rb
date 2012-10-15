@@ -15,6 +15,7 @@
 
 require 'lock_jar/maven'
 require 'lock_jar/domain/dsl_helper'
+require 'lock_jar/domain/artifact'
 
 module LockJar
   module Domain
@@ -22,7 +23,7 @@ module LockJar
   
       DEFAULT_GROUP = ['default']
       
-      attr_accessor :notations, :remote_repositories, :local_repository, :groups,
+      attr_accessor :artifacts, :remote_repositories, :local_repository, :groups,
                     :maps, :excludes, :relative_path
       
       class << self
@@ -53,7 +54,7 @@ module LockJar
       def initialize
   
         @remote_repositories = []
-        @notations = { 'default' => [] }
+        @artifacts = { 'default' => [] }
          
         @group_changed = false
           
@@ -74,7 +75,9 @@ module LockJar
           opts.merge!( args.last )
         end
         
-        artifact( notation, opts )
+        artifact = Jar.new( notation )
+        
+        assign_groups( artifact, opts[:group] )
       end
       
       def local( *args )
@@ -109,7 +112,9 @@ module LockJar
           opts.merge! args.last
         end
         
-        artifact( {path => opts[:scopes] }, opts )
+        artifact = Pom.new( path, opts[:scopes] )
+        
+        assign_groups( artifact, opts[:groups] )
       end
   
       def remote_repo( url, opts = {} )
@@ -135,9 +140,7 @@ module LockJar
       end
       
       private 
-      def artifact(artifact, opts)
-        
-        groups = opts[:group] || opts[:groups] || opts[:group]
+      def assign_groups(artifact, groups=nil)
         
         if groups
           
@@ -157,8 +160,8 @@ module LockJar
         if artifact
           groups.uniq.each do |group|
             group_key = group.to_s
-            @notations[group_key] = [] unless @notations[group_key]
-            @notations[group_key] << artifact
+            @artifacts[group_key] = [] unless @artifacts[group_key]
+            @artifacts[group_key] << artifact
           end
         end
         

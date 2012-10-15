@@ -30,13 +30,25 @@ module LockJar
       # Get the version of a POM
       #
       # @param [String] pom_path path to the pom
-      # @param [Hash] options
       #
       # @return [String] version of POM
       #
       def pom_version( pom_path )
         maven = Naether::Maven.create_from_pom( pom_path )
         maven.version()
+      end
+      
+      #
+      # Get dependencies of a Pom
+      #
+      # @param [String] pom_path path to the pom
+      # @param [Array] scopes
+      #
+      # @return [String] version of POM
+      #
+      def dependencies( pom_path, scopes = ['compile', 'runtime'] )
+        maven = Naether::Maven.create_from_pom( pom_path )
+        maven.dependencies(scopes)
       end
       
       #
