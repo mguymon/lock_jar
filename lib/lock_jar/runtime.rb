@@ -15,6 +15,8 @@
 
 require 'rubygems'
 require "yaml"
+require 'stringio'
+require 'i18n_yaml_sorter'
 require 'singleton'
 require 'lock_jar/resolver'
 require 'lock_jar/dsl'
@@ -147,12 +149,13 @@ module LockJar
             end
             
             lock_data['scopes'][scope] = { 
-              'dependencies' => notations,
-              'resolved_dependencies' => resolved_notations } 
+              'dependencies' => notations.sort,
+              'resolved_dependencies' => resolved_notations.sort } 
           end
         end
-    
+
         File.open( opts[:lockfile] || "Jarfile.lock", "w") do |f|
+          #f.write( I18nYamlSorter::Sorter.new(StringIO.new(lock_data.to_yaml)).sort )
           f.write( lock_data.to_yaml )
         end
         
