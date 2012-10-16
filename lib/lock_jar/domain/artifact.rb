@@ -54,10 +54,10 @@ module LockJar
     class Pom < Artifact
       attr_reader :path, :scopes
       
-      def initialize( path, scopes = ['compile','runtime'] )
+      def initialize( _path, _scopes = ['compile','runtime'] )
         @type = 'pom'
-        @path = path
-        @scopes = scopes
+        @path = _path
+        @scopes = _scopes
       end
       
       def to_urn
@@ -72,10 +72,20 @@ module LockJar
         LockJar::Maven.dependencies( path, scopes )  
       end
       
+      def ==(another_artifact)
+        self.<=>(another_artifact) == 0
+      end
+      
       def <=>(another_artifact)
         if another_artifact.is_a? Pom
           if to_urn == another_artifact.to_urn
-            Set.new(scopes) <=> Set.new(another_artifact.scopes)
+            return 0 if Set.new(scopes) == Set.new(another_artifact.scopes)
+            
+            if scopes.size > another_artifact.scopes.size
+              return 1
+            else
+              return -1
+            end
           else
             to_urn <=> another_artifact.to_urn
           end

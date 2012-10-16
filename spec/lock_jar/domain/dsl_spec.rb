@@ -7,7 +7,7 @@ describe LockJar::Domain::Dsl do
       
       jarfile.local_repository.should eql '~/.m2/repository'
       jarfile.artifacts["default"][0].should == LockJar::Domain::Jar.new("org.apache.mina:mina-core:2.0.4")
-      jarfile.artifacts["default"][1].should == LockJar::Domain::Pom.new("spec/pom.xml", ["compile", "runtime"])
+      jarfile.artifacts["default"][1].path.should eql "spec/pom.xml"
       jarfile.artifacts["default"][2].should be_nil
       
       jarfile.artifacts["development"][0].should == LockJar::Domain::Jar.new("com.typesafe:config:jar:0.5.0") 

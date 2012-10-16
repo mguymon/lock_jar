@@ -5,7 +5,7 @@ require 'lib/lock_jar/class_loader'
 describe LockJar::ClassLoader, "#isolate" do
  
   if Naether.platform != 'java'
-    pending "Need tests for RJB backed classloader"
+    pending "need tests for RJB backed classloader"
   else
     it "should create a SimpleEmail" do
       # Generate the IsolateJarfile.lock 
