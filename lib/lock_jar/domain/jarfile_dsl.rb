@@ -14,33 +14,24 @@
 # the License.
 
 require 'lock_jar/maven'
-require 'lock_jar/domain/jarfile_dsl'
 require 'lock_jar/domain/dsl_helper'
 
 module LockJar
   module Domain
-    class GemDsl < JarfileDsl
+    class JarfileDsl < Dsl
   
-      attr_accessor :gem_dir
+      attr_accessor :file_path
       
       class << self
         alias :overriden_create :create
-        def create(spec, jarfile)
+        def create(jarfile)
           builder = new
-          builder.gem_dir = spec.gem_dir
-          
-          jarfile = File.join( spec.gem_dir, jarfile )
-          
           builder.file_path = jarfile
           
           evaluate(builder, jarfile)
         end
       end
-      
-      alias :overriden_pom :pom
-      def pom(path, *args)
-        overriden_pom( File.join( gem_dir, path), *args)
-      end
+  
     end
   end
 end

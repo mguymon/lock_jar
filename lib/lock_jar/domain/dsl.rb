@@ -24,7 +24,9 @@ module LockJar
       DEFAULT_GROUP = ['default']
       
       attr_accessor :artifacts, :remote_repositories, :local_repository, :groups,
-                    :maps, :excludes, :relative_path
+                    :maps, :excludes, :merged
+                    
+      attr_reader :file_path
       
       class << self
       
@@ -62,7 +64,10 @@ module LockJar
         
         @local_repository = nil
         @maps = {}
+        
         @excludes = []
+        
+        @merged = []
       end
       
       def exclude(*notations)

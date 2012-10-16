@@ -119,6 +119,10 @@ module LockJar
         end
       end
       
+      if !jarfile.merged.empty?
+        lockfile.merged = jarfile.merged
+      end
+      
       if !artifacts.empty?   
         resolved_notations = resolver(opts).resolve( artifacts.map(&:to_dep), opts[:download] == true )
         
@@ -130,6 +134,7 @@ module LockJar
           group_artifacts.each do |artifact|
           
             artifact_data = {}
+            
             if artifact.is_a? LockJar::Domain::Jar
               group['dependencies'] << artifact.notation
               artifact_data["transitive"] = resolver(opts).dependencies_graph[artifact.notation].to_hash
@@ -174,6 +179,7 @@ module LockJar
           end
           
           group['dependencies'].sort!
+          
           lockfile.groups[group_name] = group         
         end                        
       end
@@ -233,19 +239,19 @@ module LockJar
     
     # Load paths from a lockfile or block. Paths are loaded once per lockfile.
     # 
-    # @param [String] jarfile_lock the lockfile
+    # @param [String] lockfile_path the lockfile
     # @param [Array] groups to load into classpath
     # @param [Hash] opts
     # @param [Block] blk
-    def load( jarfile_lock, groups = ['default'], opts = {}, &blk )
+    def load( lockfile_path, groups = ['default'], opts = {}, &blk )
       
       # lockfile is only loaded once
-      if !jarfile_lock.nil? && LockJar::Registry.instance.lockfile_registered?( jarfile_lock )
+      if !lockfile_path.nil? && LockJar::Registry.instance.lockfile_registered?( lockfile_path )
         return  
       end
       
-      if jarfile_lock
-        lockfile = LockJar::Domain::Lockfile.read( jarfile_lock )
+      if lockfile_path
+        lockfile = LockJar::Domain::Lockfile.read( lockfile_path )
         
         if opts[:local_repo].nil? && lockfile.local_repository
           opts[:local_repo] = lockfile.local_repository
@@ -260,8 +266,14 @@ module LockJar
         end
       end
       
-      LockJar::Registry.instance.register_lockfile( jarfile_lock )
-      dependencies = LockJar::Registry.instance.register_jars( list( jarfile_lock, groups, opts, &blk ) )
+      
+      if lockfile && !lockfile.merged.empty?
+        lockfile.merged.each do |path|
+          LockJar::Registry.instance.register_lockfile( path )
+        end
+      end
+      
+      dependencies = LockJar::Registry.instance.register_jars( list( lockfile_path, groups, opts, &blk ) )
               
       resolver(opts).load_to_classpath( dependencies )
     end

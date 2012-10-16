@@ -249,7 +249,7 @@ describe LockJar, "#load" do
     LockJar.lock( "spec/Jarfile", :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
     
     jars = LockJar.load( 'tmp/Jarfile.lock', ['default'], :local_repo => 'tmp/test-repo' )
-    LockJar::Registry.instance.lockfile_registered?( "tmp/Jarfile.lock" ).should be_true
+    LockJar::Registry.instance.lockfile_registered?( "tmp/Jarfile.lock" ).should be_false
     
     jars.should eql([
       File.expand_path("tmp/test-repo/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar"), 
