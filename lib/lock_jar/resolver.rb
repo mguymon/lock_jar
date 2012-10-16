@@ -22,7 +22,7 @@ module LockJar
     
     attr_reader :opts
     attr_reader :naether
-    
+        
     def initialize( opts = {} )
 
       @opts = opts
@@ -51,6 +51,10 @@ module LockJar
       @naether.dependencies = dependencies
       @naether.resolve_dependencies( download_artifacts )
       @naether.dependencies_notation
+    end
+    
+    def dependencies_graph
+      @naether.dependencies_graph
     end
     
     def download( dependencies )

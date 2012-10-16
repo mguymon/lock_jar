@@ -15,13 +15,12 @@
 
 require 'rubygems'
 require "yaml"
-require 'stringio'
-require 'i18n_yaml_sorter'
 require 'singleton'
 require 'lock_jar/resolver'
-require 'lock_jar/dsl'
 require 'lock_jar/runtime'
 require 'lock_jar/registry'
+require 'lock_jar/domain/dsl'
+require 'lock_jar/domain/lockfile'
 
 module LockJar
   class Runtime
@@ -53,11 +52,11 @@ module LockJar
       @current_resolver
     end
     
-    def install( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
-      deps = list( jarfile_lock, scopes, opts, &blk )
+    def install( jarfile_lock, groups = ['default'], opts = {}, &blk )
+      deps = list( jarfile_lock, groups, opts, &blk )
       
-      lock_data = read_lockfile( jarfile_lock )
-      lock_data['repositories'].each do |repo|
+      lockfile = LockJar::Domain::Lockfile.read( jarfile_lock )
+      lockfile.remote_repositories.each do |repo|
           resolver(opts).add_remote_repository( repo )
       end
       
@@ -73,15 +72,15 @@ module LockJar
         lock_jar_file = nil
         
         if jarfile
-          if jarfile.is_a? LockJar::Dsl
+          if jarfile.is_a? LockJar::Domain::Dsl
             lock_jar_file = jarfile
           else
-            lock_jar_file = LockJar::Dsl.evaluate( jarfile )
+            lock_jar_file = LockJar::Domain::Dsl.create( jarfile )
           end
         end
         
         unless blk.nil?
-          dsl = LockJar::Dsl.evaluate(&blk)
+          dsl = LockJar::Domain::Dsl.create(&blk)
           if lock_jar_file.nil?
             lock_jar_file = dsl
           else
@@ -95,86 +94,63 @@ module LockJar
           opts[:local_repo] = lock_jar_file.local_repository 
         end
         
-        lock_jar_file.repositories.each do |repo|
+        lock_jar_file.remote_repositories.each do |repo|
           resolver(opts).add_remote_repository( repo )
         end
         
-        lock_data = { }
+        lockfile = LockJar::Domain::Lockfile.new
 
         unless lock_jar_file.local_repository.nil?
-          lock_data['local_repository'] = lock_jar_file.local_repository
-          
-          if needs_force_encoding
-            lock_data['local_repository'] = lock_data['local_repository'].force_encoding("UTF-8")
-          end
+          lockfile.local_repository = lock_jar_file.local_repository
         end
                 
         if lock_jar_file.maps.size > 0
-          lock_data['maps'] = lock_jar_file.maps
+          lockfile.maps = lock_jar_file.maps
         end
         
         if lock_jar_file.excludes.size > 0 
-          lock_data['excludes'] = lock_jar_file.excludes
-            
-          if needs_force_encoding
-            lock_data['excludes'].map! { |exclude| exclude.force_encoding("UTF-8") }
-          end
+          lockfile.excludes = lock_jar_file.excludes
         end
         
-        lock_data['scopes'] = {} 
+        default_artifacts = lock_jar_file.artifacts.delete( 'default' )
+        if default_artifacts && !default_artifacts.empty?
+           lockfile.groups['default'] = resolve_dependencies( [], [], default_artifacts, lockfile.excludes, opts )
+        end
+         
+        lock_jar_file.artifacts.each do |group, artifacts|
           
-        lock_jar_file.notations.each do |scope, notations|
+          group_artifacts = artifacts
           
-          if needs_force_encoding
-            notations.map! { |notation| notation.force_encoding("UTF-8") }
-          end
-          
-          dependencies = []
-          notations.each do |notation|
-            dependencies << {notation => scope}
-          end
-          
-          if dependencies.size > 0
-            resolved_notations = resolver(opts).resolve( dependencies, opts[:download] == true )
+          if group_artifacts.size > 0
             
-            lock_data['repositories'] = resolver(opts).remote_repositories.uniq
-            if needs_force_encoding
-              lock_data['repositories'].map! { |repo| repo.force_encoding("UTF-8") }
-            end 
+            # remove duplicated deps
+            group_artifacts -= default_artifacts
             
-            if lock_data['excludes']
-              lock_data['excludes'].each do |exclude|
-                resolved_notations.delete_if { |dep| dep =~ /#{exclude}/ }
-              end
-            end
+            # add defaults to deps
+            group_artifacts += default_artifacts
             
-            lock_data['scopes'][scope] = { 
-              'dependencies' => notations.sort,
-              'resolved_dependencies' => resolved_notations.sort } 
+            lockfile.groups[group] = resolve_dependencies( default_artifacts, lockfile.groups['default']['dependencies'], group_artifacts, lockfile.excludes, opts )
           end
         end
-
-        File.open( opts[:lockfile] || "Jarfile.lock", "w") do |f|
-          #f.write( I18nYamlSorter::Sorter.new(StringIO.new(lock_data.to_yaml)).sort )
-          f.write( lock_data.to_yaml )
-        end
+    
+        lockfile.write( opts[:lockfile] || "Jarfile.lock" )
         
-        lock_data
+        lockfile
       end
     
-      def list( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
+      def list( jarfile_lock, groups = ['default'], opts = {}, &blk )
         dependencies = []
         maps = []
             
         if jarfile_lock
-          lockfile = read_lockfile( jarfile_lock)
-          dependencies += lockfile_dependencies( lockfile, scopes )
-          maps = lockfile['maps']
+          lockfile = LockJar::Domain::Lockfile.read( jarfile_lock)
+          dependencies += lockfile_dependencies( lockfile, groups )
+          maps = lockfile.maps
         end
         
         unless blk.nil?
-          dsl = LockJar::Dsl.evaluate(&blk)
-          dependencies += dsl_dependencies( dsl, scopes )
+          dsl = LockJar::Domain::Dsl.create(&blk)
+          dependencies += dsl_dependencies( dsl, groups ).map(&:to_dep)
           maps = dsl.maps
         end
         
@@ -202,20 +178,20 @@ module LockJar
         
         if opts[:local_paths]
           opts.delete( :local_paths ) # remove list opts so resolver is not reset
-          resolver(opts).to_local_paths( dependencies.uniq )
+          resolver(opts).to_local_paths( dependencies )
           
         else
-          dependencies.uniq
+          dependencies
         end
       end
       
       # Load paths from a lockfile or block. Paths are loaded once per lockfile.
       # 
       # @param [String] jarfile_lock the lockfile
-      # @param [Array] scopes to load into classpath
+      # @param [Array] groups to load into classpath
       # @param [Hash] opts
       # @param [Block] blk
-      def load( jarfile_lock, scopes = ['compile', 'runtime'], opts = {}, &blk )
+      def load( jarfile_lock, groups = ['default'], opts = {}, &blk )
         
         # lockfile is only loaded once
         if !jarfile_lock.nil? && LockJar::Registry.instance.lockfile_registered?( jarfile_lock )
@@ -223,15 +199,15 @@ module LockJar
         end
         
         if jarfile_lock
-          lockfile = read_lockfile( jarfile_lock )
+          lockfile = LockJar::Domain::Lockfile.read( jarfile_lock )
           
-          if opts[:local_repo].nil? && lockfile['local_repo']
-            opts[:local_repo] = lockfile['local_repo']
+          if opts[:local_repo].nil? && lockfile.local_repository
+            opts[:local_repo] = lockfile.local_repository
           end
         end
         
         unless blk.nil?
-          dsl = LockJar::Dsl.evaluate(&blk)
+          dsl = LockJar::Domain::Dsl.create(&blk)
           
           if opts[:local_repo].nil? && dsl.local_repository
             opts[:local_repo] = dsl.local_repository
@@ -239,46 +215,85 @@ module LockJar
         end
         
         LockJar::Registry.instance.register_lockfile( jarfile_lock )
-        dependencies = LockJar::Registry.instance.register_jars( list( jarfile_lock, scopes, opts, &blk ) )
+        dependencies = LockJar::Registry.instance.register_jars( list( jarfile_lock, groups, opts, &blk ) )
                 
         resolver(opts).load_to_classpath( dependencies )
       end
       
-      def read_lockfile( jarfile_lock )
-        YAML.load_file( jarfile_lock )
-      end
-      
       private
       
-      def lockfile_dependencies( lockfile, scopes)
+      def lockfile_dependencies( lockfile, groups)
         dependencies = []
          
-        scopes.each do |scope|
-          if lockfile['scopes'][scope]
-            dependencies += lockfile['scopes'][scope]['resolved_dependencies']
+        groups.each do |group|
+          if lockfile.groups[group.to_s]
+            dependencies += lockfile.groups[group.to_s]['dependencies']
           end
         end
         
         dependencies
       end
       
-      def dsl_dependencies( dsl, scopes )
+      def dsl_dependencies( dsl, groups )
         
         dependencies = []
          
-        dsl.notations.each do |scope,notations|
-          if notations && notations.size > 0
-            dependencies += notations
+        groups.each do |group|
+          if dsl.artifacts[group.to_s]
+            dependencies += dsl.artifacts[group.to_s]
           end
         end
         
         dependencies
       end
-
-      private
-      def needs_force_encoding
-        @needs_force_encoding || @needs_force_encoding = RUBY_VERSION =~ /^1.9/
+      
+      def resolve_dependencies( default_artifacts, default_notations, artifacts, excludes, opts = {} )
+        resolved_notations = []
+        if artifacts && !artifacts.empty?
+           resolved_notations = resolver(opts).resolve( artifacts.map(&:to_dep), opts[:download] == true )
+          
+          if excludes
+            excludes.each do |exclude|
+              resolved_notations.delete_if { |dep| dep =~ /#{exclude}/ }
+            end
+          end
+          
+          lock_data = { 'dependencies' => (resolved_notations - default_notations).sort }
+          lock_data['artifacts'] = []
+          artifacts.each do |artifact,deps|
+            
+            if default_artifacts.include? artifact
+              next
+            end
+            
+            artifact_data = {}
+            if artifact.is_a? LockJar::Domain::Jar
+              artifact_data["transitive"] = resolver(opts).dependencies_graph[artifact.notation].to_hash
+              
+            elsif artifact.is_a? LockJar::Domain::Pom
+              artifact_data['scopes'] = artifact.scopes
+              
+              # iterate each dependency in Pom to map transitive dependencies
+              transitive = {}
+              artifact.notations.each do |notation| 
+                transitive.merge!( resolver(opts).dependencies_graph[notation] )
+              end
+              artifact_data["transitive"] = transitive
+              
+            elsif artifact.is_a? LockJar::Domain::Local
+              # xXX: support local artifacts
+            else
+              # XXX: handle unsupported artifact
+              
+            end
+            
+            # xxX: set required_by ?
+            
+            lock_data['artifacts'] << { artifact.to_urn => artifact_data }
+          end
+          
+          lock_data
       end
+    end
   end
-  
 end

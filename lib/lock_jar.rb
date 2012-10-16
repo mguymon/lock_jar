@@ -16,10 +16,10 @@
 require "yaml"
 require 'rubygems'
 require 'lock_jar/resolver'
-require 'lock_jar/dsl'
 require 'lock_jar/runtime'
 require 'lock_jar/version'
-require 'lock_jar/rubygems'
+require 'lock_jar/domain/lockfile'
+require 'lock_jar/domain/dsl'
 
 #
 # LockJar manages Java Jars for Ruby.
@@ -38,7 +38,7 @@ module LockJar
   def self.install( *args, &blk )
     lockfile = nil
     opts = {}
-    scopes = ['compile', 'runtime']
+    groups = ['default']
       
     args.each do |arg|
       if arg.is_a?(Hash)
@@ -46,7 +46,7 @@ module LockJar
       elsif arg.is_a?( String )
         lockfile = arg
       elsif arg.is_a?( Array )
-        scopes = arg
+        groups = arg
       end
     end
     
@@ -55,14 +55,14 @@ module LockJar
       lockfile = 'Jarfile.lock'
     end
     
-    Runtime.instance.install( lockfile, scopes, opts, &blk )
+    Runtime.instance.install( lockfile, groups, opts, &blk )
   end
   
   
-  # Lists all dependencies as notations for scopes from the Jarfile.lock. Depending on the type of arg, a different configuration is set.
+  # Lists all dependencies as notations for groups from the Jarfile.lock. Depending on the type of arg, a different configuration is set.
   #
   # * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'.  Default lock file is *Jarfile.lock*.
-  # * An arg of an Array will set the scopes, e.g. ['compile','test'].  Defaults scopes are *compile* and *runtime*
+  # * An arg of an Array will set the groups, e.g. ['development','test'].  Defaults group is *default*
   # * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
   #   * :local_repo [String] sets the local repo path
   #   * :local_paths [Boolean] to true converts the notations to paths to jars in the local repo path
@@ -74,7 +74,7 @@ module LockJar
   def self.list( *args, &blk )
       lockfile = nil
       opts = {}
-      scopes = ['compile', 'runtime']
+      groups = ['default']
         
       args.each do |arg|
         if arg.is_a?(Hash)
@@ -82,7 +82,7 @@ module LockJar
         elsif arg.is_a?( String )
           lockfile = arg
         elsif arg.is_a?( Array )
-          scopes = arg
+          groups = arg
         end
       end
       
@@ -91,12 +91,12 @@ module LockJar
         lockfile = 'Jarfile.lock'
       end
       
-      Runtime.instance.list( lockfile, scopes, opts, &blk )
+      Runtime.instance.list( lockfile, groups, opts, &blk )
   end
     
-  # LockJar.load(*args): Loads all dependencies to the classpath for scopes from the Jarfile.lock. Depending on the type of arg, a different configuration is set.
+  # LockJar.load(*args): Loads all dependencies to the classpath for groups from the Jarfile.lock. Depending on the type of arg, a different configuration is set.
   # * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'. Default lock file is *Jarfile.lock*.
-  # * An arg of an Array will set the scopes, e.g. ['compile','test'].Defaults scopes are *compile* and *runtime*.
+  # * An arg of an Array will set the groups, e.g. ['development','test'].Defaults group is *default*.
   # * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
   #    * :local_repo sets the local repo path
   #    * :resolve to true will make transitive dependences resolve before loading to classpath
@@ -107,7 +107,7 @@ module LockJar
   def self.load( *args, &blk )
       lockfile = nil
       opts = {}
-      scopes = ['compile', 'runtime']
+      groups = ['default']
         
       args.each do |arg|
         if arg.is_a?(Hash)
@@ -115,7 +115,7 @@ module LockJar
         elsif arg.is_a?( String )
           lockfile = arg
         elsif arg.is_a?( Array )
-          scopes = arg
+          groups = arg
         end
       end
       
@@ -124,7 +124,7 @@ module LockJar
         lockfile = 'Jarfile.lock'
       end
       
-      Runtime.instance.load( lockfile, scopes, opts, &blk )
+      Runtime.instance.load( lockfile, groups, opts, &blk )
   end
   
   # Lock a Jarfile and generate a Jarfile.lock. 
@@ -147,7 +147,7 @@ module LockJar
     args.each do |arg|
       if arg.is_a?(Hash)
         opts.merge!( arg )
-      elsif arg.is_a?( String ) || arg.is_a?( LockJar::Dsl )
+      elsif arg.is_a?( String ) || arg.is_a?( LockJar::Domain::Dsl )
         jarfile = arg
       end
     end
@@ -161,14 +161,13 @@ module LockJar
   end
   
   #
-  # Read a Jafile.lock and convert it to a Hash
+  # Read a Jafile.lock and convert it to a LockJar::Domain::Lockfile
   #
   # @param [String] lockfile path to lockfile
   # @return [Hash] Lock Data
   def self.read( lockfile )
-    Runtime.instance.read_lockfile( lockfile )
+    LockJar::Domain::Lockfile.read( lockfile )
   end
  
 end
 
-#include LockJar::Rubygems::Kernel

@@ -1,6 +1,7 @@
 # LockJar
 
-LockJar manages Java Jars for Ruby. Powered by [Naether](https://github.com/mguymon/naether) to create a frankenstein of Bundler and Maven. A Jarfile ([example](https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile)) is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test. The Jarfile.lock can be used to populate the classpath.
+LockJar manages Java Jars for Ruby. Powered by [Naether](https://github.com/mguymon/naether) to
+ create a frankenstein of Bundler and Maven. A Jarfile ([example](https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile)) is used to generate a Jarfile.lock that contains all the resolved jar dependencies. The Jarfile.lock can be used to populate the classpath.
 
 LockJar can be used directly, from the [command line](https://github.com/mguymon/lock_jar/blob/master/README.md#command-line), [triggered from a Gem install](https://github.com/mguymon/lock_jar/blob/master/README.md#gem-integration), and [integrates with Buildr](https://github.com/mguymon/lock_jar/blob/master/README.md#buildr-integration).
 
@@ -19,25 +20,24 @@ https://github.com/mguymon/lock_jar
 A Jarfile is a simple file using a Ruby DSL for defining a project's dependencies using the following 
 methods:
 
-* **local( path )**: Set the local Maven repository, this were dependencies are downloaded to. 
-* **repository( url )**: Add additional urlr of remote Maven repository.
-* **exclude( excludes )**: Add a artifact:group that will be excluded from resolved dependencies. A single or Array of excludes can be set.
-* **jar( notations, opts = {} )**: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default scope is _compile_, can be specified by setting _opts = { :scope => ['new_scope'] }_
-* **pom( pom_path, opts = {} )**: Add a local Maven pom, default is to load dependencies for all scopes. To select the scopes to be loaded from the pom, set the _opts = { :scopes => ['new_scope'] }_
-* **scope( scopes )**: Set the scope for nested jar or pom. A single or Array of scopes can be set.
+* **local_repo( path )**: Set the local Maven repository, this were dependencies are downloaded to. 
+* **remote_repo( url )**: Add additional url of remote Maven repository.
+* **group( groups )**: Set the group for nested jar or pom. A single or Array of groups can be set.
+* **jar( notations, opts = {} )**: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default group is _default_, can be specified by setting _opts = { :group => ['group_name'] }_
+* **pom( pom_path, opts = {} )**: Add a local Maven pom, default is to load dependencies for `runtime` and `compile` scopes. To select the scopes to be loaded from the pom, set the _opts = { :scopes => ['test'] }_
 
 #### Example Jarfile
 
     repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
   	
-    // Default scope is compile
+    // Default group is default
     jar "org.apache.mina:mina-core:2.0.4"
   
-    scope 'runtime' do
+    group 'runtime' do
       jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
     end
   
-    jar 'junit:junit:jar:4.10', :scope => 'test'
+    jar 'junit:junit:jar:4.10', :group => 'test'
   
 	
 ### Resolving dependencies
@@ -58,60 +58,79 @@ Example of locking a Jarfile to a Jarfile.lock
  
 ### Jarfile.lock
 
-The _Jarfile.lock_ generated is a YAML file containing the scoped dependencies, their resolved dependencies, and the additional Maven repositories.
+The _Jarfile.lock_ generated is a YAML file containing the groupd dependencies and their nested transitive dependencies.
 
 #### The Jarfile.lock
+    
+    ---
+    version: 0.7.0
+    groups:
+      default:
+        dependencies:
+        - ch.qos.logback:logback-classic:jar:0.9.24
+        - ch.qos.logback:logback-core:jar:0.9.24
+        - com.metapossum:metapossum-scanner:jar:1.0
+        - com.slackworks:modelcitizen:jar:0.2.2
+        - commons-beanutils:commons-beanutils:jar:1.8.3
+        - commons-io:commons-io:jar:1.4
+        - commons-lang:commons-lang:jar:2.6
+        - commons-logging:commons-logging:jar:1.1.1
+        - junit:junit:jar:4.7
+        - org.apache.mina:mina-core:jar:2.0.4
+        - org.slf4j:slf4j-api:jar:1.6.1
+        artifacts:
+        - jar:org.apache.mina:mina-core:jar:2.0.4:
+            transitive:
+              org.slf4j:slf4j-api:jar:1.6.1: {}
+        - pom:spec/pom.xml:
+            scopes:
+            - runtime
+            - compile
+            transitive:
+              com.metapossum:metapossum-scanner:jar:1.0:
+                junit:junit:jar:4.7: {}
+                commons-io:commons-io:jar:1.4: {}
+              commons-beanutils:commons-beanutils:jar:1.8.3:
+                commons-logging:commons-logging:jar:1.1.1: {}
+              ch.qos.logback:logback-classic:jar:0.9.24:
+                ch.qos.logback:logback-core:jar:0.9.24: {}
+              commons-lang:commons-lang:jar:2.6: {}
+      development:
+        dependencies:
+        - com.typesafe:config:jar:0.5.0
+        artifacts:
+        - jar:com.typesafe:config:jar:0.5.0:
+            transitive: {}
+      test:
+        dependencies:
+        - junit:junit:jar:4.10
+        - org.hamcrest:hamcrest-core:jar:1.1
+        artifacts:
+        - jar:junit:junit:jar:4.10:
+            transitive:
+              org.hamcrest:hamcrest-core:jar:1.1: {}
+    ...
 
-    --- 
-    repositories: 
-      - http://repository.jboss.org/nexus/content/groups/public-jboss
-    scopes: 
-      compile: 
-        dependencies: 
-          - org.apache.mina:mina-core:2.0.4
-        resolved_dependencies: 
-          - org.apache.mina:mina-core:jar:2.0.4
-          - org.slf4j:slf4j-api:jar:1.6.1
-          - com.slackworks:modelcitizen:jar:0.2.2
-          - commons-lang:commons-lang:jar:2.6
-          - commons-beanutils:commons-beanutils:jar:1.8.3
-          - commons-logging:commons-logging:jar:1.1.1
-          - ch.qos.logback:logback-classic:jar:0.9.24
-          - ch.qos.logback:logback-core:jar:0.9.24
-          - com.metapossum:metapossum-scanner:jar:1.0
-          - commons-io:commons-io:jar:1.4
-          - junit:junit:jar:4.7
-      runtime: 
-        dependencies: 
-          - org.apache.tomcat:servlet-api:jar:6.0.35
-        resolved_dependencies: 
-          - org.apache.tomcat:servlet-api:jar:6.0.35
-      test: 
-        dependencies: 
-          - junit:junit:jar:4.10
-        resolved_dependencies: 
-          - junit:junit:jar:4.10
-          - org.hamcrest:hamcrest-core:jar:1.1
   
   
 ### Accessing Jars
 **LockJar.install(*args)**: Download Jars in the Jarfile.lock
 * _[String]_ will set the Jarfile.lock path, e.g. `'Better.lock'`. Default lock file is `'Jarfile.lock'`.
-* _[Array<String>]_ will set the scopes, e.g. `['compile','test']`. Defaults scopes are _compile_ and _runtime_.
+* _[Array<String>]_ will set the groups, e.g. `['compile','test']`. Defaults group is _default_.
 * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
   * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
   
-**LockJar.list(*args)**: Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  
+**LockJar.list(*args)**: Lists all dependencies as notations for groups from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  
 * _[String]_ will set the Jarfile.lock path, e.g. `'Better.lock'`. Default lock file is `'Jarfile.lock'`.
-* _[Array<String>]_ will set the scopes, e.g. `['compile','test']`. Defaults scopes are _compile_ and _runtime_.
+* _[Array<String>]_ will set the groups, e.g. `['default', 'runtime']`. Defaults group is _default_.
 * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
   * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
   * **:local_paths** _[Boolean]_ converts the notations to paths of jars in the local repo
   * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before returning list of jars
   
-**LockJar.load(*args)**: Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are _compile_ and _runtime_. Default lock file is _Jarfile.lock_.
+**LockJar.load(*args)**: Loads all dependencies to the classpath for groups from the Jarfile.lock. Default group is _default_. Default lock file is _Jarfile.lock_.
 * _[String]_ will set the Jarfile.lock, e.g. `'Better.lock'`
-* _[Array<String>]_ will set the scopes, e.g. `['compile','test']`
+* _[Array<String>]_ will set the groups, e.g. `['default', 'runtime']`
 * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
   * **:local_repo** _[String]_ sets the local repo path
   * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before loading to classpath 
@@ -249,7 +268,7 @@ In a project, you can access an Array of notations using the **lock_jars** metho
     lock_jars()
 
 
-The _compile_ scoped dependencies are automatically added to the classpath for compiling. The test scoped dependencies are automatically added to the classpath for tests. Do not forget, if you change the LockJar definitions, you have to rerun the **lock_jar:lock** task.
+The _default_ group dependencies are automatically added to the classpath for compiling. The _test_ group dependencies are automatically added to the classpath for tests. Do not forget, if you change the LockJar definitions, you have to rerun the **lock_jar:lock** task.
 
 
 ### Example
@@ -261,7 +280,7 @@ Sample buildfile with LockJar
     # app definition, inherited into all projects
     lock_jar do
 
-         scope 'test' do
+         group 'test' do
            jar 'junit:junit:jar:4.10'
          end
     end
