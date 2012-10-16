@@ -29,7 +29,7 @@ module LockJar
       
       def initialize
         @force_utf8 ||= RUBY_VERSION =~ /^1.9/
-        @groups = {}
+        @groups = { 'default' => {} }
         @maps = []
         @excludes = []
         @remote_repositories = []
