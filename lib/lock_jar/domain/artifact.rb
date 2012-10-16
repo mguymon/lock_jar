@@ -81,6 +81,7 @@ module LockJar
           if to_urn == another_artifact.to_urn
             return 0 if Set.new(scopes) == Set.new(another_artifact.scopes)
             
+            # XXX: this is not a reliable way to compare. 
             if scopes.size > another_artifact.scopes.size
               return 1
             else
