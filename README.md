@@ -322,7 +322,7 @@ Bundler  calls `setup` and `require`. To enable this support, add this require t
 
     require 'lock_jar/bundler'
 
-You can optionally create a Jarfile that would automatically be included when you `bundle install` or `bundle update`. Otherwise
+You can optionally create a _Jarfile_ that will automatically be included when you `bundle install` or `bundle update`. Otherwise
 Gems with a Jarfile will be merge to generate a _Jarfile.lock_. The Jarfile.lock will be loaded when Bundler calls `setup` or `require`.
 
 ## License
