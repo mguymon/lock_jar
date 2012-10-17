@@ -198,15 +198,19 @@ module LockJar
     def list( lockfile_or_path, groups = ['default'], opts = {}, &blk )
           
       lockfile = nil
+      dependencies = []
+      maps = []
       
-      if lockfile_or_path.is_a? LockJar::Domain::Lockfile
-        lockfile = lockfile_or_path
-      elsif lockfile_or_path
-        lockfile = LockJar::Domain::Lockfile.read( lockfile_or_path )
+      if lockfile_or_path
+        if lockfile_or_path.is_a? LockJar::Domain::Lockfile
+          lockfile = lockfile_or_path
+        elsif lockfile_or_path
+          lockfile = LockJar::Domain::Lockfile.read( lockfile_or_path )
+        end
+        
+        dependencies = lockfile_dependencies( lockfile, groups )
+        maps = lockfile.maps
       end
-      
-      dependencies = lockfile_dependencies( lockfile, groups )
-      maps = lockfile.maps
       
       # Support limited DSL from block
       unless blk.nil?
@@ -270,10 +274,11 @@ module LockJar
         else
           lockfile = LockJar::Domain::Lockfile.read( lockfile_or_path )
         end
-      end
+      
             
-      if opts[:local_repo].nil? && lockfile.local_repository
-        opts[:local_repo] = lockfile.local_repository
+        if opts[:local_repo].nil? && lockfile.local_repository
+          opts[:local_repo] = lockfile.local_repository
+        end
       end
       
       # set local_repo if passed in the block
