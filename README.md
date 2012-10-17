@@ -325,6 +325,33 @@ Bundler  calls `setup` and `require`. To enable this support, add this require t
 You can optionally create a _Jarfile_ that will automatically be included when you `bundle install` or `bundle update`. Otherwise
 Gems with a Jarfile will be merge to generate a _Jarfile.lock_. The Jarfile.lock will be loaded when Bundler calls `setup` or `require`.
 
+### Bundler to LockJar groups
+
+LockJar will merge the dependencies from the `default` and `runtime` group of a Gem's _Jarfile_. These will be placed in the 
+lockfile under Gem's corresponding Bundler group. For example, the following Gemfile:
+
+   group :development do
+      gem 'solr_sail', '~>0.1.0'
+    end
+
+Would produce the follow _Jarfile.lock_ excerpt:
+
+    ---
+    version: 0.7.0
+    merged:
+    - gem:solr_sail:gems/solr_sail-0.1.0-java/Jarfile
+    groups:
+      default:
+        dependencies: []
+        artifacts: []
+      development:
+        dependencies:
+         - ch.qos.logback:logback-classic:jar:1.0.6
+         - ch.qos.logback:logback-core:jar:1.0.6
+         - com.google.guava:guava:jar:r05
+
+Since `solr_sail` is defined in the `development` group, the _Jarfile.lock_ dependencies_ are als under the `development` group.
+      
 ## License
 
 Licensed to the Apache Software Foundation (ASF) under one or more
