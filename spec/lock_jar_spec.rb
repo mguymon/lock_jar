@@ -104,7 +104,7 @@ describe LockJar, "#lock" do
     File.exists?( 'tmp/Jarfile.lock' ).should be_true
     lockfile = LockJar.read('tmp/Jarfile.lock')
     lockfile.to_hash.should eql({
-      "version"=>"0.7.0", 
+      "version"=> LockJar::VERSION, 
       "excludes"=>["commons-logging", "logkit"], 
       "groups"=>{
         "default"=>{
@@ -142,7 +142,7 @@ describe LockJar, "#lock" do
     
     lockfile = LockJar.read('tmp/NoRepoJarfile.lock')
     lockfile.to_hash.should eql({
-      "version"=>"0.7.0", 
+      "version"=> LockJar::VERSION, 
       "groups"=>{
         "default"=>{
           "dependencies"=>["org.eclipse.jetty.orbit:javax.servlet:jar:3.0.0.v201112011016", 
