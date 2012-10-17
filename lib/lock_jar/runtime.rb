@@ -23,6 +23,7 @@ require 'lock_jar/domain/dsl'
 require 'lock_jar/domain/lockfile'
 
 module LockJar
+  
   class Runtime
     include Singleton
     
