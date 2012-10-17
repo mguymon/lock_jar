@@ -27,7 +27,7 @@ module LockJar
           LockJar.load( lockfile, groups )
           
           if ENV["DEBUG"]
-            puts "[LockJar] Loaded Jars  for #{groups.inspect}: #{LockJar::Registry.instance.loaded_jars.inspect}"
+            puts "[LockJar] Loaded Jars for #{groups.inspect}: #{LockJar::Registry.instance.loaded_jars.inspect}"
           end
         end
       end
@@ -135,7 +135,7 @@ module Bundler
                 
                 spec_dsl = LockJar::Domain::GemDsl.create( spec, "Jarfile" )
                 
-                dsl = LockJar::Domain::DslHelper.merge( dsl, spec_dsl )
+                dsl = LockJar::Domain::DslHelper.merge( dsl, spec_dsl, group.to_s )
               end 
             end
             

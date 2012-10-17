@@ -21,18 +21,36 @@ module LockJar
       
         #
         # Merge LockJar::Domain::Dsl
-        #
-        def merge( into_dsl, from_dsl )
+        # @param [LockJar::Domain::Dsl] into_dsl dsl that is merged into
+        # @param [LockJar::Domain::Dsl] from_dsl dsl that is merged from
+        # @param [String] into_group force only runtime and default groups to be loaded into this group
+        # @return [LockJar::Domain::Dsl] 
+        def merge( into_dsl, from_dsl, into_group = nil )
           into_dsl.remote_repositories = (into_dsl.remote_repositories + from_dsl.remote_repositories).uniq
           
-          from_dsl.artifacts.each do |group, artifacts|
-            group_artifacts = into_dsl.artifacts[group] || []
-            artifacts.each do |art|
+          # merge default and runtime group into specific group
+          if into_group
+            group_artifacts = into_dsl.artifacts[into_group] || []
+            defaults = from_dsl.artifacts['default'] || []
+            runtime = from_dsl.artifacts['runtime'] || []
+            ( defaults + runtime ).each do |art|
               unless group_artifacts.include? art
                 group_artifacts << art
               end
             end
-            into_dsl.artifacts[group] = group_artifacts
+            into_dsl.artifacts[into_group] = group_artifacts
+            
+          # one to one merging of groups
+          else
+            from_dsl.artifacts.each do |group, artifacts|
+              group_artifacts = into_dsl.artifacts[group] || []
+              artifacts.each do |art|
+                unless group_artifacts.include? art
+                  group_artifacts << art
+                end
+              end
+              into_dsl.artifacts[group] = group_artifacts
+            end
           end
           
           from_dsl.maps.each do |artifact,paths|
