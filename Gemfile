@@ -1,4 +1,4 @@
-#require 'lib/lock_jar/bundler'
+require 'lib/lock_jar/bundler'
 
 source "http://rubygems.org"
 

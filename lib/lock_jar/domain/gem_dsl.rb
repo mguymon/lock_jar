@@ -30,8 +30,7 @@ module LockJar
           builder.gem_dir = spec.gem_dir
           
           jarfile = File.join( spec.gem_dir, jarfile )
-          
-          builder.file_path = jarfile
+          builder.file_path = "gem:#{spec.name}:#{jarfile.gsub( "#{spec.base_dir}/", "" )}"
           
           evaluate(builder, jarfile)
         end

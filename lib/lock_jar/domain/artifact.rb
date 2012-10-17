@@ -19,6 +19,8 @@ require 'naether/notation'
 
 module LockJar
   module Domain
+    
+    
     class Artifact
       include Comparable
       attr_reader :type

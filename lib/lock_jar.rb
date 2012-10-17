@@ -83,6 +83,8 @@ module LockJar
           lockfile = arg
         elsif arg.is_a?( Array )
           groups = arg
+        elsif arg.is_a?( LockJar::Domain::Lockfile )
+          lockfile = arg
         end
       end
       
@@ -116,6 +118,8 @@ module LockJar
           lockfile = arg
         elsif arg.is_a?( Array )
           groups = arg
+        elsif arg.is_a?( LockJar::Domain::Lockfile )
+          lockfile = arg
         end
       end
       

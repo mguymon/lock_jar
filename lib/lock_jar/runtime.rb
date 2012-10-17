@@ -29,6 +29,10 @@ module LockJar
     
     attr_reader :current_resolver
     
+    def initialize
+      @current_resolver = nil
+    end
+    
     def resolver( opts = {} )
       
       # XXX: Caches the resolver by the options. Passing in nil opts will replay
@@ -191,16 +195,20 @@ module LockJar
       lockfile
     end
   
-    def list( jarfile_lock, groups = ['default'], opts = {}, &blk )
-      dependencies = []
-      maps = []
+    def list( lockfile_or_path, groups = ['default'], opts = {}, &blk )
           
-      if jarfile_lock
-        lockfile = LockJar::Domain::Lockfile.read( jarfile_lock)
-        dependencies += lockfile_dependencies( lockfile, groups )
-        maps = lockfile.maps
+      lockfile = nil
+      
+      if lockfile_or_path.is_a? LockJar::Domain::Lockfile
+        lockfile = lockfile_or_path
+      elsif lockfile_or_path
+        lockfile = LockJar::Domain::Lockfile.read( lockfile_or_path )
       end
       
+      dependencies = lockfile_dependencies( lockfile, groups )
+      maps = lockfile.maps
+      
+      # Support limited DSL from block
       unless blk.nil?
         dsl = LockJar::Domain::Dsl.create(&blk)
         dependencies += dsl_dependencies( dsl, groups ).map(&:to_dep)
@@ -244,37 +252,48 @@ module LockJar
     # @param [Array] groups to load into classpath
     # @param [Hash] opts
     # @param [Block] blk
-    def load( lockfile_path, groups = ['default'], opts = {}, &blk )
+    def load( lockfile_or_path, groups = ['default'], opts = {}, &blk )
+      
+      lockfile = nil
       
       # lockfile is only loaded once
-      if !lockfile_path.nil? && LockJar::Registry.instance.lockfile_registered?( lockfile_path )
-        return  
-      end
-      
-      if lockfile_path
-        lockfile = LockJar::Domain::Lockfile.read( lockfile_path )
-        
-        if opts[:local_repo].nil? && lockfile.local_repository
-          opts[:local_repo] = lockfile.local_repository
+      unless lockfile_or_path.nil? 
+        # loaded a Lockfile instance
+        if lockfile_or_path.is_a? LockJar::Domain::Lockfile
+          lockfile = lockfile_or_path
+          
+        # check if lockfile path is already loaded
+        elsif LockJar::Registry.instance.lockfile_registered?( lockfile_or_path )
+          return  
+          
+        # convert lockfile path to a Lockfile instance
+        else
+          lockfile = LockJar::Domain::Lockfile.read( lockfile_or_path )
         end
       end
+            
+      if opts[:local_repo].nil? && lockfile.local_repository
+        opts[:local_repo] = lockfile.local_repository
+      end
       
+      # set local_repo if passed in the block
       unless blk.nil?
         dsl = LockJar::Domain::Dsl.create(&blk)
         
+        # set local_repo from block
         if opts[:local_repo].nil? && dsl.local_repository
           opts[:local_repo] = dsl.local_repository
         end
       end
       
-      
+      # registered merged lockfiles for lockfile
       if lockfile && !lockfile.merged.empty?
         lockfile.merged.each do |path|
           LockJar::Registry.instance.register_lockfile( path )
         end
       end
       
-      dependencies = LockJar::Registry.instance.register_jars( list( lockfile_path, groups, opts, &blk ) )
+      dependencies = LockJar::Registry.instance.register_jars( list( lockfile, groups, opts, &blk ) )
               
       resolver(opts).load_to_classpath( dependencies )
     end

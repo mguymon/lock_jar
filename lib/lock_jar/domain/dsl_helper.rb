@@ -19,6 +19,9 @@ module LockJar
   
       class << self
       
+        #
+        # Merge LockJar::Domain::Dsl
+        #
         def merge( into_dsl, from_dsl )
           into_dsl.remote_repositories = (into_dsl.remote_repositories + from_dsl.remote_repositories).uniq
           
