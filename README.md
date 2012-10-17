@@ -330,7 +330,7 @@ Gems with a Jarfile will be merge to generate a _Jarfile.lock_. The Jarfile.lock
 LockJar will merge the dependencies from the `default` and `runtime` group of a Gem's _Jarfile_. These will be placed in the 
 lockfile under Gem's corresponding Bundler group. For example, the following Gemfile:
 
-   group :development do
+    group :development do
       gem 'solr_sail', '~>0.1.0'
     end
 
