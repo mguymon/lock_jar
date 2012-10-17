@@ -37,8 +37,9 @@ methods:
       jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
     end
   
-    jar 'junit:junit:jar:4.10', :group => 'test'
-  
+    group 'test' do
+      jar 'junit:junit:jar:4.10', :group => 'test'
+    end
 	
 ### Resolving dependencies
 
