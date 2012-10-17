@@ -8,6 +8,7 @@ LockJar can:
 * From the [command line](https://github.com/mguymon/lock_jar/blob/master/README.md#command-line)
 * [Triggered from a Gem install](https://github.com/mguymon/lock_jar/blob/master/README.md#gem-integration)
 * [Integrated into Buildr](https://github.com/mguymon/lock_jar/blob/master/README.md#buildr-integration)
+* Experimental [tntegration with Bundler](https://github.com/mguymon/lock_jar/blob/master/README.md#bundler-integration)
 
 https://github.com/mguymon/lock_jar
 
@@ -315,8 +316,13 @@ Generated the following lock files using **lock_jar:lock**
   
 ## Bundler Integration
 
-Direct Bundler integration has been deprecated to https://github.com/mguymon/lock_jar/tree/bundler_support. 
-Waiting for [Bundler plugin support](https://github.com/carlhuda/bundler/issues/1945)
+Bundler integration is **experimental** right now. To enable support for LockJar in Bundler, [LockJar patches Bundler](https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/bundler.rb) to 
+allow locking when Bundler `install` and `update`, and loading for Bundler `setup` and `require`. To enable, simply require LockJar in your _Gemfile_
+
+    require 'lib/lock_jar/bundler'
+
+You can optionally create a Jarfile that would automatically be included when you `bundle install` or `bundle update`. Otherwise
+Gems with a Jarfile will be merge to generate a _Jarfile.lock_. The Jarfile.lock will be loaded when Bundler calls `setup` or `require`.
 
 ## License
 
