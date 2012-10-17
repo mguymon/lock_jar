@@ -3,7 +3,11 @@
 LockJar manages Java Jars for Ruby. Powered by [Naether](https://github.com/mguymon/naether) to
  create a frankenstein of Bundler and Maven. A Jarfile ([example](https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile)) is used to generate a Jarfile.lock that contains all the resolved jar dependencies. The Jarfile.lock can be used to populate the classpath.
 
-LockJar can be used directly, from the [command line](https://github.com/mguymon/lock_jar/blob/master/README.md#command-line), [triggered from a Gem install](https://github.com/mguymon/lock_jar/blob/master/README.md#gem-integration), and [integrates with Buildr](https://github.com/mguymon/lock_jar/blob/master/README.md#buildr-integration).
+LockJar can:
+* Be Use directly in MRI 1.8.7, 1.9.3, and JRuby 1.6.7, 1.6.8
+* From the [command line](https://github.com/mguymon/lock_jar/blob/master/README.md#command-line)
+* [Triggered from a Gem install](https://github.com/mguymon/lock_jar/blob/master/README.md#gem-integration)
+* [Integrated into Buildr](https://github.com/mguymon/lock_jar/blob/master/README.md#buildr-integration)
 
 https://github.com/mguymon/lock_jar
 
@@ -14,6 +18,8 @@ https://github.com/mguymon/lock_jar
     gem install lock_jar
 
 ## Ruby Usage
+
+JRuby is natively supported. Ruby 1.8.7 and 1.9.3 uses [Rjb](http://rjb.rubyforge.org/) to proxy over JNI.
 
 ### Jarfile
 
