@@ -350,7 +350,7 @@ Would produce the follow _Jarfile.lock_ excerpt:
          - ch.qos.logback:logback-core:jar:1.0.6
          - com.google.guava:guava:jar:r05
 
-Since `solr_sail` is defined in the `development` group, the _Jarfile.lock_ dependencies_ are als under the `development` group.
+Since `solr_sail` is defined in the _Gemfile's_ `development` group, the corresponding _Jarfile.lock_ dependencies are also under the `development` group.
       
 ## License
 
