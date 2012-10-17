@@ -316,10 +316,11 @@ Generated the following lock files using **lock_jar:lock**
   
 ## Bundler Integration
 
-Bundler integration is **experimental** right now. To enable support for LockJar in Bundler, [LockJar patches Bundler](https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/bundler.rb) to 
-allow locking when Bundler `install` and `update`, and loading for Bundler `setup` and `require`. To enable, simply require LockJar in your _Gemfile_
+Bundler integration is **experimental** right now. [LockJar patches Bundler](https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/bundler.rb) 
+to allow creation of a _Jarfile.lock_ when Bundler calls `install` and `update`. The dependencies from the _Jarfile.lock_ are automatically loaded when
+Bundler  calls `setup` and `require`. To enable this support, add this require to your _Gemfile_
 
-    require 'lib/lock_jar/bundler'
+    require 'lock_jar/bundler'
 
 You can optionally create a Jarfile that would automatically be included when you `bundle install` or `bundle update`. Otherwise
 Gems with a Jarfile will be merge to generate a _Jarfile.lock_. The Jarfile.lock will be loaded when Bundler calls `setup` or `require`.
