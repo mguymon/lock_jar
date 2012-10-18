@@ -503,8 +503,8 @@ table {
 }
 
 body {
-  font: 14px/22px "Quattrocento Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #666;
+  font: 16px/24px "Quattrocento Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: black;
   font-weight: 300;
   margin: 0px;
   padding: 0px 0 20px 0px;
@@ -543,9 +543,10 @@ h3 {
 }
 
 a {
-  color: #3399cc;
-  font-weight: 400;
+  color: #1E440F;
+  font-weight: bold;
   text-decoration: none;
+  
 }
 
 a small {
@@ -584,8 +585,12 @@ blockquote {
 code {
   font-family: "Lucida Sans", Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
   font-size: 13px;
-  color: #efefef;
-  text-shadow: 0px 1px 0px #000;
+  color: #3CBE2B;
+  text-shadow: 0px 1px 0px #1E440F;
+  margin: 0 2px;
+}
+
+pre code { 
   margin: 0 4px;
   padding: 2px 6px;
   background: #333;
@@ -659,7 +664,7 @@ header {
   right: 0;
   width: 100%;
   text-align: center;
-  background: url(../images/background.png) #4276b6;
+  background: url(../images/background.png) #1E440F;
   -moz-box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.75);
   -o-box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.75);
@@ -694,8 +699,8 @@ header p {
   margin-right: -382px;
   position: fixed;
   top: 115px;
-  background: #ffcc00;
-  border: 1px solid #f0b500;
+  background: #3CBE2B;
+  border: 1px solid #2C8A20;
   -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   -o-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
@@ -709,13 +714,13 @@ header p {
   padding-right: 10px;
 }
 #banner .button {
-  border: 1px solid #dba500;
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffe788), color-stop(100%, #ffce38));
-  background: -webkit-linear-gradient(#ffe788, #ffce38);
-  background: -moz-linear-gradient(#ffe788, #ffce38);
-  background: -o-linear-gradient(#ffe788, #ffce38);
-  background: -ms-linear-gradient(#ffe788, #ffce38);
-  background: linear-gradient(#ffe788, #ffce38);
+  border: 1px solid #2C8A20;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #F7FDEC), color-stop(100%, #E9FFC4));
+  background: -webkit-linear-gradient(#F7FDEC, #E9FFC4);
+  background: -moz-linear-gradient(#F7FDEC, #E9FFC4);
+  background: -o-linear-gradient(#F7FDEC, #E9FFC4);
+  background: -ms-linear-gradient(#F7FDEC, #E9FFC4);
+  background: linear-gradient(#F7FDEC, #F7FDEC);
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   -o-border-radius: 2px;
@@ -726,7 +731,7 @@ header p {
   -webkit-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.4), 0px 1px 1px rgba(0, 0, 0, 0.1);
   -o-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.4), 0px 1px 1px rgba(0, 0, 0, 0.1);
   box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.4), 0px 1px 1px rgba(0, 0, 0, 0.1);
-  background-color: #FFE788;
+  background-color: #E9FFC4;
   margin-left: 5px;
   padding: 10px 12px;
   margin-top: 6px;
@@ -738,12 +743,12 @@ header p {
   text-align: center;
 }
 #banner .button:hover {
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffe788), color-stop(100%, #ffe788));
-  background: -webkit-linear-gradient(#ffe788, #ffe788);
-  background: -moz-linear-gradient(#ffe788, #ffe788);
-  background: -o-linear-gradient(#ffe788, #ffe788);
-  background: -ms-linear-gradient(#ffe788, #ffe788);
-  background: linear-gradient(#ffe788, #ffe788);
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #F7FDEC), color-stop(100%, #F7FDEC));
+  background: -webkit-linear-gradient(#F7FDEC, #F7FDEC);
+  background: -moz-linear-gradient(#F7FDEC, #F7FDEC);
+  background: -o-linear-gradient(#F7FDEC, #F7FDEC);
+  background: -ms-linear-gradient(#F7FDEC, #F7FDEC);
+  background: linear-gradient(#F7FDEC, #F7FDEC);
   background-color: #ffeca0;
 }
 #banner .fork {
@@ -754,7 +759,7 @@ header p {
   margin-top: 6px;
   line-height: 14px;
   font-size: 14px;
-  background-color: #FFE788;
+  background-color: #E9FFC4;
 }
 #banner .downloads {
   float: right;
@@ -764,7 +769,7 @@ header p {
   float: left;
   line-height: 52px;
   font-size: 90%;
-  color: #9d7f0d;
+  color: white;
   text-transform: uppercase;
   text-shadow: rgba(255, 255, 255, 0.2) 0 1px 0;
 }
@@ -779,7 +784,7 @@ header p {
   display: inline;
 }
 #banner ul li a.button {
-  background-color: #FFE788;
+  background-color: #E9FFC4;
 }
 #banner #logo {
   position: absolute;
@@ -847,7 +852,7 @@ nav ul a {
   color: #666;
 }
 nav ul a:hover {
-  color: #999;
+  color: #3CBE2B;
 }
 
 footer {
