@@ -41,11 +41,20 @@
       <section>
         <h1>LockJar</h1>
 
-<p>LockJar manages Java Jars for Ruby. Powered by <a href="https://github.com/mguymon/naether">Naether</a> to create a frankenstein of Bundler and Maven. A Jarfile (<a href="https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile">example</a>) is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test. The Jarfile.lock can be used to populate the classpath.</p>
+<p>LockJar manages Java Jars for Ruby. Powered by <a href="https://github.com/mguymon/naether">Naether</a> to
+ create a frankenstein of Bundler and Maven. A Jarfile (<a href="https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile">example</a>) is used to generate a Jarfile.lock that contains all the resolved jar dependencies. The Jarfile.lock can be used to populate the classpath.</p>
 
-<p>LockJar can be used directly, from the <a href="https://github.com/mguymon/lock_jar/blob/master/README.md#command-line">command line</a>, <a href="https://github.com/mguymon/lock_jar/blob/master/README.md#gem-integration">triggered from a Gem install</a>, and <a href="https://github.com/mguymon/lock_jar/blob/master/README.md#buildr-integration">integrates with Buildr</a>.</p>
+<p>LockJar can:</p>
 
-<p><a href="https://github.com/mguymon/lock_jar">https://github.com/mguymon/lock_jar</a></p>
+<ul>
+<li>Be Use directly in MRI 1.8.7, 1.9.3, and JRuby 1.6.7, 1.6.8</li>
+<li>From the <a href="https://github.com/mguymon/lock_jar/blob/master/README.md#command-line">command line</a>
+</li>
+<li><a href="https://github.com/mguymon/lock_jar/blob/master/README.md#gem-integration">Triggered from a Gem install</a></li>
+<li><a href="https://github.com/mguymon/lock_jar/blob/master/README.md#buildr-integration">Integrated into Buildr</a></li>
+<li>Experimental <a href="https://github.com/mguymon/lock_jar/blob/master/README.md#bundler-integration">tntegration with Bundler</a>
+</li>
+</ul><p><a href="https://github.com/mguymon/lock_jar">https://github.com/mguymon/lock_jar</a></p>
 
 <p><a href="http://rubydoc.info/gems/lock_jar/frames">RDoc</a></p>
 
@@ -56,6 +65,8 @@
 
 <h2>Ruby Usage</h2>
 
+<p>JRuby is natively supported. Ruby 1.8.7 and 1.9.3 uses <a href="http://rjb.rubyforge.org/">Rjb</a> to proxy over JNI.</p>
+
 <h3>Jarfile</h3>
 
 <p>A Jarfile is a simple file using a Ruby DSL for defining a project's dependencies using the following 
@@ -63,31 +74,31 @@ methods:</p>
 
 <ul>
 <li>
-<strong>local( path )</strong>: Set the local Maven repository, this were dependencies are downloaded to. </li>
+<strong>local_repo( path )</strong>: Set the local Maven repository, this were dependencies are downloaded to. </li>
 <li>
-<strong>repository( url )</strong>: Add additional urlr of remote Maven repository.</li>
+<strong>remote_repo( url )</strong>: Add additional url of remote Maven repository.</li>
 <li>
-<strong>exclude( excludes )</strong>: Add a artifact:group that will be excluded from resolved dependencies. A single or Array of excludes can be set.</li>
+<strong>group( groups )</strong>: Set the group for nested jar or pom. A single or Array of groups can be set.</li>
 <li>
-<strong>jar( notations, opts = {} )</strong>: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default scope is <em>compile</em>, can be specified by setting <em>opts = { :scope =&gt; ['new_scope'] }</em>
+<strong>jar( notations, opts = {} )</strong>: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default group is <em>default</em>, can be specified by setting <em>opts = { :group =&gt; ['group_name'] }</em>
 </li>
 <li>
-<strong>pom( pom_path, opts = {} )</strong>: Add a local Maven pom, default is to load dependencies for all scopes. To select the scopes to be loaded from the pom, set the <em>opts = { :scopes =&gt; ['new_scope'] }</em>
+<strong>pom( pom_path, opts = {} )</strong>: Add a local Maven pom, default is to load dependencies for <code>runtime</code> and <code>compile</code> scopes. To select the scopes to be loaded from the pom, set the <em>opts = { :scopes =&gt; ['test'] }</em>
 </li>
-<li>
-<strong>scope( scopes )</strong>: Set the scope for nested jar or pom. A single or Array of scopes can be set.</li>
 </ul><h4>Example Jarfile</h4>
 
 <pre><code>repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
 
-// Default scope is compile
+// Default group is default
 jar "org.apache.mina:mina-core:2.0.4"
 
-scope 'runtime' do
+group 'runtime' do
   jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
 end
 
-jar 'junit:junit:jar:4.10', :scope =&gt; 'test'
+group 'test' do
+  jar 'junit:junit:jar:4.10', :group =&gt; 'test'
+end
 </code></pre>
 
 <h3>Resolving dependencies</h3>
@@ -120,40 +131,58 @@ jar 'junit:junit:jar:4.10', :scope =&gt; 'test'
 
 <h3>Jarfile.lock</h3>
 
-<p>The <em>Jarfile.lock</em> generated is a YAML file containing the scoped dependencies, their resolved dependencies, and the additional Maven repositories.</p>
+<p>The <em>Jarfile.lock</em> generated is a YAML file containing information on how to handle the classpath for grouped dependencies and their nested transitive dependencies.</p>
 
 <h4>The Jarfile.lock</h4>
 
-<pre><code>--- 
-repositories: 
-  - http://repository.jboss.org/nexus/content/groups/public-jboss
-scopes: 
-  compile: 
-    dependencies: 
-      - org.apache.mina:mina-core:2.0.4
-    resolved_dependencies: 
-      - org.apache.mina:mina-core:jar:2.0.4
-      - org.slf4j:slf4j-api:jar:1.6.1
-      - com.slackworks:modelcitizen:jar:0.2.2
-      - commons-lang:commons-lang:jar:2.6
-      - commons-beanutils:commons-beanutils:jar:1.8.3
-      - commons-logging:commons-logging:jar:1.1.1
-      - ch.qos.logback:logback-classic:jar:0.9.24
-      - ch.qos.logback:logback-core:jar:0.9.24
-      - com.metapossum:metapossum-scanner:jar:1.0
-      - commons-io:commons-io:jar:1.4
-      - junit:junit:jar:4.7
-  runtime: 
-    dependencies: 
-      - org.apache.tomcat:servlet-api:jar:6.0.35
-    resolved_dependencies: 
-      - org.apache.tomcat:servlet-api:jar:6.0.35
-  test: 
-    dependencies: 
-      - junit:junit:jar:4.10
-    resolved_dependencies: 
-      - junit:junit:jar:4.10
-      - org.hamcrest:hamcrest-core:jar:1.1
+<pre><code>---
+version: 0.7.0
+groups:
+  default:
+    dependencies:
+    - ch.qos.logback:logback-classic:jar:0.9.24
+    - ch.qos.logback:logback-core:jar:0.9.24
+    - com.metapossum:metapossum-scanner:jar:1.0
+    - com.slackworks:modelcitizen:jar:0.2.2
+    - commons-beanutils:commons-beanutils:jar:1.8.3
+    - commons-io:commons-io:jar:1.4
+    - commons-lang:commons-lang:jar:2.6
+    - commons-logging:commons-logging:jar:1.1.1
+    - junit:junit:jar:4.7
+    - org.apache.mina:mina-core:jar:2.0.4
+    - org.slf4j:slf4j-api:jar:1.6.1
+    artifacts:
+    - jar:org.apache.mina:mina-core:jar:2.0.4:
+        transitive:
+          org.slf4j:slf4j-api:jar:1.6.1: {}
+    - pom:spec/pom.xml:
+        scopes:
+        - runtime
+        - compile
+        transitive:
+          com.metapossum:metapossum-scanner:jar:1.0:
+            junit:junit:jar:4.7: {}
+            commons-io:commons-io:jar:1.4: {}
+          commons-beanutils:commons-beanutils:jar:1.8.3:
+            commons-logging:commons-logging:jar:1.1.1: {}
+          ch.qos.logback:logback-classic:jar:0.9.24:
+            ch.qos.logback:logback-core:jar:0.9.24: {}
+          commons-lang:commons-lang:jar:2.6: {}
+  development:
+    dependencies:
+    - com.typesafe:config:jar:0.5.0
+    artifacts:
+    - jar:com.typesafe:config:jar:0.5.0:
+        transitive: {}
+  test:
+    dependencies:
+    - junit:junit:jar:4.10
+    - org.hamcrest:hamcrest-core:jar:1.1
+    artifacts:
+    - jar:junit:junit:jar:4.10:
+        transitive:
+          org.hamcrest:hamcrest-core:jar:1.1: {}
+...
 </code></pre>
 
 <h3>Accessing Jars</h3>
@@ -164,7 +193,7 @@ scopes:
 <li>
 <em>[String]</em> will set the Jarfile.lock path, e.g. <code>'Better.lock'</code>. Default lock file is <code>'Jarfile.lock'</code>.</li>
 <li>
-<em>[Array]</em> will set the scopes, e.g. <code>['compile','test']</code>. Defaults scopes are <em>compile</em> and <em>runtime</em>.</li>
+<em>[Array]</em> will set the groups, e.g. <code>['compile','test']</code>. Defaults group is <em>default</em>.</li>
 <li>
 <em>[Hash]</em> will set the options, e.g. <code>{ :local_repo =&gt; 'path' }</code>
 
@@ -174,13 +203,13 @@ scopes:
 </li>
 </ul>
 </li>
-</ul><p><strong>LockJar.list(*args)</strong>: Lists all dependencies as notations for scopes from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  </p>
+</ul><p><strong>LockJar.list(*args)</strong>: Lists all dependencies as notations for groups from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  </p>
 
 <ul>
 <li>
 <em>[String]</em> will set the Jarfile.lock path, e.g. <code>'Better.lock'</code>. Default lock file is <code>'Jarfile.lock'</code>.</li>
 <li>
-<em>[Array]</em> will set the scopes, e.g. <code>['compile','test']</code>. Defaults scopes are <em>compile</em> and <em>runtime</em>.</li>
+<em>[Array]</em> will set the groups, e.g. <code>['default', 'runtime']</code>. Defaults group is <em>default</em>.</li>
 <li>
 <em>[Hash]</em> will set the options, e.g. <code>{ :local_repo =&gt; 'path' }</code>
 
@@ -194,14 +223,14 @@ scopes:
 <strong>:resolve</strong> <em>[Boolean]</em> to true will make transitive dependences resolve before returning list of jars</li>
 </ul>
 </li>
-</ul><p><strong>LockJar.load(*args)</strong>: Loads all dependencies to the classpath for scopes from the Jarfile.lock. Defaults scopes are <em>compile</em> and <em>runtime</em>. Default lock file is <em>Jarfile.lock</em>.</p>
+</ul><p><strong>LockJar.load(*args)</strong>: Loads all dependencies to the classpath for groups from the Jarfile.lock. Default group is <em>default</em>. Default lock file is <em>Jarfile.lock</em>.</p>
 
 <ul>
 <li>
 <em>[String]</em> will set the Jarfile.lock, e.g. <code>'Better.lock'</code>
 </li>
 <li>
-<em>[Array]</em> will set the scopes, e.g. <code>['compile','test']</code>
+<em>[Array]</em> will set the groups, e.g. <code>['default', 'runtime']</code>
 </li>
 <li>
 <em>[Hash]</em> will set the options, e.g. <code>{ :local_repo =&gt; 'path' }</code>
@@ -282,7 +311,7 @@ end
 
 <h2>Gem Integration</h2>
 
-<h3>Installing</h3>
+<h3>Installing Jars with a Gem</h3>
 
 <p>LockJar can be triggered when a Gem is installed by using a <a href="http://docs.rubygems.org/read/chapter/20#extensions">Gem extension</a>
 of type <em>Rakefile</em>. The cavaet is the task to install the jars must be the default for the Rakefile.</p>
@@ -316,16 +345,31 @@ point at the task to download the jars (from the example Rakefile,
 <em>PostInstallRakefile</em> to handle the <code>task :prepare</code>. When packaging the gem, <em>PostInstallRakefile</em> is
 renamed to <code>Rakefile</code>.</p>
 
+<h3>Manually installing Jars</h3>
+
+<p>Instead of rely in a Rakefile to install Jars when the Gem is installed, Jars can be manually installed. The following
+Ruby needs to be called before calling <code>LockJar.load</code>. Only Jars that are missing are downloaded.</p>
+
+<pre><code>  #get jarfile relative the gem dir
+  lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
+
+  # Download any missing Jars
+  LockJar.install( lockfile )
+</code></pre>
+
 <h3>Loading</h3>
 
-<p>With the Jars already installed, loading the classpath for the Gem is simple. 
+<p>With the Jars installed, loading the classpath for the Gem is simple. 
 As part of the load process for the Gem (an entry file that is required, etc) use the following:</p>
 
 <pre><code>  #get jarfile relative the gem dir
   lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
 
+  # Loads the ClassPath with Jars from the lockfile
   LockJar.load( :lockfile =&gt; lockfile )
 </code></pre>
+
+<p>See also <a href="https://github.com/mguymon/lock_jar/wiki/ClassLoader">loading Jars into a custom ClassLoader</a>.</p>
 
 <h2>Buildr Integration</h2>
 
@@ -346,7 +390,7 @@ As part of the load process for the Gem (an entry file that is required, etc) us
 <pre><code>lock_jars()
 </code></pre>
 
-<p>The <em>compile</em> scoped dependencies are automatically added to the classpath for compiling. The test scoped dependencies are automatically added to the classpath for tests. Do not forget, if you change the LockJar definitions, you have to rerun the <strong>lock_jar:lock</strong> task.</p>
+<p>The <em>default</em> group dependencies are automatically added to the classpath for compiling. The <em>test</em> group dependencies are automatically added to the classpath for tests. Do not forget, if you change the LockJar definitions, you have to rerun the <strong>lock_jar:lock</strong> task.</p>
 
 <h3>Example</h3>
 
@@ -357,7 +401,7 @@ As part of the load process for the Gem (an entry file that is required, etc) us
 # app definition, inherited into all projects
 lock_jar do
 
-     scope 'test' do
+     group 'test' do
        jar 'junit:junit:jar:4.10'
      end
 end
@@ -388,8 +432,44 @@ end
 <em>project2.lock</em> - contains <em>junit</em> and <em>pom.xml</em> jars.</li>
 </ul><h2>Bundler Integration</h2>
 
-<p>Direct Bundler integration has been deprecated to <a href="https://github.com/mguymon/lock_jar/tree/bundler_support">https://github.com/mguymon/lock_jar/tree/bundler_support</a>. 
-Waiting for <a href="https://github.com/carlhuda/bundler/issues/1945">Bundler plugin support</a></p>
+<p>Bundler integration is <strong>experimental</strong> right now. <a href="https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/bundler.rb">LockJar patches Bundler</a> 
+to allow creation of a <em>Jarfile.lock</em> when Bundler calls <code>install</code> and <code>update</code>. The dependencies from the <em>Jarfile.lock</em> are automatically loaded when
+Bundler  calls <code>setup</code> and <code>require</code>. To enable this support, add this require to your <em>Gemfile</em></p>
+
+<pre><code>require 'lock_jar/bundler'
+</code></pre>
+
+<p>You can optionally create a <em>Jarfile</em> that will automatically be included when you <code>bundle install</code> or <code>bundle update</code>. Otherwise
+Gems with a Jarfile will be merge to generate a <em>Jarfile.lock</em>. The Jarfile.lock will be loaded when Bundler calls <code>setup</code> or <code>require</code>.</p>
+
+<h3>Bundler to LockJar groups</h3>
+
+<p>LockJar will merge the dependencies from the <code>default</code> and <code>runtime</code> group of a Gem's <em>Jarfile</em>. These will be placed in the 
+lockfile under Gem's corresponding Bundler group. For example, the following Gemfile:</p>
+
+<pre><code>group :development do
+  gem 'solr_sail', '~&gt;0.1.0'
+end
+</code></pre>
+
+<p>Would produce the follow <em>Jarfile.lock</em> excerpt:</p>
+
+<pre><code>---
+version: 0.7.0
+merged:
+- gem:solr_sail:gems/solr_sail-0.1.0-java/Jarfile
+groups:
+  default:
+    dependencies: []
+    artifacts: []
+  development:
+    dependencies:
+     - ch.qos.logback:logback-classic:jar:1.0.6
+     - ch.qos.logback:logback-core:jar:1.0.6
+     - com.google.guava:guava:jar:r05
+</code></pre>
+
+<p>Since <code>solr_sail</code> is defined in the <em>Gemfile's</em> <code>development</code> group, the corresponding <em>Jarfile.lock</em> dependencies are also under the <code>development</code> group.</p>
 
 <h2>License</h2>
 
