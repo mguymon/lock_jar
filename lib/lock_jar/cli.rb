@@ -17,7 +17,7 @@ module LockJar
       def generate_scopes_option
         method_option :scopes, 
           :aliases => "-s", 
-          :default => ['compile', 'runtime'], 
+          :default => ['default'],
           :desc => "Scopes to install from Jarfile.lock",
           :type => :array
       end
