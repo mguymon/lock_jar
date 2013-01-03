@@ -48,8 +48,9 @@ pkg
 # For vim:
 #*.swp
 
-# For redcar:
-#.redcar
+# ides:
+.redcar
+*.iml
 
 # For rubinius:
 #*.rbc
