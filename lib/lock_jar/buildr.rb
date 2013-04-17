@@ -14,7 +14,7 @@
 # the License.
 
 require 'lock_jar'
-require 'lock_jar/dsl'
+require 'lock_jar/domain/dsl'
 
 module Buildr
   
@@ -31,7 +31,7 @@ module Buildr
   end
   
   def lock_jar( &blk )
-    @@global_lockjar_dsl = ::LockJar::Dsl.evaluate(&blk) 
+    @@global_lockjar_dsl = ::LockJar::Domain::Dsl.create(&blk) 
   end
   
   namespace "lock_jar" do
@@ -54,7 +54,7 @@ module Buildr
       include Extension
     
       def lock_jar( &blk )
-          @lockjar_dsl = ::LockJar::Dsl.evaluate(&blk)    
+          @lockjar_dsl = ::LockJar::Domain::Dsl.create(&blk)    
                    
           unless Buildr.global_lockjar_dsl.nil?
             @lockjar_dsl.merge( Buildr.global_lockjar_dsl )
