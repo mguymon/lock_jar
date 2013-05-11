@@ -6,4 +6,4 @@
 
 ### 0.7.0
 
-* Sort dependences for Jarfile.lock (<a href="https://github.com/mguymon/lock_jar/pull/3">Pull #3</a>) [thanks <a href="https://github.com/chetan"></a>]
+* Sort dependences for Jarfile.lock (<a href="https://github.com/mguymon/lock_jar/pull/3">Pull #3</a>) [thanks <a href="https://github.com/chetan">chetan</a>]
