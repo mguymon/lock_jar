@@ -240,7 +240,7 @@ end
 describe LockJar, "#load" do     
   it "by Jarfile.lock" do
     if Naether.platform == 'java'
-      lambda { include_class 'org.apache.mina.core.IoUtil' }.should raise_error
+      lambda { java_import 'org.apache.mina.core.IoUtil' }.should raise_error
     else
       lambda { Rjb::import('org.apache.mina.core.IoUtil') }.should raise_error
     end
@@ -264,7 +264,7 @@ describe LockJar, "#load" do
       File.expand_path("tmp/test-repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"),
     ])
     if Naether.platform == 'java'
-      lambda { include_class 'org.apache.mina.core.IoUtil' }.should_not raise_error
+      lambda { java_import 'org.apache.mina.core.IoUtil' }.should_not raise_error
     else
       lambda { Rjb::import('org.apache.mina.core.IoUtil') }.should_not raise_error
     end
@@ -274,7 +274,7 @@ describe LockJar, "#load" do
    
   it "by block with resolve option" do
     if Naether.platform == 'java'
-      lambda { include_class 'org.modeshape.common.math.Duration' }.should raise_error
+      lambda { java_import 'org.modeshape.common.math.Duration' }.should raise_error
     else
       lambda { Rjb::import('org.modeshape.common.math.Duration') }.should raise_error
     end
@@ -286,7 +286,7 @@ describe LockJar, "#load" do
     jars.should eql( ["/home/zinger/.m2/repository/org/modeshape/modeshape-common/2.3.0.Final/modeshape-common-2.3.0.Final.jar", "/home/zinger/.m2/repository/org/slf4j/slf4j-api/1.5.11/slf4j-api-1.5.11.jar", "/home/zinger/.m2/repository/net/jcip/jcip-annotations/1.0/jcip-annotations-1.0.jar"] )
       
     if Naether.platform == 'java'
-      lambda { include_class 'org.modeshape.common.math.Duration' }.should_not raise_error
+      lambda { java_import 'org.modeshape.common.math.Duration' }.should_not raise_error
     else
       lambda { Rjb::import('org.modeshape.common.math.Duration') }.should_not raise_error
     end
