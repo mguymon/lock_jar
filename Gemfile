@@ -2,7 +2,7 @@
 
 source "http://rubygems.org"
 
-gem "naether", "~> 0.10.0"
+gem "naether", "~> 0.10.1"
 gem "thor",     "~> 0.14.6"
 
 # Add dependencies to develop your gem here.
