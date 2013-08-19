@@ -1,6 +1,6 @@
-require File.expand_path(File.join(File.dirname(__FILE__),'../spec_helper'))
-require 'lib/lock_jar'
-require 'lib/lock_jar/maven'
+require 'spec_helper'
+require 'lock_jar'
+require 'lock_jar/maven'
 require 'naether'
 
 describe LockJar::Maven do

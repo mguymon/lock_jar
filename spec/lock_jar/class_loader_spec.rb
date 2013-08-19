@@ -1,5 +1,5 @@
-require File.expand_path(File.join(File.dirname(__FILE__),'../spec_helper'))
-require 'lib/lock_jar/class_loader'
+require 'spec_helper'
+require 'lock_jar/class_loader'
 
 
 describe LockJar::ClassLoader, "#isolate" do

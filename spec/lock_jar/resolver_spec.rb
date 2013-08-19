@@ -1,5 +1,5 @@
-require File.expand_path(File.join(File.dirname(__FILE__),'../spec_helper'))
-require 'lib/lock_jar/resolver'
+require 'spec_helper'
+require 'lock_jar/resolver'
 require 'fileutils'
 require 'naether'
 
