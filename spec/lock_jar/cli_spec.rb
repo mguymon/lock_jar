@@ -1,0 +1,99 @@
+require 'spec_helper'
+
+describe "lockjar" do
+
+include Spec::Helpers
+
+  context "version" do
+    before do
+      @version = File.read(File.join(File.dirname(__FILE__), "..", "..", "VERSION"))
+    end
+
+    it "should return correct version" do
+      lockjar "version"
+      expect(@out).to eq(@version)
+    end
+
+    it "should create lock file with default path" do
+      current_dir = Dir.pwd
+      Dir.chdir("spec/support")
+
+      FileUtils.rm("Jarfile.lock") rescue nil
+
+      lockjar "lock"
+      expect(@out).to eq("Locking Jarfile to Jarfile.lock")
+      expect(File.exists?("Jarfile.lock")).to be_true
+
+      Dir.chdir(current_dir)
+    end
+
+    it "should create lock file with specific path" do
+      jarfile_path = File.join("spec", "support", "Jarfile")
+      jarfile_lock_path = File.join("spec", "support", "Jarfile.lock")
+      FileUtils.rm(jarfile_lock_path) rescue nil
+
+      lockjar "lock -j #{jarfile_path} -l #{jarfile_lock_path}"
+      expect(@out).to eq("Locking #{jarfile_path} to #{jarfile_lock_path}")
+      expect(File.exists?(jarfile_lock_path)).to be_true
+    end
+
+    it "should list with default path" do
+      current_dir = Dir.pwd
+      Dir.chdir("spec/support")
+      FileUtils.rm("Jarfile.lock") rescue nil
+      lockjar "lock"
+
+expect_output =<<-EOM.strip
+Listing Jars from Jarfile.lock for ["default"]
+["com.google.guava:guava:jar:14.0.1"]
+EOM
+
+      lockjar "list"
+      expect(@out).to eq(expect_output)
+
+      Dir.chdir(current_dir)
+    end
+
+    it "should list with specific path" do
+      jarfile_path = File.join("spec", "support", "Jarfile")
+      jarfile_lock_path = File.join("spec", "support", "Jarfile.lock")
+      FileUtils.rm(jarfile_lock_path) rescue ni
+      lockjar "lock -j #{jarfile_path} -l #{jarfile_lock_path}"
+
+expect_expr = Regexp.new(<<-'EOM'.strip)
+Listing Jars from .*Jarfile.lock for \["default"\]
+\["com.google.guava:guava:jar:14.0.1"\]
+EOM
+
+      lockjar "list -l #{jarfile_lock_path}"
+      expect(@out).to match(expect_expr)
+    end
+
+    it "should install jar archives with default path" do
+      current_dir = Dir.pwd
+      Dir.chdir("spec/support")
+      FileUtils.rm("Jarfile.lock") rescue nil
+      lockjar "lock"
+
+      lockjar "install"
+      expect(@out).to eq("Installing Jars from Jarfile.lock for [\"default\"]")
+      LockJar.load
+      expect(Java::ComGoogleCommonCollect::Multimap).to be_kind_of(Module)
+
+      Dir.chdir(current_dir)
+    end
+
+    it "should install jar archives with specific path" do
+      jarfile_path = File.join("spec", "support", "Jarfile")
+      jarfile_lock_path = File.join("spec", "support", "Jarfile.lock")
+      FileUtils.rm(jarfile_lock_path) rescue nil
+      lockjar "lock -j #{jarfile_path} -l #{jarfile_lock_path}"
+
+      lockjar "install -l #{jarfile_lock_path}"
+      expect(@out).to eq("Installing Jars from #{jarfile_lock_path} for [\"default\"]")
+      LockJar.load(jarfile_lock_path)
+      expect(Java::ComGoogleCommonCollect::Multimap).to be_kind_of(Module)
+    end
+  end
+
+end

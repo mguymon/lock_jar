@@ -7,6 +7,7 @@ require 'rspec'
 require 'lock_jar'
 require 'stringio'
 require 'fileutils'
+require 'support/helper'
 
 
 def mock_terminal
