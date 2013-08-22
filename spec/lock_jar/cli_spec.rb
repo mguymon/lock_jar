@@ -13,7 +13,9 @@ include Spec::Helpers
       lockjar "version"
       expect(@out).to eq(@version)
     end
+  end
 
+  context "lock" do
     it "should create lock file with default path" do
       current_dir = Dir.pwd
       Dir.chdir("spec/support")
@@ -36,6 +38,9 @@ include Spec::Helpers
       expect(@out).to eq("Locking #{jarfile_path} to #{jarfile_lock_path}")
       expect(File.exists?(jarfile_lock_path)).to be_true
     end
+  end
+
+  context "list" do
 
     it "should list with default path" do
       current_dir = Dir.pwd
@@ -57,7 +62,7 @@ EOM
     it "should list with specific path" do
       jarfile_path = File.join("spec", "support", "Jarfile")
       jarfile_lock_path = File.join("spec", "support", "Jarfile.lock")
-      FileUtils.rm(jarfile_lock_path) rescue ni
+      FileUtils.rm(jarfile_lock_path) rescue nil
       lockjar "lock -j #{jarfile_path} -l #{jarfile_lock_path}"
 
 expect_expr = Regexp.new(<<-'EOM'.strip)
@@ -68,7 +73,9 @@ EOM
       lockjar "list -l #{jarfile_lock_path}"
       expect(@out).to match(expect_expr)
     end
+  end
 
+  context "install" do
     it "should install jar archives with default path" do
       current_dir = Dir.pwd
       Dir.chdir("spec/support")

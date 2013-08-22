@@ -5,10 +5,10 @@ $:.unshift File.expand_path(File.join('..', File.dirname(__FILE__), 'lib'))
 require 'rubygems'
 require 'rspec'
 require 'lock_jar'
+require 'lock_jar/cli'
 require 'stringio'
 require 'fileutils'
 require 'support/helper'
-
 
 def mock_terminal
   @input = StringIO.new
@@ -32,6 +32,6 @@ RSpec.configure do |config|
   end
 
   config.after(:suite) do
-    FileUtils.rm_rf(TEMP_DIR)
+    #FileUtils.rm_rf(TEMP_DIR)
   end
 end

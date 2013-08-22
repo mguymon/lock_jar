@@ -4,9 +4,13 @@ module Spec
   module Helpers
     def lockjar(cmd, options = {})
       lockjar_bin = File.expand_path('../../../bin/lockjar', __FILE__)
-      cmd = "#{lockjar_bin} #{cmd}"
+      cmd = "ruby -I#{lib} #{lockjar_bin} #{cmd}"
 
       sys_exec(cmd)
+    end
+
+    def lib
+      File.expand_path('../../../lib', __FILE__)
     end
 
     def sys_exec(cmd, expect_err = false)

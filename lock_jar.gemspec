@@ -68,7 +68,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rspec>, ["~> 2.9.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_development_dependency(%q<yard>, ["~> 0.8.0"])
-      s.add_development_dependency(%q<solr_sail>, ["~> 0.1.0"])
+      #s.add_development_dependency(%q<solr_sail>, ["~> 0.1.0"])
       s.add_development_dependency(%q<jruby-openssl>, [">= 0"])
     else
       s.add_dependency(%q<naether>, ["~> 0.10.0"])
@@ -76,7 +76,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rspec>, ["~> 2.9.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_dependency(%q<yard>, ["~> 0.8.0"])
-      s.add_dependency(%q<solr_sail>, ["~> 0.1.0"])
+      #s.add_dependency(%q<solr_sail>, ["~> 0.1.0"])
       s.add_dependency(%q<jruby-openssl>, [">= 0"])
     end
   else
@@ -85,7 +85,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rspec>, ["~> 2.9.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
     s.add_dependency(%q<yard>, ["~> 0.8.0"])
-    s.add_dependency(%q<solr_sail>, ["~> 0.1.0"])
+    #s.add_dependency(%q<solr_sail>, ["~> 0.1.0"])
     s.add_dependency(%q<jruby-openssl>, [">= 0"])
   end
 end
