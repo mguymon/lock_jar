@@ -1,5 +1,7 @@
 # LockJar
 
+[![Build Status](https://secure.travis-ci.org/mguymon/lock_jar.png?branch=master)](http://travis-ci.org/harleyttd/auditable)
+
 LockJar manages Java Jars for Ruby. Powered by [Naether](https://github.com/mguymon/naether) to
  create a frankenstein of Bundler and Maven. A Jarfile ([example](https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile)) is used to generate a Jarfile.lock that contains all the resolved jar dependencies. The Jarfile.lock can be used to populate the classpath.
 
