@@ -11,13 +11,13 @@ describe LockJar::Runtime do
       LockJar::Runtime.instance.current_resolver.naether.local_repo_path.should eql File.expand_path('tmp/test-repo') 
       
       LockJar::Runtime.instance.load( nil, [], :local_repo => 'tmp/param_config' ) do 
-        local 'dsl_config'
+        local_repo 'dsl_config'
       end
       
       LockJar::Runtime.instance.current_resolver.naether.local_repo_path.should eql File.expand_path('tmp/param_config')
     
       LockJar::Runtime.instance.load( nil ) do 
-        local 'tmp/dsl_config'
+        local_repo 'tmp/dsl_config'
       end
       
       LockJar::Runtime.instance.current_resolver.naether.local_repo_path.should eql File.expand_path('tmp/dsl_config')
