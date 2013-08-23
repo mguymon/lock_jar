@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "lock_jar"
-  s.version = "0.7.4"
+  s.version = "0.7.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Guymon"]
-  s.date = "2013-04-17"
+  s.date = "2013-08-23"
   s.description = "Manage Jar files for Ruby. In the spirit of Bundler, a Jarfile\n  is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test.\n  The Jarfile.lock can be used to populate the classpath"
   s.email = "michael@tobedevoured.com"
   s.executables = ["lockjar"]
@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".gitignore",
+    ".travis.yml",
+    "CHANGELOG.md",
     "Gemfile",
     "LICENSE",
     "README.md",
@@ -44,6 +46,7 @@ Gem::Specification.new do |s|
     "lock_jar.gemspec",
     "spec/Jarfile",
     "spec/lock_jar/class_loader_spec.rb",
+    "spec/lock_jar/cli_spec.rb",
     "spec/lock_jar/domain/dsl_helper_spec.rb",
     "spec/lock_jar/domain/dsl_spec.rb",
     "spec/lock_jar/maven_spec.rb",
@@ -51,7 +54,9 @@ Gem::Specification.new do |s|
     "spec/lock_jar/runtime_spec.rb",
     "spec/lock_jar_spec.rb",
     "spec/pom.xml",
-    "spec/spec_helper.rb"
+    "spec/spec_helper.rb",
+    "spec/support/Jarfile",
+    "spec/support/helper.rb"
   ]
   s.homepage = "http://github.com/mguymon/lock_jar"
   s.licenses = ["Apache"]
@@ -63,24 +68,27 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<naether>, ["~> 0.10.0"])
+      s.add_runtime_dependency(%q<naether>, ["~> 0.10.1"])
       s.add_runtime_dependency(%q<thor>, ["~> 0.18.1"])
-      s.add_development_dependency(%q<rspec>, ["~> 2.9.0"])
+      s.add_development_dependency(%q<rspec>, ["~> 2.14.1"])
+      s.add_development_dependency(%q<pry>, ["~> 0.9.12.2"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_development_dependency(%q<yard>, ["~> 0.8.0"])
       s.add_development_dependency(%q<jruby-openssl>, [">= 0"])
     else
-      s.add_dependency(%q<naether>, ["~> 0.10.0"])
+      s.add_dependency(%q<naether>, ["~> 0.10.1"])
       s.add_dependency(%q<thor>, ["~> 0.18.1"])
-      s.add_dependency(%q<rspec>, ["~> 2.9.0"])
+      s.add_dependency(%q<rspec>, ["~> 2.14.1"])
+      s.add_dependency(%q<pry>, ["~> 0.9.12.2"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_dependency(%q<yard>, ["~> 0.8.0"])
       s.add_dependency(%q<jruby-openssl>, [">= 0"])
     end
   else
-    s.add_dependency(%q<naether>, ["~> 0.10.0"])
+    s.add_dependency(%q<naether>, ["~> 0.10.1"])
     s.add_dependency(%q<thor>, ["~> 0.18.1"])
-    s.add_dependency(%q<rspec>, ["~> 2.9.0"])
+    s.add_dependency(%q<rspec>, ["~> 2.14.1"])
+    s.add_dependency(%q<pry>, ["~> 0.9.12.2"])
     s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
     s.add_dependency(%q<yard>, ["~> 0.8.0"])
     s.add_dependency(%q<jruby-openssl>, [">= 0"])
