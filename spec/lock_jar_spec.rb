@@ -6,16 +6,16 @@ require 'naether'
 
 describe LockJar, "#lock" do    
   it "should create a lock file" do
-    if File.exists?( 'tmp' )
-      File.delete( 'tmp/Jarfile.lock' ) if File.exists?( 'tmp/Jarfile.lock' )
+    if File.exists?( TEMP_DIR )
+      File.delete( "#{TEMP_DIR}/Jarfile.lock" ) if File.exists?( "#{TEMP_DIR}/Jarfile.lock" )
     else 
-      Dir.mkdir( 'tmp' ) 
+      Dir.mkdir( TEMP_DIR )
     end
     
-    LockJar.lock( "spec/Jarfile", :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
-    File.exists?( 'tmp/Jarfile.lock' ).should be_true
+    LockJar.lock( "spec/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
+    File.exists?( "#{TEMP_DIR}/Jarfile.lock" ).should be_true
     
-    lockfile = LockJar.read('tmp/Jarfile.lock')
+    lockfile = LockJar.read("#{TEMP_DIR}/Jarfile.lock")
     lockfile.to_hash.should eql({
       "version"=> LockJar::VERSION, 
       "local_repository"=>"~/.m2/repository", 
@@ -72,15 +72,15 @@ describe LockJar, "#lock" do
   
   it "should replace dependencies with map" do
     dsl = LockJar::Domain::Dsl.create do
-      map 'junit:junit:4.10', 'tmp'
+      map 'junit:junit:4.10', "#{TEMP_DIR}"
       jar 'junit:junit:4.10'
     end
     
-    LockJar.lock( dsl, :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
-    lockfile = LockJar.read('tmp/Jarfile.lock')
+    LockJar.lock( dsl, :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
+    lockfile = LockJar.read("#{TEMP_DIR}/Jarfile.lock")
     lockfile.to_hash.should eql({
       "version"=> LockJar::VERSION, 
-      "maps"=>{"junit:junit:4.10"=>["tmp"]}, 
+      "maps"=>{"junit:junit:4.10"=>["#{TEMP_DIR}"]},
       "groups"=>{
         "default"=>{
           "dependencies"=>["junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"], 
@@ -100,9 +100,9 @@ describe LockJar, "#lock" do
       jar 'opensymphony:oscache:jar:2.4.1'
     end
     
-    LockJar.lock( dsl, :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
-    File.exists?( 'tmp/Jarfile.lock' ).should be_true
-    lockfile = LockJar.read('tmp/Jarfile.lock')
+    LockJar.lock( dsl, :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
+    File.exists?( "#{TEMP_DIR}/Jarfile.lock" ).should be_true
+    lockfile = LockJar.read("#{TEMP_DIR}/Jarfile.lock")
     lockfile.to_hash.should eql({
       "version"=> LockJar::VERSION, 
       "excludes"=>["commons-logging", "logkit"], 
@@ -134,13 +134,13 @@ describe LockJar, "#lock" do
   
   
   it "should lock using a block" do
-    LockJar.lock( :local_repo => 'tmp/test-repo', :lockfile => 'tmp/NoRepoJarfile.lock' ) do
+    LockJar.lock( :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/NoRepoJarfile.lock" ) do
       jar "org.eclipse.jetty:jetty-servlet:8.1.3.v20120416"
     end
     
-    File.exists?( 'tmp/NoRepoJarfile.lock' ).should be_true
+    File.exists?( "#{TEMP_DIR}/NoRepoJarfile.lock" ).should be_true
     
-    lockfile = LockJar.read('tmp/NoRepoJarfile.lock')
+    lockfile = LockJar.read("#{TEMP_DIR}/NoRepoJarfile.lock")
     lockfile.to_hash.should eql({
       "version"=> LockJar::VERSION, 
       "groups"=>{
@@ -179,21 +179,20 @@ end
 describe LockJar, "#install" do     
   it "should install jars" do
     
-    LockJar.lock( "spec/Jarfile", :download_artifacts => false, :local_repo => 'tmp/test-repo-install', :lockfile => 'tmp/Jarfile.lock' )
+    LockJar.lock( "spec/Jarfile", :download_artifacts => false, :local_repo => "#{TEMP_DIR}/test-repo-install", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
           
-    jars = LockJar.install( 'tmp/Jarfile.lock', ['default'], :local_repo => 'tmp/test-repo-install' )
+    jars = LockJar.install( "#{TEMP_DIR}/Jarfile.lock", ['default'], :local_repo => "#{TEMP_DIR}/test-repo-install" )
     jars.should eql([
-      File.expand_path("tmp/test-repo-install/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar"), 
-      File.expand_path("tmp/test-repo-install/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar"), 
-      File.expand_path("tmp/test-repo-install/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar"), 
-      File.expand_path("tmp/test-repo-install/com/slackworks/modelcitizen/0.2.2/modelcitizen-0.2.2.jar"), 
-      File.expand_path("tmp/test-repo-install/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3.jar"), 
-      File.expand_path("tmp/test-repo-install/commons-io/commons-io/1.4/commons-io-1.4.jar"), 
-      File.expand_path("tmp/test-repo-install/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"), 
-      File.expand_path("tmp/test-repo-install/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"), 
-      File.expand_path("tmp/test-repo-install/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 
-      File.expand_path("tmp/test-repo-install/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar") 
-
+      File.expand_path("#{TEMP_DIR}/test-repo-install/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo-install/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo-install/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo-install/com/slackworks/modelcitizen/0.2.2/modelcitizen-0.2.2.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo-install/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo-install/commons-io/commons-io/1.4/commons-io-1.4.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo-install/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo-install/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo-install/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo-install/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar")
     ])
   end
   
@@ -202,9 +201,9 @@ end
 describe LockJar, "#list" do     
   it "should list jars" do
     
-    LockJar.lock( "spec/Jarfile", :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
+    LockJar.lock( "spec/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
           
-    jars = LockJar.list( 'tmp/Jarfile.lock', ['default', 'development', 'bad scope'], :local_repo => 'tmp/test-repo' )
+    jars = LockJar.list( "#{TEMP_DIR}/Jarfile.lock", ['default', 'development', 'bad scope'], :local_repo => "#{TEMP_DIR}/test-repo" )
     jars.should eql([
       "ch.qos.logback:logback-classic:jar:0.9.24", "ch.qos.logback:logback-core:jar:0.9.24", 
        "com.metapossum:metapossum-scanner:jar:1.0", "com.slackworks:modelcitizen:jar:0.2.2", 
@@ -216,24 +215,24 @@ describe LockJar, "#list" do
   
   it "should replace dependencies with maps" do
     dsl = LockJar::Domain::Dsl.create do
-      map 'junit:junit', 'tmp'
+      map 'junit:junit', "#{TEMP_DIR}"
       jar 'junit:junit:4.10'
     end
     
-    LockJar.lock( dsl, :local_repo => 'tmp/test-repo', :lockfile => 'tmp/ListJarfile.lock' )
-    paths = LockJar.list( 'tmp/ListJarfile.lock', :local_repo => 'tmp/test-repo' )
-    paths.should eql( [ "tmp", "org.hamcrest:hamcrest-core:jar:1.1"] ) 
+    LockJar.lock( dsl, :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/ListJarfile.lock")
+    paths = LockJar.list( "#{TEMP_DIR}/ListJarfile.lock", :local_repo => "#{TEMP_DIR}/test-repo" )
+    paths.should eql( [ "#{TEMP_DIR}", "org.hamcrest:hamcrest-core:jar:1.1"] )
   end
   
   it "should replace dependencies with maps and get local paths" do
     dsl = LockJar::Domain::Dsl.create do
-      map 'junit:junit', 'tmp'
+      map 'junit:junit', "#{TEMP_DIR}"
       jar 'junit:junit:4.10'
     end
     
-    LockJar.lock( dsl, :local_repo => 'tmp/test-repo', :lockfile => 'tmp/ListJarfile.lock' )
-    paths = LockJar.list( 'tmp/ListJarfile.lock', :local_repo => 'tmp/test-repo' )
-    paths.should eql( [ "tmp", "org.hamcrest:hamcrest-core:jar:1.1"] ) 
+    LockJar.lock( dsl, :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/ListJarfile.lock" )
+    paths = LockJar.list( "#{TEMP_DIR}/ListJarfile.lock", :local_repo => "#{TEMP_DIR}/test-repo" )
+    paths.should eql( [ "#{TEMP_DIR}", "org.hamcrest:hamcrest-core:jar:1.1"] )
   end
 end
     
@@ -246,22 +245,22 @@ describe LockJar, "#load" do
     end
     
 
-    LockJar.lock( "spec/Jarfile", :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
+    LockJar.lock( "spec/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
     
-    jars = LockJar.load( 'tmp/Jarfile.lock', ['default'], :local_repo => 'tmp/test-repo' )
-    LockJar::Registry.instance.lockfile_registered?( "tmp/Jarfile.lock" ).should be_false
+    jars = LockJar.load( "#{TEMP_DIR}/Jarfile.lock", ['default'], :local_repo => "#{TEMP_DIR}/test-repo" )
+    LockJar::Registry.instance.lockfile_registered?( "#{TEMP_DIR}/Jarfile.lock" ).should be_false
     
     jars.should eql([
-      File.expand_path("tmp/test-repo/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar"), 
-      File.expand_path("tmp/test-repo/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar"), 
-      File.expand_path("tmp/test-repo/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar"), 
-      File.expand_path("tmp/test-repo/com/slackworks/modelcitizen/0.2.2/modelcitizen-0.2.2.jar"), 
-      File.expand_path("tmp/test-repo/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3.jar"), 
-      File.expand_path("tmp/test-repo/commons-io/commons-io/1.4/commons-io-1.4.jar"), 
-      File.expand_path("tmp/test-repo/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"), 
-      File.expand_path("tmp/test-repo/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"), 
-      File.expand_path("tmp/test-repo/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 
-      File.expand_path("tmp/test-repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo/com/slackworks/modelcitizen/0.2.2/modelcitizen-0.2.2.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo/commons-beanutils/commons-beanutils/1.8.3/commons-beanutils-1.8.3.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo/commons-io/commons-io/1.4/commons-io-1.4.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"),
+      File.expand_path("#{TEMP_DIR}/test-repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"),
     ])
     if Naether.platform == 'java'
       lambda { java_import 'org.apache.mina.core.IoUtil' }.should_not raise_error

@@ -2,7 +2,18 @@ require 'spec_helper'
 
 describe "lockjar" do
 
-include Spec::Helpers
+  include Spec::Helpers
+
+  before(:all) do
+    install_jarfile <<-J
+jar "com.google.guava:guava:14.0.1"
+J
+  end
+
+  after(:all) do
+    FileUtils.rm("Jarfile")
+    FileUtils.rm("Jarfile.lock") rescue nil
+  end
 
   context "version" do
     before do
@@ -17,16 +28,10 @@ include Spec::Helpers
 
   context "lock" do
     it "should create lock file with default path" do
-      current_dir = Dir.pwd
-      Dir.chdir("spec/support")
-
       FileUtils.rm("Jarfile.lock") rescue nil
-
       lockjar "lock"
       expect(@out).to eq("Locking Jarfile to Jarfile.lock")
       expect(File.exists?("Jarfile.lock")).to be_true
-
-      Dir.chdir(current_dir)
     end
 
     it "should create lock file with specific path" do
@@ -43,8 +48,6 @@ include Spec::Helpers
   context "list" do
 
     it "should list with default path" do
-      current_dir = Dir.pwd
-      Dir.chdir("spec/support")
       FileUtils.rm("Jarfile.lock") rescue nil
       lockjar "lock"
 
@@ -55,8 +58,6 @@ EOM
 
       lockjar "list"
       expect(@out).to eq(expect_output)
-
-      Dir.chdir(current_dir)
     end
 
     it "should list with specific path" do
@@ -77,17 +78,13 @@ EOM
 
   context "install" do
     it "should install jar archives with default path" do
-      current_dir = Dir.pwd
-      Dir.chdir("spec/support")
       FileUtils.rm("Jarfile.lock") rescue nil
       lockjar "lock"
 
       lockjar "install"
       expect(@out).to eq("Installing Jars from Jarfile.lock for [\"default\"]")
       LockJar.load
-      expect(Java::ComGoogleCommonCollect::Multimap).to be_kind_of(Module)
-
-      Dir.chdir(current_dir)
+      expect(Java::ComGoogleCommonCollect::Multimap).to be_kind_of(Module) if is_jruby?
     end
 
     it "should install jar archives with specific path" do
@@ -99,7 +96,7 @@ EOM
       lockjar "install -l #{jarfile_lock_path}"
       expect(@out).to eq("Installing Jars from #{jarfile_lock_path} for [\"default\"]")
       LockJar.load(jarfile_lock_path)
-      expect(Java::ComGoogleCommonCollect::Multimap).to be_kind_of(Module)
+      expect(Java::ComGoogleCommonCollect::Multimap).to be_kind_of(Module) if is_jruby?
     end
   end
 

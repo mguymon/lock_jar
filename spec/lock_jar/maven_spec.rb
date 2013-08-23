@@ -15,9 +15,9 @@ describe LockJar::Maven do
     end
     
     it "should install artifact" do
-      LockJar::Maven.install( "maven_spec:install:7", "spec/pom.xml", nil, :local_repo => 'tmp/test-repo' )
+      LockJar::Maven.install( "maven_spec:install:7", "spec/pom.xml", nil, :local_repo => "#{TEMP_DIR}/test-repo" )
       
-      File.exists?( 'tmp/test-repo/maven_spec/install/7/install-7.pom' ).should be_true
+      File.exists?( "#{TEMP_DIR}/test-repo/maven_spec/install/7/install-7.pom" ).should be_true
     end
   end
 end

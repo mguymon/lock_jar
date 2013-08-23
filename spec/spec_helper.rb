@@ -16,7 +16,7 @@ def mock_terminal
   $terminal = HighLine.new @input, @output
 end
 
-TEMP_DIR = File.join(File.dirname(__FILE__), "..", "tmp")
+TEMP_DIR = File.expand_path(File.join(File.dirname(__FILE__), "..", "temporary"))
 TEST_REPO = File.expand_path(File.join(TEMP_DIR, "test-repo"))
 PARAM_CONFIG = File.expand_path(File.join(TEMP_DIR, "param_config"))
 DSL_CONFIG = File.expand_path(File.join(TEMP_DIR, "dsl_config"))
@@ -32,6 +32,6 @@ RSpec.configure do |config|
   end
 
   config.after(:suite) do
-    #FileUtils.rm_rf(TEMP_DIR)
+    FileUtils.rm_rf(TEMP_DIR)
   end
 end

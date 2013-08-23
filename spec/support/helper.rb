@@ -1,4 +1,5 @@
 require 'open3'
+require 'pathname'
 
 module Spec
   module Helpers
@@ -28,10 +29,16 @@ module Spec
       @out
     end
 
-    def locked_app(*path)
-      root = tmp.join("bundled_app")
-      FileUtils.mkdir_p(root)
-      root.join(*path)
+    def install_jarfile(*args)
+      root_path ||= Pathname.new(File.expand_path("../../..", __FILE__))
+      jarfile_path = root_path.join("Jarfile")
+      File.open(jarfile_path.to_s, 'w') do |f|
+        f.puts args.last
+      end
+    end
+
+    def is_jruby?
+      defined?(RUBY_ENGINE) && (RUBY_ENGINE == "jruby")
     end
   end
 end
