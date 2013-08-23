@@ -30,7 +30,7 @@ J
     it "should create lock file with default path" do
       FileUtils.rm("Jarfile.lock") rescue nil
       lockjar "lock"
-      expect(@out).to eq("Locking Jarfile to Jarfile.lock")
+      expect(@out).to match(/^Locking Jarfile to Jarfile.lock.*/)
       expect(File.exists?("Jarfile.lock")).to be_true
     end
 
