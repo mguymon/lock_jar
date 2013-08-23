@@ -1,5 +1,5 @@
-require File.expand_path(File.join(File.dirname(__FILE__),'../spec_helper'))
-require 'lib/lock_jar/class_loader'
+require 'spec_helper'
+require 'lock_jar/class_loader'
 
 
 describe LockJar::ClassLoader, "#isolate" do
@@ -9,11 +9,11 @@ describe LockJar::ClassLoader, "#isolate" do
   else
     it "should create a SimpleEmail" do
       # Generate the IsolateJarfile.lock 
-      LockJar.lock( :lockfile => 'tmp/IsolateJarfile.lock' ) do
+      LockJar.lock( :lockfile => "#{TEMP_DIR}/IsolateJarfile.lock" ) do
        jar 'org.apache.commons:commons-email:1.2'
       end
       
-      email = LockJar::ClassLoader.new( 'tmp/IsolateJarfile.lock' ).isolate do
+      email = LockJar::ClassLoader.new( "#{TEMP_DIR}/IsolateJarfile.lock" ).isolate do
           email = new_instance( 'org.apache.commons.mail.SimpleEmail' )
           email.setSubject( 'test subject' )     
           
@@ -31,14 +31,14 @@ describe LockJar::ClassLoader, "#isolate" do
   
     it "should create a JsonFactory and ObjectMapper" do
       # Generate the IsolateJarfile.lock 
-      LockJar.lock( :lockfile => 'tmp/IsolateJarfile.lock' ) do
+      LockJar.lock( :lockfile => "#{TEMP_DIR}/IsolateJarfile.lock" ) do
        jar 'com.fasterxml.jackson.core:jackson-core:2.0.6'
        jar 'com.fasterxml.jackson.core:jackson-databind:2.0.6'
       end
       
       json = '{ "test1": "1test1", "test2": "2test2"}'
       
-      map = LockJar::ClassLoader.new( 'tmp/IsolateJarfile.lock' ).isolate do
+      map = LockJar::ClassLoader.new( "#{TEMP_DIR}/IsolateJarfile.lock" ).isolate do
           factory = new_instance( 'com.fasterxml.jackson.core.JsonFactory' )
           mapper = new_instance( 'com.fasterxml.jackson.databind.ObjectMapper', factory) 
           mapper.readValue(json, java.util.Map.java_class)

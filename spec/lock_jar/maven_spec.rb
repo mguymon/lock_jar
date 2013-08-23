@@ -1,6 +1,6 @@
-require File.expand_path(File.join(File.dirname(__FILE__),'../spec_helper'))
-require 'lib/lock_jar'
-require 'lib/lock_jar/maven'
+require 'spec_helper'
+require 'lock_jar'
+require 'lock_jar/maven'
 require 'naether'
 
 describe LockJar::Maven do
@@ -15,9 +15,9 @@ describe LockJar::Maven do
     end
     
     it "should install artifact" do
-      LockJar::Maven.install( "maven_spec:install:7", "spec/pom.xml", nil, :local_repo => 'tmp/test-repo' )
+      LockJar::Maven.install( "maven_spec:install:7", "spec/pom.xml", nil, :local_repo => "#{TEMP_DIR}/test-repo" )
       
-      File.exists?( 'tmp/test-repo/maven_spec/install/7/install-7.pom' ).should be_true
+      File.exists?( "#{TEMP_DIR}/test-repo/maven_spec/install/7/install-7.pom" ).should be_true
     end
   end
 end
