@@ -1,5 +1,6 @@
-require File.expand_path(File.join(File.dirname(__FILE__),'../../spec_helper'))
+require 'spec_helper'
 require 'lock_jar/domain/artifact'
+
 describe LockJar::Domain::Dsl do
   context "Instance" do
     it "should load a Jarfile" do
