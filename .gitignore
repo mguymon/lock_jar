@@ -1,3 +1,4 @@
+# Dont save the Gemfile since JRuby and CRuby have incompatiable deps
 Gemfile.lock
 Jarfile.lock
 
