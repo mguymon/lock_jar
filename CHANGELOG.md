@@ -1,5 +1,9 @@
 ## LockJar Changelog
 
+### 0.7.5 (August 23, 2013)
+
+* Update Thor dep, improve specs (<a href="https://github.com/mguymon/lock_jar/pull/10>Pull #10</a>) [thanks <a href="https://github.com/yokolet">yokolet</a>]
+
 ### 0.7.4 (April 17, 2013)
 
 * Fixed Buildr integration (<a href="https://github.com/mguymon/lock_jar/issues/6">Issue #6</a>) [thanks <a href="https://github.com/tobsch">tobsch</a>]
