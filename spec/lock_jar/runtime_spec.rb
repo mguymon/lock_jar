@@ -11,13 +11,13 @@ describe LockJar::Runtime do
       LockJar::Runtime.instance.current_resolver.naether.local_repo_path.should eql TEST_REPO
       
       LockJar::Runtime.instance.load( nil, [], :local_repo => PARAM_CONFIG ) do
-        local 'dsl_config'
+        local_repo 'dsl_config'
       end
       
       LockJar::Runtime.instance.current_resolver.naether.local_repo_path.should eql PARAM_CONFIG
     
       LockJar::Runtime.instance.load( nil ) do
-        local DSL_CONFIG
+        local_repo DSL_CONFIG
       end
       
       LockJar::Runtime.instance.current_resolver.naether.local_repo_path.should eql DSL_CONFIG
