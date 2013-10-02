@@ -34,24 +34,29 @@ module LockJar
     end
     
     def resolver( opts = {} )
-      
+
+      resolver_opts = {}
+
       # XXX: Caches the resolver by the options. Passing in nil opts will replay
       #      from the cache. This need to change.
       
       unless opts.nil?
-        if opts[:local_repo]
-          opts[:local_repo] = File.expand_path(opts[:local_repo])
+        resolver_opts = opts.dup
+
+        # remove opts that are not for the resolver and will affect the crummy caching
+        resolver_opts.delete :local_paths
+
+        if resolver_opts[:local_repo]
+          resolver_opts[:local_repo] = File.expand_path(resolver_opts[:local_repo])
         end
       else
         if @current_resolver
-          opts = @current_resolver.opts
-        else
-          opts = {}
+          resolver_opts = @current_resolver.opts
         end
       end
       
-      if @current_resolver.nil? || opts != @current_resolver.opts
-        @current_resolver = LockJar::Resolver.new( opts )
+      if @current_resolver.nil? || resolver_opts != @current_resolver.opts
+        @current_resolver = LockJar::Resolver.new( resolver_opts )
       end
       
       @current_resolver
@@ -242,7 +247,6 @@ module LockJar
       end
       
       if opts[:local_paths]
-        opts.delete( :local_paths ) # remove list opts so resolver is not reset
         resolver(opts).to_local_paths( dependencies )
         
       else

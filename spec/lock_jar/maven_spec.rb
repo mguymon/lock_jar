@@ -15,9 +15,13 @@ describe LockJar::Maven do
     end
     
     it "should install artifact" do
-      LockJar::Maven.install( "maven_spec:install:7", "spec/pom.xml", nil, :local_repo => "#{TEMP_DIR}/test-repo" )
+      LockJar::Maven.install( "maven_spec:install:7", "spec/pom.xml", nil, :local_repo => TEST_REPO )
       
       File.exists?( "#{TEMP_DIR}/test-repo/maven_spec/install/7/install-7.pom" ).should be_true
+    end
+
+    it "should invoke the compile goal for the maven project" do
+      expect( LockJar::Maven.invoke( 'spec/pom.xml', 'compile', :local_repo => TEST_REPO).exitCode ).to eql 0
     end
   end
 end

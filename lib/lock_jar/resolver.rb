@@ -15,6 +15,7 @@
 
 require 'rubygems'
 require 'naether'
+require 'naether/bootstrap'
 require 'fileutils'
 
 module LockJar
@@ -33,7 +34,7 @@ module LockJar
       
       # Bootstrapping naether will create an instance from downloaded jars. 
       # If jars exist locally already, create manually
-      @naether = Naether.new
+      @naether = Naether.create
       @naether.local_repo_path = local_repo if local_repo
       @naether.clear_remote_repositories if opts[:offline]
     end

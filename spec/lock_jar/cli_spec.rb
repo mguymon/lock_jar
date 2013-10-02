@@ -15,6 +15,18 @@ J
     FileUtils.rm("Jarfile.lock") rescue nil
   end
 
+  it "should show everything" do
+    lockjar ''
+    expect(@out).to eq(
+'Commands:
+  lockjar help [COMMAND]  # Describe available commands or one specific command
+  lockjar install         # Install Jars from a Jarfile.lock
+  lockjar list            # List Jars from a Jarfile.lock
+  lockjar lock            # Lock Jars in a Jarfile.lock
+  lockjar maven           # Run tasks on a Maven POM
+  lockjar version         # LockJar version')
+  end
+
   context "version" do
     before do
       @version = File.read(File.join(File.dirname(__FILE__), "..", "..", "VERSION"))
