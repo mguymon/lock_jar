@@ -7,7 +7,7 @@ module LockJar
     class Lockfile
       
       attr_accessor :local_repository, :maps, :excludes, :remote_repositories, 
-                    :version, :groups, :gems
+                    :version, :groups, :gems, :merged
       attr_reader :force_utf8
       
       
@@ -19,6 +19,7 @@ module LockJar
         lockfile.version = lock_data['version'] || LockJar::VERSION
         
         lockfile.local_repository = lock_data['local_repository']
+        lockfile.merged = lock_data['merged'] || []
         lockfile.maps = lock_data['maps'] || []
         lockfile.excludes = lock_data['excludes'] || []
         lockfile.groups = lock_data['groups'] || lock_data['scopes'] || {}
@@ -29,11 +30,12 @@ module LockJar
       
       def initialize
         @force_utf8 ||= RUBY_VERSION =~ /^1.9/
-        @groups = {}
+        @groups = { 'default' => {} }
         @maps = []
         @excludes = []
         @remote_repositories = []
         @gems = []
+        @merged = []
         
         @version = LockJar::VERSION # default version
       end
@@ -48,7 +50,11 @@ module LockJar
             lock_data['local_repository'] = lock_data['local_repository'].force_encoding("UTF-8")
           end
         end
-                
+            
+        unless merged.empty?
+          lock_data['merged'] = merged
+        end
+        
         if maps.size > 0
           lock_data['maps'] = maps
         end

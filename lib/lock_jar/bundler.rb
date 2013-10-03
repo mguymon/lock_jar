@@ -2,6 +2,7 @@ require 'lock_jar'
 require 'lock_jar/registry'
 require 'lock_jar/domain/dsl'
 require 'lock_jar/domain/gem_dsl'
+require 'lock_jar/domain/jarfile_dsl'
 require 'lock_jar/domain/dsl_helper'
 
 module LockJar
@@ -47,17 +48,18 @@ module Bundler
       to_lock = _lockjar_extended_to_lock
    
       definition = Bundler.definition
-      if !definition.send( :nothing_changed? )
+      #if !definition.send( :nothing_changed? )
+        gems_with_jars = []
+        
         # load local Jarfile
         if File.exists?( 'Jarfile' )
-          dsl = LockJar::Domain::Dsl.create( 'Jarfile' )
-        
+          dsl = LockJar::Domain::JarfileDsl.create( File.expand_path( 'Jarfile' ) )
+          gems_with_jars << 'jarfile:Jarfile'
         # Create new Dsl
         else
           dsl = LockJar::Domain::Dsl.new
         end
         
-        gems_with_jars = []
         definition.groups.each do |group|
           if ENV["DEBUG"]
             puts "[LockJar] Group #{group}:"
@@ -69,13 +71,13 @@ module Bundler
             jarfile = File.join( gem_dir, "Jarfile" )
            	
             if File.exists?( jarfile )
-              gems_with_jars << spec.name
+              gems_with_jars << "gem:#{spec.name}"
            	  
               if ENV["DEBUG"]
                 puts "[LockJar]   #{spec.name} has Jarfile"
               end
               
-              spec_dsl = LockJar::Domain::GemDsl.create( gem_dir, "Jarfile" )
+              spec_dsl = LockJar::Domain::GemDsl.create( spec, "Jarfile" )
               
               dsl = LockJar::Domain::DslHelper.merge( dsl, spec_dsl )
             end 
@@ -83,11 +85,11 @@ module Bundler
           
         end
   
-        puts "[LockJar] Locking Jars for Gems: #{gems_with_jars.inspect}"
-        LockJar.lock(dsl, :gems => gems_with_jars )
-      elsif ENV["DEBUG"]
-        puts "[LockJar] Locking skiped, Gemfile has not changed"
-      end      
+        puts "[LockJar] Locking Jars for: #{gems_with_jars.join(', ')}"
+        LockJar.lock( dsl )
+      #elsif ENV["DEBUG"]
+      #  puts "[LockJar] Locking skiped, Gemfile has not changed"
+      #end      
       to_lock
     end
     

@@ -26,7 +26,7 @@ describe LockJar, "#lock" do
             "com.slackworks:modelcitizen:jar:0.2.2", 
             "commons-beanutils:commons-beanutils:jar:1.8.3", "commons-io:commons-io:jar:1.4", 
             "commons-lang:commons-lang:jar:2.6", "commons-logging:commons-logging:jar:1.1.1", 
-            "junit:junit:jar:4.7", "org.apache.mina:mina-core:jar:2.0.4", 
+             "org.apache.mina:mina-core:jar:2.0.4", 
             "org.slf4j:slf4j-api:jar:1.6.1"], 
           "artifacts"=>[{
             "jar:org.apache.mina:mina-core:jar:2.0.4"=>{
@@ -36,17 +36,18 @@ describe LockJar, "#lock" do
             "pom:spec/pom.xml"=>{
               "scopes"=>["runtime", "compile"], 
               "transitive"=>{
-                "com.metapossum:metapossum-scanner:jar:1.0"=>{
-                  "junit:junit:jar:4.7"=>{}, 
-                  "commons-io:commons-io:jar:1.4"=>{}
-                }, 
-                "commons-beanutils:commons-beanutils:jar:1.8.3"=>{
-                  "commons-logging:commons-logging:jar:1.1.1"=>{}
-                }, 
-                "ch.qos.logback:logback-classic:jar:0.9.24"=>{
-                  "ch.qos.logback:logback-core:jar:0.9.24"=>{}
-                }, 
-                "commons-lang:commons-lang:jar:2.6"=>{}
+                "com.slackworks:modelcitizen:jar:0.2.2" => {
+                  "com.metapossum:metapossum-scanner:jar:1.0"=>{
+                    "commons-io:commons-io:jar:1.4"=>{}
+                  }, 
+                  "commons-beanutils:commons-beanutils:jar:1.8.3"=>{
+                    "commons-logging:commons-logging:jar:1.1.1"=>{}
+                  }, 
+                  "ch.qos.logback:logback-classic:jar:0.9.24"=>{
+                    "ch.qos.logback:logback-core:jar:0.9.24"=>{}
+                  }, 
+                  "commons-lang:commons-lang:jar:2.6"=>{}
+                }
               }
             }
           }]
@@ -64,7 +65,8 @@ describe LockJar, "#lock" do
               "transitive"=>{"org.hamcrest:hamcrest-core:jar:1.1"=>{}}}
           }]
         }
-      }
+      },
+      "remote_repositories" => ["http://mirrors.ibiblio.org/pub/mirrors/maven2", "http://repository.jboss.org/nexus/content/groups/public-jboss"]
     })
   end
   
@@ -87,7 +89,8 @@ describe LockJar, "#lock" do
               "transitive"=>{"org.hamcrest:hamcrest-core:jar:1.1"=>{}}}
           }]
         }
-      }
+      },
+      "remote_repositories" => ["http://mirrors.ibiblio.org/pub/mirrors/maven2", "http://repository.jboss.org/nexus/content/groups/public-jboss"]
     })      
   end
   
@@ -123,7 +126,8 @@ describe LockJar, "#lock" do
             }
           }]
         }
-      }
+      },
+      "remote_repositories" => ["http://mirrors.ibiblio.org/pub/mirrors/maven2", "http://repository.jboss.org/nexus/content/groups/public-jboss"]
     })
     
   end
@@ -187,7 +191,6 @@ describe LockJar, "#install" do
       File.expand_path("tmp/test-repo-install/commons-io/commons-io/1.4/commons-io-1.4.jar"), 
       File.expand_path("tmp/test-repo-install/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"), 
       File.expand_path("tmp/test-repo-install/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"), 
-      File.expand_path("tmp/test-repo-install/junit/junit/4.7/junit-4.7.jar"), 
       File.expand_path("tmp/test-repo-install/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 
       File.expand_path("tmp/test-repo-install/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar") 
 
@@ -207,7 +210,7 @@ describe LockJar, "#list" do
        "com.metapossum:metapossum-scanner:jar:1.0", "com.slackworks:modelcitizen:jar:0.2.2", 
        "commons-beanutils:commons-beanutils:jar:1.8.3", "commons-io:commons-io:jar:1.4", 
        "commons-lang:commons-lang:jar:2.6", "commons-logging:commons-logging:jar:1.1.1", 
-       "junit:junit:jar:4.7", "org.apache.mina:mina-core:jar:2.0.4", 
+       "org.apache.mina:mina-core:jar:2.0.4", 
        "org.slf4j:slf4j-api:jar:1.6.1", "com.typesafe:config:jar:0.5.0" ])
   end
   
@@ -246,7 +249,7 @@ describe LockJar, "#load" do
     LockJar.lock( "spec/Jarfile", :local_repo => 'tmp/test-repo', :lockfile => 'tmp/Jarfile.lock' )
     
     jars = LockJar.load( 'tmp/Jarfile.lock', ['default'], :local_repo => 'tmp/test-repo' )
-    LockJar::Registry.instance.lockfile_registered?( "tmp/Jarfile.lock" ).should be_true
+    LockJar::Registry.instance.lockfile_registered?( "tmp/Jarfile.lock" ).should be_false
     
     jars.should eql([
       File.expand_path("tmp/test-repo/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar"), 
@@ -257,7 +260,6 @@ describe LockJar, "#load" do
       File.expand_path("tmp/test-repo/commons-io/commons-io/1.4/commons-io-1.4.jar"), 
       File.expand_path("tmp/test-repo/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"), 
       File.expand_path("tmp/test-repo/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"), 
-      File.expand_path("tmp/test-repo/junit/junit/4.7/junit-4.7.jar"), 
       File.expand_path("tmp/test-repo/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"), 
       File.expand_path("tmp/test-repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"),
     ])

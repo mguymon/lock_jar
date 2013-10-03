@@ -42,7 +42,13 @@ module LockJar
           end
           
           from_dsl.excludes.each do |exclude|
-            into_dsl.excludes << exclude
+            unless into_dsl.include? exclude
+              into_dsl.excludes << exclude
+            end
+          end
+          
+          if from_dsl.file_path
+            into_dsl.merged << from_dsl.file_path
           end
           
           into_dsl

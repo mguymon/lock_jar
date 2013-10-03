@@ -58,7 +58,7 @@ Example of locking a Jarfile to a Jarfile.lock
  
 ### Jarfile.lock
 
-The _Jarfile.lock_ generated is a YAML file containing the groupd dependencies and their nested transitive dependencies.
+The _Jarfile.lock_ generated is a YAML file containing information on how to handle the classpath for grouped dependencies and their nested transitive dependencies.
 
 #### The Jarfile.lock
     
