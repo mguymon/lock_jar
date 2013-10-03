@@ -16,6 +16,7 @@
 require 'lock_jar/maven'
 require 'lock_jar/domain/dsl_helper'
 require 'lock_jar/domain/artifact'
+require 'lock_jar/domain/pom_dsl'
 
 module LockJar
   module Domain
@@ -24,7 +25,7 @@ module LockJar
       DEFAULT_GROUP = ['default']
       
       attr_accessor :artifacts, :remote_repositories, :local_repository, :groups,
-                    :maps, :excludes, :merged
+                    :maps, :excludes, :merged, :poms
                     
       attr_reader :file_path
       
@@ -63,11 +64,14 @@ module LockJar
         @present_group = 'default'
         
         @local_repository = nil
+
         @maps = {}
         
         @excludes = []
         
         @merged = []
+
+        @poms = []
       end
       
       def exclude(*notations)
@@ -80,7 +84,7 @@ module LockJar
           opts.merge!( args.last )
         end
         
-        artifact = Jar.new( notation )
+        artifact = Artifact::Jar.new( notation )
         
         assign_groups( artifact, opts[:group] )
       end
@@ -106,20 +110,9 @@ module LockJar
       end
       
       # 
-      def pom(path, *args)
-        unless path =~ /\.xml$/i
-          raise "#{path} is an invalid pom path"  
-        end
-        
-        opts = { :scopes => ['runtime', 'compile'] }
-          
-        if args.last.is_a? Hash
-          opts.merge! args.last
-        end
-        
-        artifact = Pom.new( path, opts[:scopes] )
-        
-        assign_groups( artifact, opts[:groups] )
+      def pom(path, *args, &blk)
+        pom_dsl = PomDsl.new( self, path, *args, &blk)
+        poms << pom_dsl
       end
   
       def remote_repo( url, opts = {} )
@@ -143,8 +136,7 @@ module LockJar
         warn "[DEPRECATION] `scope` is deprecated.  Please use `group` instead."
         group(*scopes,&blk)
       end
-      
-      private 
+
       def assign_groups(artifact, groups=nil)
         
         if groups

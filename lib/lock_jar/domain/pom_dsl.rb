@@ -14,25 +14,49 @@
 # the License.
 
 require 'lock_jar/maven'
-require 'lock_jar/domain/dsl'
+require 'lock_jar/domain/artifact'
+require 'lock_jar/domain/pom/uberjar_dsl'
 require 'lock_jar/domain/dsl_helper'
 
 module LockJar
   module Domain
-    class JarfileDsl < Dsl
-  
-      attr_accessor :file_path
-      
-      class << self
-        alias :overridden_create :create
-        def create(jarfile)
-          builder = new
-          builder.file_path = jarfile
-          
-          evaluate(builder, jarfile)
+    class PomDsl
+
+      attr_accessor :pom, :uberjars
+
+      def initialize(parent, *args, &blk)
+        @uberjars = []
+        @parent = parent
+
+        if args.first.is_a? String
+          self.pom_path(*args)
         end
+
+        self.instance_eval(&blk) if blk
       end
-  
+
+      def uberjar(&blk)
+        uberjar_dsl = Pom::UberjarDsl.new(&blk)
+        @uberjars << uberjar_dsl
+      end
+
+      def pom_path(*args)
+
+        @pom = args.shift
+
+        unless @pom =~ /\.xml$/i
+          raise "#{@pom} is an invalid pom path"
+        end
+
+        opts = { :scopes => ['runtime', 'compile'] }
+
+        if args.last.is_a? Hash
+          opts.merge! args.last
+        end
+
+        artifact = Artifact::Pom.new( @pom, opts[:scopes] )
+        @parent.assign_groups( artifact, opts[:groups] )
+      end
     end
   end
 end

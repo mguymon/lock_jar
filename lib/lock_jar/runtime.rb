@@ -32,33 +32,29 @@ module LockJar
     def initialize
       @current_resolver = nil
     end
-    
+
     def resolver( opts = {} )
 
-      resolver_opts = {}
-
       # XXX: Caches the resolver by the options. Passing in nil opts will replay
-      #      from the cache. This need to change.
-      
+      #      from the cache. This need to change. It is also a bit troublesome
+      #      since all the opts are passed around and modified directly.
+
       unless opts.nil?
-        resolver_opts = opts.dup
-
-        # remove opts that are not for the resolver and will affect the crummy caching
-        resolver_opts.delete :local_paths
-
-        if resolver_opts[:local_repo]
-          resolver_opts[:local_repo] = File.expand_path(resolver_opts[:local_repo])
+        if opts[:local_repo]
+          opts[:local_repo] = File.expand_path(opts[:local_repo])
         end
       else
         if @current_resolver
-          resolver_opts = @current_resolver.opts
+          opts = @current_resolver.opts
+        else
+          opts = {}
         end
       end
-      
-      if @current_resolver.nil? || resolver_opts != @current_resolver.opts
-        @current_resolver = LockJar::Resolver.new( resolver_opts )
+
+      if @current_resolver.nil? || opts != @current_resolver.opts
+        @current_resolver = LockJar::Resolver.new( opts )
       end
-      
+
       @current_resolver
     end
     
@@ -145,11 +141,11 @@ module LockJar
           
             artifact_data = {}
             
-            if artifact.is_a? LockJar::Domain::Jar
+            if artifact.is_a? LockJar::Domain::Artifact::Jar
               group['dependencies'] << artifact.notation
               artifact_data["transitive"] = resolver(opts).dependencies_graph[artifact.notation].to_hash
 
-            elsif artifact.is_a? LockJar::Domain::Pom
+            elsif artifact.is_a? LockJar::Domain::Artifact::Pom
               artifact_data['scopes'] = artifact.scopes
               
               # iterate each dependency in Pom to map transitive dependencies
@@ -159,7 +155,7 @@ module LockJar
               end
               artifact_data["transitive"] = transitive
               
-            elsif artifact.is_a? LockJar::Domain::Local
+            elsif artifact.is_a? LockJar::Domain::Artifact::Local
               # xXX: support local artifacts
             else
               # XXX: handle unsupported artifact

@@ -40,7 +40,7 @@ describe LockJar::Domain::DslHelper do
       
       dsl = LockJar::Domain::DslHelper.merge( block1, block2 )
       
-      dsl.artifacts['default'].should =~ [LockJar::Domain::Jar.new("org.apache.mina:mina-core:2.0.4"), LockJar::Domain::Pom.new("spec/pom.xml",["runtime", "compile"]), LockJar::Domain::Jar.new("compile-jar")]
+      dsl.artifacts['default'].should =~ [LockJar::Domain::Artifact::Jar.new("org.apache.mina:mina-core:2.0.4"), LockJar::Domain::Artifact::Pom.new("spec/pom.xml",["runtime", "compile"]), LockJar::Domain::Artifact::Jar.new("compile-jar")]
       
       #  "runtime" => [LockJar::Domain::Jar.new("org.apache.tomcat:servlet-api:jar:6.0.35"), LockJar::Domain::Jar.new("runtime-jar"), LockJar::Domain::Pom.new("runtime-pom.xml")], 
       #  "test" => [LockJar::Domain::Jar.new("junit:junit:jar:4.10"), LockJar::Domain::Jar.new("test-jar"), LockJar::Domain::Pom.new("test-pom.xml")]

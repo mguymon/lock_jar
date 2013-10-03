@@ -16,10 +16,10 @@ def mock_terminal
   $terminal = HighLine.new @input, @output
 end
 
-TEMP_DIR = File.expand_path(File.join(File.dirname(__FILE__), "..", ".spec-tmp"))
-TEST_REPO = File.expand_path(File.join(TEMP_DIR, "test-repo"))
-PARAM_CONFIG = File.expand_path(File.join(TEMP_DIR, "param_config"))
-DSL_CONFIG = File.expand_path(File.join(TEMP_DIR, "dsl_config"))
+TEMP_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', '.spec-tmp'))
+TEST_REPO = File.expand_path(File.join(TEMP_DIR, 'test-repo'))
+PARAM_CONFIG = File.expand_path(File.join(TEMP_DIR, 'param_config'))
+DSL_CONFIG = File.expand_path(File.join(TEMP_DIR, 'dsl_config'))
 
 RSpec.configure do |config|
   config.order = 'default'

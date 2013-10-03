@@ -104,7 +104,6 @@ EOM
       jarfile_lock_path = File.join("spec", "support", "Jarfile.lock")
       FileUtils.rm(jarfile_lock_path) rescue nil
       lockjar "lock -j #{jarfile_path} -l #{jarfile_lock_path}"
-
       lockjar "install -l #{jarfile_lock_path}"
       expect(@out).to eq("Installing Jars from #{jarfile_lock_path} for [\"default\"]")
       LockJar.load(jarfile_lock_path)

@@ -18,24 +18,24 @@ require 'lock_jar/maven'
 require 'naether/notation'
 
 module LockJar
-  module Domain
+  module Domain::Artifact
     
-    
-    class Artifact
+
+    class Base
       include Comparable
       attr_reader :type
-      
+
       def <=>(another_artifact)
-        if another_artifact.is_a? Artifact
+        if another_artifact.is_a? Base
           to_urn <=> another_artifact.to_urn
         else
           to_urn <=> another_artifact.to_s
         end
       end
-      
+
     end
-    
-    class Jar < Artifact
+
+    class Jar < Base
       attr_reader :notation
       
       def initialize( notation )
@@ -52,7 +52,7 @@ module LockJar
       end
     end
     
-    class Local < Artifact
+    class Local < Base
       attr_reader :path
       def initialize( path )
         @type = 'local'
@@ -68,7 +68,7 @@ module LockJar
       end
     end
     
-    class Pom < Artifact
+    class Pom < Base
       attr_reader :path, :scopes
       
       def initialize( _path, _scopes = ['compile','runtime'] )

@@ -13,26 +13,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-require 'lock_jar/maven'
-require 'lock_jar/domain/dsl'
-require 'lock_jar/domain/dsl_helper'
-
 module LockJar
-  module Domain
-    class JarfileDsl < Dsl
-  
-      attr_accessor :file_path
-      
-      class << self
-        alias :overridden_create :create
-        def create(jarfile)
-          builder = new
-          builder.file_path = jarfile
-          
-          evaluate(builder, jarfile)
-        end
-      end
-  
-    end
+  module Domain::Pom
+
   end
 end
