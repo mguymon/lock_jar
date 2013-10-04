@@ -2,12 +2,24 @@ local_repo '~/.m2/repository'
 repository 'http://mirrors.ibiblio.org/pub/mirrors/maven2'
 
 jar "org.apache.mina:mina-core:2.0.4"
-pom 'spec/pom.xml'
-    
+
 group 'development' do
     jar 'com.typesafe:config:jar:0.5.0'
 end
 
 group 'test' do
     jar 'junit:junit:jar:4.10'
+end
+
+pom 'spec/pom.xml' do
+   uberjar do
+     build_manifest do
+       title 'Inventory Manager'
+       main_class 'main_class'
+       created_by 'created_by'
+       custom 'custom_key', 'custom_val'
+     end
+
+     jar_name 'uberjar.jar'
+   end
 end

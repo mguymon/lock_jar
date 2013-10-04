@@ -172,6 +172,7 @@ module LockJar
   def self.read( lockfile )
     LockJar::Domain::Lockfile.read( lockfile )
   end
- 
+
+
 end
 

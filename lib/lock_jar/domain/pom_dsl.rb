@@ -22,24 +22,23 @@ module LockJar
   module Domain
     class PomDsl
 
-      attr_accessor :pom, :uberjars
+      attr_accessor :pom, :uberjar_dsl
 
       def initialize(parent, *args, &blk)
-        @uberjars = []
         @parent = parent
 
         if args.first.is_a? String
-          self.pom_path(*args)
+          pom_path(*args)
         end
 
         self.instance_eval(&blk) if blk
       end
 
       def uberjar(&blk)
-        uberjar_dsl = Pom::UberjarDsl.new(&blk)
-        @uberjars << uberjar_dsl
+        @uberjar_dsl = Pom::UberjarDsl.new(&blk)
       end
 
+      private
       def pom_path(*args)
 
         @pom = args.shift

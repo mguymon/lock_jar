@@ -112,7 +112,7 @@ module LockJar
       # 
       def pom(path, *args, &blk)
         pom_dsl = PomDsl.new( self, path, *args, &blk)
-        poms << pom_dsl
+        @poms << pom_dsl
       end
   
       def remote_repo( url, opts = {} )

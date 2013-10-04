@@ -14,22 +14,63 @@ module LockJar
                       :default => 'pom.xml',
                       :desc => 'Path to pom.xml'
       end
+
+      def generate_maven_home_option
+        method_option :maven_home,
+                      :aliases => '-m',
+                      :desc => 'Path to installed Maven'
+      end
     end
     extend(ClassMethods)
 
     desc 'goal', 'invoke Maven goals'
     generate_pom_option
-    method_option :pom,
-                  :aliases => '-p',
-                  :default => 'pom.xml',
-                  :desc => 'Path to pom.xml'
-    def goal(goals)
+    generate_maven_home_option
+    def goal(*goals)
+      opts = {}
+      opts[:maven_home] = options[:maven_home] if options[:maven_home]
+
+      Runtime.instance.resolver
+
+      puts "Invoking #{goals.join(' ')} on #{options[:pom]}"
+      LockJar::Maven.invoke(options[:pom], goals, opts)
     end
 
     desc 'uberjar', 'Create uberjar from Maven POM'
-    generate_pom_option
+    method_option :jarfile,
+                  :aliases => '-j',
+                  :default => 'Jarfile',
+                  :desc => 'Path to Jarfile'
+    generate_maven_home_option
+    method_option :force,
+                  :aliases => '-f',
+                  :type => :boolean,
+                  :desc => 'Force the building of the Uberjar, even if nothing changed'
+    method_option :package,
+                  :aliases => '-k',
+                  :type => :boolean,
+                  :desc => 'Eexecute the Maven package goal before building'
+    method_option :assembly_dir,
+                  :aliases => '-a',
+                  :desc => 'Directory where the uberjar is assembled'
+    method_option :destination_dir,
+                  :aliases => '-d',
+                  :desc => 'Directory where the uberjar jar is created'
     def uberjar
+      opts = {}
+      opts[:maven_home] = options[:maven_home] if options[:maven_home]
+      opts[:force] = options[:force] if options[:force]
+      opts[:package] = options[:package] if options[:package]
+      opts[:assembly_dir] = options[:assembly_dir] if options[:assembly_dir]
+      opts[:destination_dir] = options[:destination_dir] if options[:destination_dir]
 
+      jarfile = options[:jarfile]
+      dsl = LockJar::Domain::Dsl.create(jarfile)
+      begin
+        LockJar::Maven.uberjar(dsl.pom, opts)
+      rescue => exception
+        puts exception.backtrace
+      end
     end
 
   end

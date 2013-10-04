@@ -23,5 +23,19 @@ describe LockJar::Maven do
     it "should invoke the compile goal for the maven project" do
       expect( LockJar::Maven.invoke( 'spec/pom.xml', 'compile', :local_repo => TEST_REPO).exitCode ).to eql 0
     end
+
+    it "should make uberjar" do
+      LockJar::Maven.uberjar 'spec/Jarfile', :destination_dir => "#{TEMP_DIR}", :assembly_dir => "#{TEMP_DIR}/assembly", :local_repo => TEST_REPO
+      expect(File.exists?("#{TEMP_DIR}/assembly/META-INF/MANIFEST.MF")).to be_true
+      expect(File.exists?("#{TEMP_DIR}/assembly/dependencies.yml")).to be_true
+      expect(File.exists?("#{TEMP_DIR}/assembly/dependencies.md5")).to be_true
+      expect(File.exists?("#{TEMP_DIR}/assembly/ch")).to be_true
+      expect(File.exists?("#{TEMP_DIR}/assembly/com")).to be_true
+      expect(File.exists?("#{TEMP_DIR}/assembly/junit")).to be_true
+      expect(File.exists?("#{TEMP_DIR}/assembly/org")).to be_true
+
+      expect(File.exists?("#{TEMP_DIR}/uberjar.jar")).to be_true
+      File.size("#{TEMP_DIR}/uberjar.jar").should > 0
+    end
   end
 end

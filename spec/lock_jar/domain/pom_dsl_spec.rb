@@ -6,23 +6,6 @@ describe LockJar::Domain::PomDsl do
 
   let(:parent) { LockJar::Domain::Dsl.create { } }
 
-  context "set pom path" do
-
-    it "should  by a block" do
-      dsl = LockJar::Domain::PomDsl.new(parent) do
-        pom_path 'test.xml'
-      end
-
-      dsl.pom.should eql 'test.xml'
-    end
-
-    it "should by param" do
-      dsl = LockJar::Domain::PomDsl.new(parent, 'test.xml')
-
-      dsl.pom.should eql 'test.xml'
-    end
-  end
-
   describe "uberjar" do
 
     let(:dsl) do
@@ -46,7 +29,7 @@ describe LockJar::Domain::PomDsl do
         end
       end
 
-      dsl.uberjars.first
+      dsl.uberjar_dsl
     end
 
     it "should set appenders" do
