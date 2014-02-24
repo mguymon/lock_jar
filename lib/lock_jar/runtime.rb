@@ -58,7 +58,7 @@ module LockJar
     end
     
     def install( jarfile_lock, groups = ['default'], opts = {}, &blk )
-      deps = list( jarfile_lock, groups, opts, &blk )
+      deps = list( jarfile_lock, groups, {:with_locals => false}.merge( opts ), &blk )
       
       lockfile = LockJar::Domain::Lockfile.read( jarfile_lock )
       lockfile.remote_repositories.each do |repo|
@@ -129,12 +129,12 @@ module LockJar
       end
       
       if !artifacts.empty?   
-        resolved_notations = resolver(opts).resolve( artifacts.map(&:to_dep), opts[:download] == true )
+        resolved_notations = resolver(opts).resolve( artifacts.select{ |artifact| artifact.resolvable? }.map(&:to_dep), opts[:download] == true )
         
         lockfile.remote_repositories = resolver(opts).remote_repositories - ['http://repo1.maven.org/maven2/']
         
         jarfile.artifacts.each do |group_name, group_artifacts|
-          group = {'dependencies' => [], 'artifacts' => []}
+          group = {'locals' => [], 'dependencies' => [], 'artifacts' => []}
           
           group_artifacts.each do |artifact|
           
@@ -155,7 +155,7 @@ module LockJar
               artifact_data["transitive"] = transitive
               
             elsif artifact.is_a? LockJar::Domain::Local
-              # xXX: support local artifacts
+              group['locals'] << artifact.path
             else
               # XXX: handle unsupported artifact
               
@@ -170,11 +170,13 @@ module LockJar
               deps
             end
             
-            group['dependencies'] += dep_merge.call( artifact_data["transitive"] )
-            
-            # xxX: set required_by ?
-            
-            group['artifacts'] << { artifact.to_urn => artifact_data }
+            if artifact_data["transitive"]
+              group['dependencies'] += dep_merge.call( artifact_data["transitive"] )
+              
+              # xxX: set required_by ?
+              
+              group['artifacts'] << { artifact.to_urn => artifact_data }
+            end
           end
   
           if lockfile.excludes
@@ -184,11 +186,13 @@ module LockJar
           end
           
           group['dependencies'].sort!
+          if group['locals'].empty?
+            group.delete 'locals'
+          end
           
           lockfile.groups[group_name] = group         
         end                        
       end
-      
       
       lockfile.write( opts[:lockfile] || "Jarfile.lock" )
       
@@ -200,6 +204,7 @@ module LockJar
       lockfile = nil
       dependencies = []
       maps = []
+      with_locals = {:with_locals => true }.merge(opts).delete :with_locals
       
       if lockfile_or_path
         if lockfile_or_path.is_a? LockJar::Domain::Lockfile
@@ -208,14 +213,14 @@ module LockJar
           lockfile = LockJar::Domain::Lockfile.read( lockfile_or_path )
         end
         
-        dependencies = lockfile_dependencies( lockfile, groups )
+        dependencies = lockfile_dependencies( lockfile, groups, with_locals )
         maps = lockfile.maps
       end
       
       # Support limited DSL from block
       unless blk.nil?
         dsl = LockJar::Domain::Dsl.create(&blk)
-        dependencies += dsl_dependencies( dsl, groups ).map(&:to_dep)
+        dependencies += dsl_dependencies( dsl, groups, with_locals ).map(&:to_dep)
         maps = dsl.maps
       end
       
@@ -305,19 +310,24 @@ module LockJar
     
     private
     
-    def lockfile_dependencies( lockfile, groups)
+    def lockfile_dependencies( lockfile, groups, with_locals = true)
       dependencies = []
        
       groups.each do |group|
         if lockfile.groups[group.to_s]
-          dependencies += lockfile.groups[group.to_s]['dependencies']
+          dependencies += lockfile.groups[group.to_s]['dependencies'] 
+
+          if with_locals
+            locals = lockfile.groups[group.to_s]['locals']
+            dependencies += locals if locals
+          end
         end
       end
       
       dependencies
     end
     
-    def dsl_dependencies( dsl, groups )
+    def dsl_dependencies( dsl, groups, with_locals = true)
       
       dependencies = []
        
@@ -325,6 +335,10 @@ module LockJar
         if dsl.artifacts[group.to_s]
           dependencies += dsl.artifacts[group.to_s]
         end
+      end
+
+      unless with_locals
+        dependencies.select! { |dep| !dep.is_a? LockJar::Domain::Local }
       end
       
       dependencies

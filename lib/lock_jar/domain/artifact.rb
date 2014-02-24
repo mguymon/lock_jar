@@ -33,6 +33,9 @@ module LockJar
         end
       end
       
+      def resolvable?
+        true
+      end
     end
     
     class Jar < Artifact
@@ -65,6 +68,10 @@ module LockJar
       
       def to_dep
         path
+      end
+
+      def resolvable?
+        false
       end
     end
     

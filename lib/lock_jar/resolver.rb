@@ -74,24 +74,22 @@ module LockJar
       paths
     end
     
-    def load_to_classpath( notations )
-      dirs = []
-      jars = [] 
-        
-      notations.each do |notation|
-        if File.directory?(notation)
-          dirs << notation
+    def load_to_classpath( artifacts )
+      paths = [] 
+      notations = []
+
+      artifacts.each do |art|
+        if File.exists?(art)
+          paths << art
         else
-          jars << notation
+          notations << art
         end
       end
       
-      Naether::Java.load_paths( dirs )
+      paths += @naether.to_local_paths( notations )
+      Naether::Java.load_paths( paths )
       
-      jars = @naether.to_local_paths( jars )
-      Naether::Java.load_paths( jars )
-      
-      dirs + jars
+      paths
     end
   end
 end

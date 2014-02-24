@@ -4,12 +4,13 @@ require 'lock_jar/domain/artifact'
 describe LockJar::Domain::Dsl do
   context "Instance" do
     it "should load a Jarfile" do
-      jarfile = LockJar::Domain::Dsl.create( "spec/Jarfile" )
+      jarfile = LockJar::Domain::Dsl.create( "spec/fixtures/Jarfile" )
       
       jarfile.local_repository.should eql '~/.m2/repository'
       jarfile.artifacts["default"][0].should == LockJar::Domain::Jar.new("org.apache.mina:mina-core:2.0.4")
-      jarfile.artifacts["default"][1].path.should eql "spec/pom.xml"
-      jarfile.artifacts["default"][2].should be_nil
+      jarfile.artifacts["default"][1].should == LockJar::Domain::Local.new("spec/fixtures/naether-0.13.0.jar")
+      jarfile.artifacts["default"][2].path.should eql "spec/pom.xml"
+      jarfile.artifacts["default"][3].should be_nil
       
       jarfile.artifacts["development"][0].should == LockJar::Domain::Jar.new("com.typesafe:config:jar:0.5.0") 
       jarfile.artifacts["development"][1].should be_nil
@@ -26,6 +27,7 @@ describe LockJar::Domain::Dsl do
         repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
         
         jar "org.apache.mina:mina-core:2.0.4"
+        local "spec/fixtures/naether-0.13.0.jar"
         pom 'spec/pom.xml'
             
         group 'pirate' do
@@ -39,7 +41,7 @@ describe LockJar::Domain::Dsl do
       
       block.local_repository.should eql '~/.m2'
       block.artifacts.should == {
-        "default" => [LockJar::Domain::Jar.new("org.apache.mina:mina-core:2.0.4"), LockJar::Domain::Pom.new("spec/pom.xml")], 
+        "default" => [LockJar::Domain::Jar.new("org.apache.mina:mina-core:2.0.4"), LockJar::Domain::Local.new("spec/fixtures/naether-0.13.0.jar"), LockJar::Domain::Pom.new("spec/pom.xml")], 
         "pirate" => [LockJar::Domain::Jar.new("org.apache.tomcat:servlet-api:jar:6.0.35")], 
         "test" => [LockJar::Domain::Jar.new("junit:junit:jar:4.10")]
       }
