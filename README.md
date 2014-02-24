@@ -22,7 +22,7 @@ https://github.com/mguymon/lock_jar
 
 ## Ruby Usage
 
-JRuby is natively supported. Ruby 1.8.7 and 1.9.3 uses [Rjb](http://rjb.rubyforge.org/) to proxy over JNI.
+JRuby is natively supported. Ruby 1.9.3 and 2.1 uses [Rjb](http://rjb.rubyforge.org/) to proxy over JNI.
 
 ### Jarfile
 
