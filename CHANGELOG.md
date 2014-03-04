@@ -2,7 +2,7 @@
 
 ### 0.8.0 (March 4, 2014)
 
-* Added `local` to DSL for adding local jars (<a href="https://github.com/mguymon/lock_jar/issues/6>Issue #6</a>)
+* Added `local` to DSL for adding local jars (<a href="https://github.com/mguymon/lock_jar/issues/6">Issue #6</a>)
 
 ### 0.7.5 (August 23, 2013)
 
