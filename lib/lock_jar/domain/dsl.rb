@@ -86,11 +86,22 @@ module LockJar
       end
       
       def local( *args )
-        if !args.empty? && File.directory?( File.expand_path( args.first ) )
-          warn "[DEPRECATION] `local` to set local_repository is deprecated.  Please use `local_repo` instead."
-          local_repo(args.first)
-        else
-          # XXX: support local artifacts
+        unless args.empty?
+          if File.directory?( File.expand_path( args.first ) )
+            warn "[DEPRECATION] `local` to set local_repository is deprecated.  Please use `local_repo` instead."
+            local_repo(args.first)
+          else
+            path = args.shift
+
+            opts = {}
+            if args.last.is_a? Hash
+              opts.merge!( args.last )
+            end
+            
+            artifact = Local.new( path )
+            
+            assign_groups( artifact, opts[:group] )
+          end
         end
       end
   

@@ -22,7 +22,7 @@ https://github.com/mguymon/lock_jar
 
 ## Ruby Usage
 
-JRuby is natively supported. Ruby 1.8.7 and 1.9.3 uses [Rjb](http://rjb.rubyforge.org/) to proxy over JNI.
+JRuby is natively supported. Ruby 1.9.3 and 2.1 uses [Rjb](http://rjb.rubyforge.org/) to proxy over JNI.
 
 ### Jarfile
 
@@ -33,6 +33,7 @@ methods:
 * **remote_repo( url )**: Add additional url of remote Maven repository.
 * **group( groups )**: Set the group for nested jar or pom. A single or Array of groups can be set.
 * **jar( notations, opts = {} )**: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default group is _default_, can be specified by setting _opts = { :group => ['group_name'] }_
+* **local( path )**: Add a local path to a Jar
 * **pom( pom_path, opts = {} )**: Add a local Maven pom, default is to load dependencies for `runtime` and `compile` scopes. To select the scopes to be loaded from the pom, set the _opts = { :scopes => ['test'] }_
 
 #### Example Jarfile
@@ -41,7 +42,8 @@ methods:
   	
     // Default group is default
     jar "org.apache.mina:mina-core:2.0.4"
-  
+    local 'spec/fixtures/naether-0.13.0.jar'
+
     group 'runtime' do
       jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
     end

@@ -12,7 +12,7 @@ describe LockJar, "#lock" do
       Dir.mkdir( TEMP_DIR )
     end
     
-    LockJar.lock( "spec/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
+    LockJar.lock( "spec/fixtures/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
     File.exists?( "#{TEMP_DIR}/Jarfile.lock" ).should be_true
     
     lockfile = LockJar.read("#{TEMP_DIR}/Jarfile.lock")
@@ -21,6 +21,7 @@ describe LockJar, "#lock" do
       "local_repository"=>"~/.m2/repository", 
       "groups"=>{
         "default"=>{
+          "locals"=>["spec/fixtures/naether-0.13.0.jar"],
           "dependencies"=>["ch.qos.logback:logback-classic:jar:0.9.24", 
             "ch.qos.logback:logback-core:jar:0.9.24", "com.metapossum:metapossum-scanner:jar:1.0",
             "com.slackworks:modelcitizen:jar:0.2.2", 
@@ -179,7 +180,7 @@ end
 describe LockJar, "#install" do     
   it "should install jars" do
     
-    LockJar.lock( "spec/Jarfile", :download_artifacts => false, :local_repo => "#{TEMP_DIR}/test-repo-install", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
+    LockJar.lock( "spec/fixtures/Jarfile", :download_artifacts => false, :local_repo => "#{TEMP_DIR}/test-repo-install", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
           
     jars = LockJar.install( "#{TEMP_DIR}/Jarfile.lock", ['default'], :local_repo => "#{TEMP_DIR}/test-repo-install" )
     jars.should eql([
@@ -201,7 +202,7 @@ end
 describe LockJar, "#list" do     
   it "should list jars" do
     
-    LockJar.lock( "spec/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
+    LockJar.lock( "spec/fixtures/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
           
     jars = LockJar.list( "#{TEMP_DIR}/Jarfile.lock", ['default', 'development', 'bad scope'], :local_repo => "#{TEMP_DIR}/test-repo" )
     jars.should eql([
@@ -210,7 +211,7 @@ describe LockJar, "#list" do
        "commons-beanutils:commons-beanutils:jar:1.8.3", "commons-io:commons-io:jar:1.4", 
        "commons-lang:commons-lang:jar:2.6", "commons-logging:commons-logging:jar:1.1.1", 
        "org.apache.mina:mina-core:jar:2.0.4", 
-       "org.slf4j:slf4j-api:jar:1.6.1", "com.typesafe:config:jar:0.5.0" ])
+       "org.slf4j:slf4j-api:jar:1.6.1", "spec/fixtures/naether-0.13.0.jar", "com.typesafe:config:jar:0.5.0" ])
   end
   
   it "should replace dependencies with maps" do
@@ -245,12 +246,13 @@ describe LockJar, "#load" do
     end
     
 
-    LockJar.lock( "spec/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
+    LockJar.lock( "spec/fixtures/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
     
     jars = LockJar.load( "#{TEMP_DIR}/Jarfile.lock", ['default'], :local_repo => "#{TEMP_DIR}/test-repo" )
     LockJar::Registry.instance.lockfile_registered?( "#{TEMP_DIR}/Jarfile.lock" ).should be_false
     
     jars.should eql([
+      "spec/fixtures/naether-0.13.0.jar",
       File.expand_path("#{TEMP_DIR}/test-repo/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar"),
       File.expand_path("#{TEMP_DIR}/test-repo/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar"),
       File.expand_path("#{TEMP_DIR}/test-repo/com/metapossum/metapossum-scanner/1.0/metapossum-scanner-1.0.jar"),
