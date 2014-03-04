@@ -1,45 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Lock jar by mguymon</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Lock jar : LockJar manages Java Jars for Ruby" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Lock jar</title>
   </head>
+
   <body>
 
-      <header>
-        <h1>Lock jar</h1>
-        <p>LockJar manages Java Jars for Ruby</p>
-      </header>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/mguymon/lock_jar">View on GitHub</a>
 
-      <div id="banner">
-        <span id="logo"></span>
+          <h1 id="project_title">Lock jar</h1>
+          <h2 id="project_tagline">LockJar manages Java Jars for Ruby</h2>
 
-        <a href="https://github.com/mguymon/lock_jar" class="button fork"><strong>View On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/mguymon/lock_jar/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/mguymon/lock_jar/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
-      </div><!-- end banner -->
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/mguymon/lock_jar/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/mguymon/lock_jar/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
 
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
-      <section>
-        <h1>LockJar</h1>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="lockjar" class="anchor" href="#lockjar"><span class="octicon octicon-link"></span></a>LockJar</h1>
+
+<p><a href="http://travis-ci.org/mguymon/lock_jar"><img src="https://secure.travis-ci.org/mguymon/lock_jar.png?branch=master" alt="Build Status"></a></p>
 
 <p>LockJar manages Java Jars for Ruby. Powered by <a href="https://github.com/mguymon/naether">Naether</a> to
  create a frankenstein of Bundler and Maven. A Jarfile (<a href="https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile">example</a>) is used to generate a Jarfile.lock that contains all the resolved jar dependencies. The Jarfile.lock can be used to populate the classpath.</p>
@@ -47,27 +42,30 @@
 <p>LockJar can:</p>
 
 <ul>
-<li>Be Use directly in MRI 1.8.7, 1.9.3, and JRuby 1.6.7, 1.6.8</li>
+<li>Be used directly in MRI 1.9.3, 2.0, 2.1 and JRuby 1.6.x, 1.7.x</li>
 <li>From the <a href="https://github.com/mguymon/lock_jar/blob/master/README.md#command-line">command line</a>
 </li>
 <li><a href="https://github.com/mguymon/lock_jar/blob/master/README.md#gem-integration">Triggered from a Gem install</a></li>
 <li><a href="https://github.com/mguymon/lock_jar/blob/master/README.md#buildr-integration">Integrated into Buildr</a></li>
-<li>Experimental <a href="https://github.com/mguymon/lock_jar/blob/master/README.md#bundler-integration">tntegration with Bundler</a>
+<li>Experimental <a href="https://github.com/mguymon/lock_jar/blob/master/README.md#bundler-integration">integration with Bundler</a>
 </li>
 </ul><p><a href="https://github.com/mguymon/lock_jar">https://github.com/mguymon/lock_jar</a></p>
 
 <p><a href="http://rubydoc.info/gems/lock_jar/frames">RDoc</a></p>
 
-<h2>Install</h2>
+<h2>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h2>
 
 <pre><code>gem install lock_jar
 </code></pre>
 
-<h2>Ruby Usage</h2>
+<h2>
+<a name="ruby-usage" class="anchor" href="#ruby-usage"><span class="octicon octicon-link"></span></a>Ruby Usage</h2>
 
-<p>JRuby is natively supported. Ruby 1.8.7 and 1.9.3 uses <a href="http://rjb.rubyforge.org/">Rjb</a> to proxy over JNI.</p>
+<p>JRuby is natively supported. Ruby 1.9.3 and 2.1 uses <a href="http://rjb.rubyforge.org/">Rjb</a> to proxy over JNI.</p>
 
-<h3>Jarfile</h3>
+<h3>
+<a name="jarfile" class="anchor" href="#jarfile"><span class="octicon octicon-link"></span></a>Jarfile</h3>
 
 <p>A Jarfile is a simple file using a Ruby DSL for defining a project's dependencies using the following 
 methods:</p>
@@ -80,17 +78,20 @@ methods:</p>
 <li>
 <strong>group( groups )</strong>: Set the group for nested jar or pom. A single or Array of groups can be set.</li>
 <li>
-<strong>jar( notations, opts = {} )</strong>: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default group is <em>default</em>, can be specified by setting <em>opts = { :group =&gt; ['group_name'] }</em>
-</li>
+<strong>jar( notations, opts = {} )</strong>: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default group is <em>default</em>, can be specified by setting <em>opts = { :group =&gt; ['group</em>name'] }_</li>
+<li>
+<strong>local( path )</strong>: Add a local path to a Jar</li>
 <li>
 <strong>pom( pom_path, opts = {} )</strong>: Add a local Maven pom, default is to load dependencies for <code>runtime</code> and <code>compile</code> scopes. To select the scopes to be loaded from the pom, set the <em>opts = { :scopes =&gt; ['test'] }</em>
 </li>
-</ul><h4>Example Jarfile</h4>
+</ul><h4>
+<a name="example-jarfile" class="anchor" href="#example-jarfile"><span class="octicon octicon-link"></span></a>Example Jarfile</h4>
 
 <pre><code>repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
 
 // Default group is default
 jar "org.apache.mina:mina-core:2.0.4"
+local 'spec/fixtures/naether-0.13.0.jar'
 
 group 'runtime' do
   jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
@@ -101,7 +102,8 @@ group 'test' do
 end
 </code></pre>
 
-<h3>Resolving dependencies</h3>
+<h3>
+<a name="resolving-dependencies" class="anchor" href="#resolving-dependencies"><span class="octicon octicon-link"></span></a>Resolving dependencies</h3>
 
 <p><strong>LockJar.lock( *args )</strong>: Using a Jarfile, creates a lock file. Depending on the type of arg, a different configuration is set.</p>
 
@@ -129,11 +131,13 @@ end
 <pre><code>LockJar.lock
 </code></pre>
 
-<h3>Jarfile.lock</h3>
+<h3>
+<a name="jarfilelock" class="anchor" href="#jarfilelock"><span class="octicon octicon-link"></span></a>Jarfile.lock</h3>
 
 <p>The <em>Jarfile.lock</em> generated is a YAML file containing information on how to handle the classpath for grouped dependencies and their nested transitive dependencies.</p>
 
-<h4>The Jarfile.lock</h4>
+<h4>
+<a name="the-jarfilelock" class="anchor" href="#the-jarfilelock"><span class="octicon octicon-link"></span></a>The Jarfile.lock</h4>
 
 <pre><code>---
 version: 0.7.0
@@ -185,7 +189,8 @@ groups:
 ...
 </code></pre>
 
-<h3>Accessing Jars</h3>
+<h3>
+<a name="accessing-jars" class="anchor" href="#accessing-jars"><span class="octicon octicon-link"></span></a>Accessing Jars</h3>
 
 <p><strong>LockJar.install(*args)</strong>: Download Jars in the Jarfile.lock</p>
 
@@ -256,27 +261,32 @@ groups:
 
 <p>See also <a href="https://github.com/mguymon/lock_jar/wiki/ClassLoader">loading Jars into a custom ClassLoader</a>.</p>
 
-<h3>Shortcuts</h3>
+<h3>
+<a name="shortcuts" class="anchor" href="#shortcuts"><span class="octicon octicon-link"></span></a>Shortcuts</h3>
 
-<h4>Skipping the Jarfile</h4>
+<h4>
+<a name="skipping-the-jarfile" class="anchor" href="#skipping-the-jarfile"><span class="octicon octicon-link"></span></a>Skipping the Jarfile</h4>
 
 <p>You can skip the <em>Jarfile</em> and <em>Jarfile.lock</em> to directly play with dependencies by passing a block to <em>LockJar.lock</em>, <em>LockJar.list</em>, and <em>LockJar.load</em></p>
 
-<h4>Lock without a Jarfile</h4>
+<h4>
+<a name="lock-without-a-jarfile" class="anchor" href="#lock-without-a-jarfile"><span class="octicon octicon-link"></span></a>Lock without a Jarfile</h4>
 
 <pre><code>LockJar.lock do
   jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
 end
 </code></pre>
 
-<h4>List without a Jarfile.lock</h4>
+<h4>
+<a name="list-without-a-jarfilelock" class="anchor" href="#list-without-a-jarfilelock"><span class="octicon octicon-link"></span></a>List without a Jarfile.lock</h4>
 
 <pre><code>LockJar.list do
   jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
 end
 </code></pre>
 
-<h4>Load without a Jarfile.lock</h4>
+<h4>
+<a name="load-without-a-jarfilelock" class="anchor" href="#load-without-a-jarfilelock"><span class="octicon octicon-link"></span></a>Load without a Jarfile.lock</h4>
 
 <pre><code>LockJar.load do
   jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
@@ -290,7 +300,8 @@ end
 end
 </code></pre>
 
-<h2>Command line</h2>
+<h2>
+<a name="command-line" class="anchor" href="#command-line"><span class="octicon octicon-link"></span></a>Command line</h2>
 
 <p>There is a simple command line helper. You can lock a <em>Jarfile</em> with the following command</p>
 
@@ -309,9 +320,11 @@ end
 
 <p><em>lockjar</em> <em>--help</em> will give you list of all commands and their options.</p>
 
-<h2>Gem Integration</h2>
+<h2>
+<a name="gem-integration" class="anchor" href="#gem-integration"><span class="octicon octicon-link"></span></a>Gem Integration</h2>
 
-<h3>Installing Jars with a Gem</h3>
+<h3>
+<a name="installing-jars-with-a-gem" class="anchor" href="#installing-jars-with-a-gem"><span class="octicon octicon-link"></span></a>Installing Jars with a Gem</h3>
 
 <p>LockJar can be triggered when a Gem is installed by using a <a href="http://docs.rubygems.org/read/chapter/20#extensions">Gem extension</a>
 of type <em>Rakefile</em>. The cavaet is the task to install the jars must be the default for the Rakefile.</p>
@@ -337,7 +350,8 @@ task :prepare do
 end
 </code></pre>
 
-<h4>Work around for Rakefile default</h4>
+<h4>
+<a name="work-around-for-rakefile-default" class="anchor" href="#work-around-for-rakefile-default"><span class="octicon octicon-link"></span></a>Work around for Rakefile default</h4>
 
 <p>The downside of using the Gem extension Rakefile is it requires the default to 
 point at the task to download the jars (from the example Rakefile, 
@@ -345,7 +359,8 @@ point at the task to download the jars (from the example Rakefile,
 <em>PostInstallRakefile</em> to handle the <code>task :prepare</code>. When packaging the gem, <em>PostInstallRakefile</em> is
 renamed to <code>Rakefile</code>.</p>
 
-<h3>Manually installing Jars</h3>
+<h3>
+<a name="manually-installing-jars" class="anchor" href="#manually-installing-jars"><span class="octicon octicon-link"></span></a>Manually installing Jars</h3>
 
 <p>Instead of rely in a Rakefile to install Jars when the Gem is installed, Jars can be manually installed. The following
 Ruby needs to be called before calling <code>LockJar.load</code>. Only Jars that are missing are downloaded.</p>
@@ -357,7 +372,8 @@ Ruby needs to be called before calling <code>LockJar.load</code>. Only Jars that
   LockJar.install( lockfile )
 </code></pre>
 
-<h3>Loading</h3>
+<h3>
+<a name="loading" class="anchor" href="#loading"><span class="octicon octicon-link"></span></a>Loading</h3>
 
 <p>With the Jars installed, loading the classpath for the Gem is simple. 
 As part of the load process for the Gem (an entry file that is required, etc) use the following:</p>
@@ -371,7 +387,8 @@ As part of the load process for the Gem (an entry file that is required, etc) us
 
 <p>See also <a href="https://github.com/mguymon/lock_jar/wiki/ClassLoader">loading Jars into a custom ClassLoader</a>.</p>
 
-<h2>Buildr Integration</h2>
+<h2>
+<a name="buildr-integration" class="anchor" href="#buildr-integration"><span class="octicon octicon-link"></span></a>Buildr Integration</h2>
 
 <p>LockJar integrates with <a href="http://buildr.apache.org/">Buildr</a> using an <a href="https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/buildr.rb">Addon</a>. This allows the Jarfile to be defined directly into a <em>buildfile</em>. A global LockJar definition can be set and is inherited to all projects. Each project may have its own LockJar definition. A lock file is generated per project based on the project name.</p>
 
@@ -392,7 +409,8 @@ As part of the load process for the Gem (an entry file that is required, etc) us
 
 <p>The <em>default</em> group dependencies are automatically added to the classpath for compiling. The <em>test</em> group dependencies are automatically added to the classpath for tests. Do not forget, if you change the LockJar definitions, you have to rerun the <strong>lock_jar:lock</strong> task.</p>
 
-<h3>Example</h3>
+<h3>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h3>
 
 <p>Sample buildfile with LockJar</p>
 
@@ -430,7 +448,8 @@ end
 <em>project1.lock</em> - contains <em>junit</em> and <em>mina</em> jars.</li>
 <li>
 <em>project2.lock</em> - contains <em>junit</em> and <em>pom.xml</em> jars.</li>
-</ul><h2>Bundler Integration</h2>
+</ul><h2>
+<a name="bundler-integration" class="anchor" href="#bundler-integration"><span class="octicon octicon-link"></span></a>Bundler Integration</h2>
 
 <p>Bundler integration is <strong>experimental</strong> right now. <a href="https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/bundler.rb">LockJar patches Bundler</a> 
 to allow creation of a <em>Jarfile.lock</em> when Bundler calls <code>install</code> and <code>update</code>. The dependencies from the <em>Jarfile.lock</em> are automatically loaded when
@@ -442,7 +461,8 @@ Bundler  calls <code>setup</code> and <code>require</code>. To enable this suppo
 <p>You can optionally create a <em>Jarfile</em> that will automatically be included when you <code>bundle install</code> or <code>bundle update</code>. Otherwise
 Gems with a Jarfile will be merge to generate a <em>Jarfile.lock</em>. The Jarfile.lock will be loaded when Bundler calls <code>setup</code> or <code>require</code>.</p>
 
-<h3>Bundler to LockJar groups</h3>
+<h3>
+<a name="bundler-to-lockjar-groups" class="anchor" href="#bundler-to-lockjar-groups"><span class="octicon octicon-link"></span></a>Bundler to LockJar groups</h3>
 
 <p>LockJar will merge the dependencies from the <code>default</code> and <code>runtime</code> group of a Gem's <em>Jarfile</em>. These will be placed in the 
 lockfile under Gem's corresponding Bundler group. For example, the following Gemfile:</p>
@@ -471,7 +491,8 @@ groups:
 
 <p>Since <code>solr_sail</code> is defined in the <em>Gemfile's</em> <code>development</code> group, the corresponding <em>Jarfile.lock</em> dependencies are also under the <code>development</code> group.</p>
 
-<h2>License</h2>
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with this
@@ -488,12 +509,16 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
 License for the specific language governing permissions and limitations under
 the License.</p>
       </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/mguymon">mguymon</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Lock jar maintained by <a href="https://github.com/mguymon">mguymon</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -504,6 +529,7 @@ the License.</p>
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
