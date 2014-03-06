@@ -2,8 +2,8 @@
 
 source "http://rubygems.org"
 
-gem "naether", "~> 0.10.1"
-gem "thor",     "~> 0.18.1"
+gem "naether", "~> 0.13.1"
+gem "thor",    ">= 0.18.1"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
