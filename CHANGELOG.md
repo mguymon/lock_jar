@@ -1,5 +1,9 @@
 ## LockJar Changelog
 
+### 0.9.0 (March 6, 2014)
+
+* Update to Naether 0.13.1 to fight the chatty log (<a href="https://github.com/mguymon/lock_jar/issues/14">Issue #14</a>)
+
 ### 0.8.0 (March 4, 2014)
 
 * Added `local` to DSL for adding local jars (<a href="https://github.com/mguymon/lock_jar/issues/6">Issue #6</a>)
