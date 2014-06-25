@@ -16,13 +16,10 @@ J
   end
 
   context "version" do
-    before do
-      @version = File.read(File.join(File.dirname(__FILE__), "..", "..", "VERSION"))
-    end
 
     it "should return correct version" do
       lockjar "version"
-      expect(@out).to eq(@version)
+      expect(@out).to eq(LockJar::VERSION)
     end
   end
 

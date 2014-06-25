@@ -20,7 +20,7 @@ module LockJar
   module Domain
     class JarfileDsl < Dsl
   
-      attr_accessor :file_path
+      attr_accessor :file_path, :bundler_enabled
       
       class << self
         alias :overriden_create :create
@@ -30,6 +30,10 @@ module LockJar
           
           evaluate(builder, jarfile)
         end
+      end
+
+      def bundler
+        @bundler_enabled = true
       end
   
     end
