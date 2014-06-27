@@ -14,12 +14,12 @@
 # the License.
 
 require 'rubygems'
-require "yaml"
+require 'yaml'
 require 'singleton'
 require 'lock_jar/resolver'
-require 'lock_jar/runtime'
 require 'lock_jar/registry'
 require 'lock_jar/domain/dsl'
+require 'lock_jar/domain/jarfile_dsl'
 require 'lock_jar/domain/lockfile'
 
 module LockJar
@@ -75,12 +75,12 @@ module LockJar
       opts = {:download => true }.merge( opts )
     
       jarfile = nil
-      
+
       if jarfile_or_dsl
         if jarfile_or_dsl.is_a? LockJar::Domain::Dsl
           jarfile = jarfile_or_dsl
         else
-          jarfile = LockJar::Domain::Dsl.create( jarfile_or_dsl )
+          jarfile = LockJar::Domain::JarfileDsl.create( jarfile_or_dsl )
         end
       end
       
@@ -89,7 +89,15 @@ module LockJar
         if jarfile.nil?
           jarfile = dsl
         else
-          jarfile.merge( dsl )
+          jarfile = LockJar::Domain::DslHelper.merge( jarfile, dsl )
+        end
+      end
+
+      if jarfile.respond_to?(:bundler_enabled ) && jarfile.bundler_enabled
+        require 'lock_jar_bundler/bundler'
+
+        LockJar::Bundler.bundled_jarfiles(jarfile.bundler_enabled).each do |bundled_jarfile|
+          jarfile = LockJar::Domain::DslHelper.merge( jarfile, LockJar::Domain::JarfileDsl.create(bundled_jarfile) )
         end
       end
 

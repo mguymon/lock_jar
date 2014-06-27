@@ -13,7 +13,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-require 'lock_jar/runtime'
 require 'naether/maven'
 
 module LockJar

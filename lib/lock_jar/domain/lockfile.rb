@@ -31,7 +31,7 @@ module LockJar
         lock_data = YAML.load_file( path )
         
         lockfile.version = lock_data['version'] || LockJar::VERSION
-        
+        lockfile.merged = lock_data['merged']
         lockfile.local_repository = lock_data['local_repository']
         lockfile.merged = lock_data['merged'] || []
         lockfile.maps = lock_data['maps'] || []

@@ -1,7 +1,7 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'lock_jar/bundler/version'
+require 'lock_jar_bundler/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'lock_jar_bundler'
@@ -19,6 +19,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'lock_jar', '>= 0.8.0'
-  spec.add_development 'bundler', '~> 1.6'
+  spec.add_dependency 'bundler', '~> 1.6'
   spec.add_development_dependency 'rake'
 end

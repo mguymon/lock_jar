@@ -1,0 +1,3 @@
+bundler :default, :test
+
+jar "com.tobedevoured.command:core:0.3.2"

@@ -32,8 +32,14 @@ module LockJar
         end
       end
 
-      def bundler
-        @bundler_enabled = true
+      def bundler(*groups)
+        if groups.nil?
+          groups = [:default]
+        else
+          groups = groups.map(&:to_sym)
+        end
+
+        @bundler_enabled = groups
       end
   
     end
