@@ -100,7 +100,10 @@ module LockJar
     LockJar::Domain::Lockfile.read( lockfile )
   end
 
-  # Add a Jarfile to be eventually loaded together with other
+  # Add a Jarfile to be included when LockJar.lock_registered_jarfiles is called.
+  #
+  # @param [String] jarfile path to register
+  # @return [Array] All registered jarfiles
   def self.register_jarfile( jarfile )
     fail "Jarfile not found: #{ jarfile }" unless File.exists? jarfile
     @@registered_jarfiles ||= []
@@ -110,7 +113,7 @@ module LockJar
   # Lock the registered Jarfiles and generate a Jarfile.lock.
   #
   # Options and groups are passed through to the LockJar.lock method, but
-  # if a jarfile is specified, it will be ignored. Use LockJar.register_jarfile
+  # if a Jarfile is specified, it will be ignored. Use LockJar.register_jarfile
   # to add dependencies.
   #
   # A block can be passed in, overriding values from the Jarfiles.
