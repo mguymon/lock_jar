@@ -27,38 +27,20 @@ require 'lock_jar/domain/dsl'
 # @author Michael Guymon
 #
 module LockJar
-  
+
   #
   # Override LockJar configuration
   #
   def self.config( opts )
     Runtime.instance.resolver( opts )
   end
-  
+
   def self.install( *args, &blk )
-    lockfile = nil
-    opts = {}
-    groups = ['default']
-      
-    args.each do |arg|
-      if arg.is_a?(Hash)
-        opts.merge!( arg )
-      elsif arg.is_a?( String )
-        lockfile = arg
-      elsif arg.is_a?( Array )
-        groups = arg
-      end
-    end
-    
-    # default to Jarfile.lock
-    if blk.nil? && lockfile.nil?
-      lockfile = 'Jarfile.lock'
-    end
-    
+    lockfile, groups, opts = extract_args :lockfile, args, &blk
     Runtime.instance.install( lockfile, groups, opts, &blk )
   end
-  
-  
+
+
   # Lists all dependencies as notations for groups from the Jarfile.lock. Depending on the type of arg, a different configuration is set.
   #
   # * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'.  Default lock file is *Jarfile.lock*.
@@ -67,71 +49,31 @@ module LockJar
   #   * :local_repo [String] sets the local repo path
   #   * :local_paths [Boolean] to true converts the notations to paths to jars in the local repo path
   #   * :resolve [Boolean] to true will make transitive dependences resolve before loading to classpath
-  # 
+  #
   # A block can be passed in, overriding values from a Jarfile.lock.
   #
   # @return [Array] of jar and mapped path
   def self.list( *args, &blk )
-      lockfile = nil
-      opts = {}
-      groups = ['default']
-        
-      args.each do |arg|
-        if arg.is_a?(Hash)
-          opts.merge!( arg )
-        elsif arg.is_a?( String )
-          lockfile = arg
-        elsif arg.is_a?( Array )
-          groups = arg
-        elsif arg.is_a?( LockJar::Domain::Lockfile )
-          lockfile = arg
-        end
-      end
-      
-      # default to Jarfile.lock
-      if blk.nil? && lockfile.nil?
-        lockfile = 'Jarfile.lock'
-      end
-      
-      Runtime.instance.list( lockfile, groups, opts, &blk )
+    lockfile, groups, opts = extract_args :lockfile, args, &blk
+    Runtime.instance.list( lockfile, groups, opts, &blk )
   end
-    
+
   # LockJar.load(*args): Loads all dependencies to the classpath for groups from the Jarfile.lock. Depending on the type of arg, a different configuration is set.
   # * An arg of a String will set the Jarfile.lock, e.g. 'Better.lock'. Default lock file is *Jarfile.lock*.
   # * An arg of an Array will set the groups, e.g. ['development','test'].Defaults group is *default*.
   # * An arg of a Hash will set the options, e.g. { :local_repo => 'path' }
   #    * :local_repo sets the local repo path
   #    * :resolve to true will make transitive dependences resolve before loading to classpath
-  # 
+  #
   # A block can be passed in, overriding values from a Jarfile.lock.
   #
   # @return [Array] of absolute paths of jars and mapped paths loaded into claspath
   def self.load( *args, &blk )
-      lockfile = nil
-      opts = {}
-      groups = ['default']
-        
-      args.each do |arg|
-        if arg.is_a?(Hash)
-          opts.merge!( arg )
-        elsif arg.is_a?( String )
-          lockfile = arg
-        elsif arg.is_a?( Array )
-          groups = arg
-        elsif arg.is_a?( LockJar::Domain::Lockfile )
-          lockfile = arg
-        end
-      end
-      
-      # default to Jarfile.lock
-      if blk.nil? && lockfile.nil?
-        lockfile = 'Jarfile.lock'
-      end
-      
-      Runtime.instance.load( lockfile, groups, opts, &blk )
+    lockfile, groups, opts = extract_args :lockfile, args, &blk
+    Runtime.instance.load( lockfile, groups, opts, &blk )
   end
-  
-  # Lock a Jarfile and generate a Jarfile.lock. 
+
+  # Lock a Jarfile and generate a Jarfile.lock.
   #
   # LockJar.lock accepts an Array for parameters. Depending on the type of arg, a different configuration is set.
   #
@@ -145,25 +87,10 @@ module LockJar
   #
   # @return [Hash] Lock data
   def self.lock( *args, &blk )
-    jarfile = nil
-    opts = {}
-      
-    args.each do |arg|
-      if arg.is_a?(Hash)
-        opts.merge!( arg )
-      elsif arg.is_a?( String ) || arg.is_a?( LockJar::Domain::Dsl )
-        jarfile = arg
-      end
-    end
-    
-    # default to Jarfile
-    if blk.nil? && jarfile.nil?
-      jarfile = 'Jarfile'
-    end
-    
+    jarfile, groups, opts = extract_args :jarfile, args, &blk
     Runtime.instance.lock( jarfile, opts, &blk )
   end
-  
+
   #
   # Read a Jafile.lock and convert it to a LockJar::Domain::Lockfile
   #
@@ -172,6 +99,31 @@ module LockJar
   def self.read( lockfile )
     LockJar::Domain::Lockfile.read( lockfile )
   end
- 
+  private
+
+  def self.extract_args(type, args, &blk )
+    lockfile_or_path = nil
+    opts = {}
+    groups = ['default']
+    args.each do |arg|
+      case arg
+      when Hash
+        opts.merge!( arg )
+      when String
+        lockfile_or_path = arg
+      when LockJar::Domain::Lockfile
+        lockfile_or_path = arg if type == :lockfile
+      when LockJar::Domain::Dsl
+        lockfile_or_path = arg if type == :jarfile
+      when Array
+        groups = arg
+      end
+    end
+    # default to Jarfile.lock
+    if blk.nil? && lockfile_or_path.nil?
+      lockfile_or_path = 'Jarfile.lock'
+    end
+    [lockfile_or_path, groups, opts]
+  end
 end
 
