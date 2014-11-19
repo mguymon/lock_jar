@@ -106,8 +106,15 @@ module LockJar
   # @return [Array] All registered jarfiles
   def self.register_jarfile( jarfile )
     fail "Jarfile not found: #{ jarfile }" unless File.exists? jarfile
+    registered_jarfiles << jarfile
+  end
+
+  def self.reset_registered_jarfiles
+    @@registered_jarfiles = []
+  end
+
+  def self.registered_jarfiles
     @@registered_jarfiles ||= []
-    @@registered_jarfiles << jarfile
   end
 
   # Lock the registered Jarfiles and generate a Jarfile.lock.
@@ -120,7 +127,8 @@ module LockJar
   #
   # @return [Hash] Lock data
   def self.lock_registered_jarfiles( *args, &blk )
-    jarfiles = @@registered_jarfiles || []
+    jarfiles = registered_jarfiles
+    return if jarfiles.empty?
     instances = jarfiles.map do |jarfile|
       LockJar::Domain::JarfileDsl.create jarfile
     end
