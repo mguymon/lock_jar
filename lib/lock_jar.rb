@@ -161,7 +161,7 @@ module LockJar
     end
     if blk.nil? && lockfile_or_path.nil?
       if type == :lockfile
-        lockfile_or_path = 'Jarfile.lock'
+        lockfile_or_path = opts.fetch(:lockfile, 'Jarfile.lock')
       elsif type == :jarfile
         lockfile_or_path = 'Jarfile'
       end
