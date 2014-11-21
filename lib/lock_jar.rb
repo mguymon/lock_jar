@@ -159,9 +159,12 @@ module LockJar
         groups = arg
       end
     end
-    # default to Jarfile.lock
     if blk.nil? && lockfile_or_path.nil?
-      lockfile_or_path = 'Jarfile.lock'
+      if type == :lockfile
+        lockfile_or_path = opts.fetch(:lockfile, 'Jarfile.lock')
+      elsif type == :jarfile
+        lockfile_or_path = 'Jarfile'
+      end
     end
     [lockfile_or_path, groups, opts]
   end

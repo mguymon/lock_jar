@@ -342,3 +342,31 @@ describe LockJar, "#load" do
     end
   end
 end
+
+describe LockJar, "#extract_args" do
+  # Certain argument combinations can't really be tested
+
+  it 'should have the right defaults for :lockfile' do
+    LockJar.send(:extract_args, :lockfile, []).should == ['Jarfile.lock', ['default'], {}]
+  end
+
+  it 'should have the right defaults for :jarfile' do
+    LockJar.send(:extract_args, :jarfile, []).should == ['Jarfile', ['default'], {}]
+  end
+
+  it 'should not have a default filename if a block is given' do
+    blk = proc {}
+    LockJar.send(:extract_args, :jarfile, [], &blk).should == [nil, ['default'], {}]
+    LockJar.send(:extract_args, :lockfile, [], &blk).should == [nil, ['default'], {}]
+  end
+
+  it 'should use the :lockfile opt when lockfile is requested' do
+    LockJar.send(:extract_args, :lockfile, [{lockfile: "LF"}]).should == ["LF", ['default'], {lockfile: "LF"}]
+  end
+  it 'should not use the :lockfile opt when jarfile is requested' do
+    LockJar.send(:extract_args, :jarfile, [{lockfile: "LF"}]).should == ["Jarfile", ['default'], {lockfile: "LF"}]
+  end
+  it 'should not use the :lockfile opt when a lockfile provided' do
+    LockJar.send(:extract_args, :lockfile, ["MyLF", {lockfile: "LF"}]).should == ["MyLF", ['default'], {lockfile: "LF"}]
+  end
+end
