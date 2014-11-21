@@ -6,7 +6,7 @@ LockJar manages Java Jars for Ruby. Powered by [Naether](https://github.com/mguy
  create a frankenstein of Bundler and Maven. A Jarfile ([example](https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile)) is used to generate a Jarfile.lock that contains all the resolved jar dependencies. The Jarfile.lock can be used to populate the classpath.
 
 LockJar can:
-* Be used directly in MRI 1.9.3, 2.0, 2.1 and JRuby 1.6.x, 1.7.x
+* Be used directly in MRI 1.9.3, 2.0, 2.1 and JRuby 1.6, 1.7
 * From the [command line](https://github.com/mguymon/lock_jar/blob/master/README.md#command-line)
 * [Triggered from a Gem install](https://github.com/mguymon/lock_jar/blob/master/README.md#gem-integration)
 * [Integrated into Buildr](https://github.com/mguymon/lock_jar/blob/master/README.md#buildr-integration)
@@ -228,7 +228,7 @@ Rakefile with default to install Jars using LockJar:
       # get jarfile relative the gem dir
       lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
       
-      LockJar.install( :lockfile => lockfile )
+      LockJar.install( lockfile )
     end
     
 #### Work around for Rakefile default
@@ -259,7 +259,7 @@ As part of the load process for the Gem (an entry file that is required, etc) us
       lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
       
       # Loads the ClassPath with Jars from the lockfile
-      LockJar.load( :lockfile => lockfile )
+      LockJar.load( lockfile )
 
 See also [loading Jars into a custom ClassLoader](https://github.com/mguymon/lock_jar/wiki/ClassLoader).
 
