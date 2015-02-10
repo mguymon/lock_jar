@@ -9,6 +9,9 @@ require 'lock_jar/cli'
 require 'stringio'
 require 'fileutils'
 require 'support/helper'
+require 'lock_jar/logging'
+
+LockJar::Logging.verbose!
 
 def mock_terminal
   @input = StringIO.new
