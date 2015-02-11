@@ -1,5 +1,9 @@
 ## LockJar Changelog
 
+### 0.10.4 (Feburary 11, 2015)
+
+* Fix bug with excludes in Jarfiles (<a href="https://github.com/mguymon/lock_jar/pull/25">Pull #20</a>) [<a href="https://github.com/pangloss">pangloss</a>]
+
 ### 0.10.1 (November 19, 2014)
 
 * Use local_repository from Jarfile.lock in install() if none has been passed in (<a href="https://github.com/mguymon/lock_jar/pull/20">Pull #20</a>) [<a href="https://github.com/stewi2">stewi2</a>]
