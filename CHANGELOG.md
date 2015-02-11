@@ -4,6 +4,14 @@
 
 * Fix bug with excludes in Jarfiles (<a href="https://github.com/mguymon/lock_jar/pull/25">Pull #20</a>) [<a href="https://github.com/pangloss">pangloss</a>]
 
+### 0.10.3 (Januaray 13, 2015)
+
+* Control the logging of Naether from LockJar::Logging
+
+### 0.10.2 (November 20, 2014)
+
+* Default to the correct file, based on desired type (<a href="https://github.com/mguymon/lock_jar/pull/22">Pull #20</a>) [<a href="https://github.com/pangloss">pangloss</a>]
+
 ### 0.10.1 (November 19, 2014)
 
 * Use local_repository from Jarfile.lock in install() if none has been passed in (<a href="https://github.com/mguymon/lock_jar/pull/20">Pull #20</a>) [<a href="https://github.com/stewi2">stewi2</a>]
