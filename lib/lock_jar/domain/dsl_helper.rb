@@ -16,18 +16,18 @@
 module LockJar
   module Domain
     class DslHelper
-  
+
       class << self
-      
+
         #
         # Merge LockJar::Domain::Dsl
         # @param [LockJar::Domain::Dsl] into_dsl dsl that is merged into
         # @param [LockJar::Domain::Dsl] from_dsl dsl that is merged from
         # @param [String] into_group force only runtime and default groups to be loaded into this group
-        # @return [LockJar::Domain::Dsl] 
+        # @return [LockJar::Domain::Dsl]
         def merge( into_dsl, from_dsl, into_group = nil )
           into_dsl.remote_repositories = (into_dsl.remote_repositories + from_dsl.remote_repositories).uniq
-          
+
           # merge default and runtime group into specific group
           if into_group
             group_artifacts = into_dsl.artifacts[into_group] || []
@@ -39,7 +39,7 @@ module LockJar
               end
             end
             into_dsl.artifacts[into_group] = group_artifacts
-            
+
           # one to one merging of groups
           else
             from_dsl.artifacts.each do |group, artifacts|
@@ -52,7 +52,7 @@ module LockJar
               into_dsl.artifacts[group] = group_artifacts
             end
           end
-          
+
           from_dsl.maps.each do |artifact,paths|
             existing_map = into_dsl.maps[artifact]
             if existing_map
@@ -61,20 +61,20 @@ module LockJar
               into_dsl.maps[artifact] = paths
             end
           end
-          
+
           from_dsl.excludes.each do |exclude|
-            unless into_dsl.include? exclude
+            unless into_dsl.excludes.include? exclude
               into_dsl.excludes << exclude
             end
           end
-          
+
           if from_dsl.file_path
             into_dsl.merged << from_dsl.file_path
           end
-          
+
           into_dsl
         end
-      
+
         def read_file(file)
           File.open(file, "rb") { |f| f.read }
         end
