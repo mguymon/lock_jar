@@ -1,5 +1,9 @@
 ## LockJar Changelog
 
+### 0.10.5 (Feburary 13, 2015)
+
+* Use Naether 0.14.0, with support for NAETHER_MIRROR env
+
 ### 0.10.4 (Feburary 11, 2015)
 
 * Fix bug with excludes in Jarfiles (<a href="https://github.com/mguymon/lock_jar/pull/25">Pull #20</a>) [<a href="https://github.com/pangloss">pangloss</a>]
