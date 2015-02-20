@@ -67,7 +67,7 @@ describe LockJar, "#lock" do
           }]
         }
       },
-      "remote_repositories" => ["http://mirrors.ibiblio.org/pub/mirrors/maven2", "http://repository.jboss.org/nexus/content/groups/public-jboss"]
+      "remote_repositories" => ["http://repo1.maven.org/maven2/"]
     })
   end
 
@@ -91,24 +91,45 @@ describe LockJar, "#lock" do
           }]
         }
       },
-      "remote_repositories" => ["http://mirrors.ibiblio.org/pub/mirrors/maven2", "http://repository.jboss.org/nexus/content/groups/public-jboss"]
+      "remote_repositories" => ["http://repo1.maven.org/maven2/", "http://mirrors.ibiblio.org/pub/mirrors/maven2", "http://repository.jboss.org/nexus/content/groups/public-jboss"]
     })
   end
 
-  it "should exclude excludes from dependencies" do
-    dsl = LockJar::Domain::Dsl.create do
-      exclude 'commons-logging', 'logkit'
-      jar 'opensymphony:oscache:jar:2.4.1'
+  context "with a lockfile" do
+    let(:dsl) do
+      LockJar::Domain::Dsl.create do
+        exclude 'commons-logging', 'logkit'
+        jar 'opensymphony:oscache:jar:2.4.1'
+      end
     end
 
-    LockJar.lock( dsl, :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
-    File.exists?( "#{TEMP_DIR}/Jarfile.lock" ).should be_true
-    lockfile = LockJar.read("#{TEMP_DIR}/Jarfile.lock")
-    lockfile.to_hash.should eql({
-      "version"=> LockJar::VERSION,
-      "excludes"=>["commons-logging", "logkit"],
-      "groups"=>{
-        "default"=>{
+    let(:lockfile) do
+      LockJar.lock( dsl, :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
+      File.exists?( "#{TEMP_DIR}/Jarfile.lock" ).should be_true
+      LockJar.read("#{TEMP_DIR}/Jarfile.lock")
+    end
+
+    let(:lockfile_hash) { lockfile.to_hash }
+
+    it 'should have a version' do
+      lockfile_hash['version'].should eql LockJar::VERSION
+    end
+
+    it 'should have a excludes' do
+      lockfile_hash['excludes'].should eql ["commons-logging", "logkit"]
+    end
+
+    it 'should have remote repositories' do
+      lockfile_hash["remote_repositories"].should eql %w[
+        http://repo1.maven.org/maven2/
+      ]
+    end
+
+    context 'for the lockfile groups' do
+      let(:groups) { lockfile_hash['groups'] }
+
+      it 'should have default' do
+        groups['default'].should eql({
           "dependencies"=>[
             "avalon-framework:avalon-framework:jar:4.1.3", "javax.jms:jms:jar:1.1",
             "javax.servlet:servlet-api:jar:2.3", "log4j:log4j:jar:1.2.12",
@@ -126,13 +147,10 @@ describe LockJar, "#lock" do
               }
             }
           }]
-        }
-      },
-      "remote_repositories" => ["http://mirrors.ibiblio.org/pub/mirrors/maven2", "http://repository.jboss.org/nexus/content/groups/public-jboss"]
-    })
-
+        })
+      end
+    end
   end
-
 
   it "should lock using a block" do
     LockJar.lock( :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/NoRepoJarfile.lock" ) do
@@ -144,6 +162,7 @@ describe LockJar, "#lock" do
     lockfile = LockJar.read("#{TEMP_DIR}/NoRepoJarfile.lock")
     lockfile.to_hash.should eql({
       "version"=> LockJar::VERSION,
+      "remote_repositories" => ["http://repo1.maven.org/maven2/"],
       "groups"=>{
         "default"=>{
           "dependencies"=>["org.eclipse.jetty.orbit:javax.servlet:jar:3.0.0.v201112011016",

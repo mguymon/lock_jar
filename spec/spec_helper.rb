@@ -10,6 +10,7 @@ require 'stringio'
 require 'fileutils'
 require 'support/helper'
 require 'lock_jar/logging'
+require 'pry'
 
 LockJar::Logging.verbose!
 
