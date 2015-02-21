@@ -82,6 +82,7 @@ module LockJar
 
         lock_data
       end
+      alias_method :to_h, :to_hash
 
       def to_yaml
         to_hash.to_yaml

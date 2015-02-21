@@ -57,6 +57,10 @@ module LockJar
       @current_resolver
     end
 
+    def reset!
+      @current_resolver = nil
+    end
+
     def install( jarfile_lock, groups = ['default'], opts = {}, &blk )
       deps = list( jarfile_lock, groups, {:with_locals => false}.merge( opts ), &blk )
 
@@ -154,7 +158,7 @@ module LockJar
 
       if !artifacts.empty?
         resolved_notations = resolver(opts).resolve( artifacts.select{ |artifact| artifact.resolvable? }.map(&:to_dep), opts[:download] == true )
-        
+
         jarfile.artifacts.each do |group_name, group_artifacts|
           group = {'locals' => [], 'dependencies' => [], 'artifacts' => []}
 

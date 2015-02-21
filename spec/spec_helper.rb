@@ -8,9 +8,12 @@ require 'lock_jar'
 require 'lock_jar/cli'
 require 'stringio'
 require 'fileutils'
-require 'support/helper'
 require 'lock_jar/logging'
 require 'pry'
+
+# Requires supporting ruby files with custom matchers and macros, etc,
+# in spec/support/ and its subdirectories.
+Dir[File.expand_path('.') + '/spec/support/**/*.rb'].each { |f| require f }
 
 LockJar::Logging.verbose!
 
