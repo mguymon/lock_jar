@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lock_jar (0.11.0)
+    lock_jar (0.12.0)
       naether (~> 0.14.0)
       thor (>= 0.18.1)
 

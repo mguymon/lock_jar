@@ -1,5 +1,9 @@
 ## LockJar Changelog
 
+### 0.12.0 (Feburary 23, 2015)
+
+* Add support for `without_default_maven_repo`
+
 ### 0.10.0 (June 27, 2014)
 
 * Extract Bundler out to own Gem - https://github.com/mguymon/lock_jar_bundler
@@ -36,7 +40,7 @@
 ### 0.7.0
 
 * Sort dependences for Jarfile.lock (<a href="https://github.com/mguymon/lock_jar/pull/3">Pull #3</a>) [<a href="https://github.com/chetan">chetan</a>]
- 
+
 #### 0.7.5 (August 23, 2013)
 
 * Update Thor dep, improve specs (<a href="https://github.com/mguymon/lock_jar/pull/10">Pull #10</a>) [<a href="https://github.com/yokolet">yokolet</a>]
