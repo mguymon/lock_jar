@@ -26,20 +26,21 @@ JRuby is natively supported. Ruby 1.9.3 and 2.1 uses [Rjb](http://rjb.rubyforge.
 
 ### Jarfile
 
-A Jarfile is a simple file using a Ruby DSL for defining a project's dependencies using the following 
+A Jarfile is a simple file using a Ruby DSL for defining a project's dependencies using the following
 methods:
 
-* **local_repo( path )**: Set the local Maven repository, this were dependencies are downloaded to. 
+* **local_repo( path )**: Set the local Maven repository, this were dependencies are downloaded to.
 * **remote_repo( url )**: Add additional url of remote Maven repository.
 * **group( groups )**: Set the group for nested jar or pom. A single or Array of groups can be set.
 * **jar( notations, opts = {} )**: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default group is _default_, can be specified by setting _opts = { :group => ['group_name'] }_
 * **local( path )**: Add a local path to a Jar
 * **pom( pom_path, opts = {} )**: Add a local Maven pom, default is to load dependencies for `runtime` and `compile` scopes. To select the scopes to be loaded from the pom, set the _opts = { :scopes => ['test'] }_
+* **without_default_maven_repo**: Do not use the default maven repo.
 
 #### Example Jarfile
 
     repository 'http://repository.jboss.org/nexus/content/groups/public-jboss'
-  	
+
     // Default group is default
     jar "org.apache.mina:mina-core:2.0.4"
     local 'spec/fixtures/naether-0.13.0.jar'
@@ -47,11 +48,11 @@ methods:
     group 'runtime' do
       jar 'org.apache.tomcat:servlet-api:jar:6.0.35'
     end
-  
+
     group 'test' do
       jar 'junit:junit:jar:4.10', :group => 'test'
     end
-	
+
 ### Resolving dependencies
 
 **LockJar.lock( *args )**: Using a Jarfile, creates a lock file. Depending on the type of arg, a different configuration is set.
@@ -66,14 +67,20 @@ When the Jarfile is locked, the transitive dependencies are resolved and saved t
 Example of locking a Jarfile to a Jarfile.lock
 
     LockJar.lock
-  
- 
+
+#### Default Remote Repository
+
+LockJar uses Naether's default remote repository, http://repo1.maven.org/maven2/.
+
+Jarfile.lock pior to _0.12.0_ did not write the default remote repository. As of version _0.12.0_, only repositories in the Jarfile.lock are used. This means older Jarfile.lock will need to be updated to include the default maven repo if they rely on it.
+
+
 ### Jarfile.lock
 
 The _Jarfile.lock_ generated is a YAML file containing information on how to handle the classpath for grouped dependencies and their nested transitive dependencies.
 
 #### The Jarfile.lock
-    
+
     ---
     version: 0.7.0
     groups:
@@ -123,15 +130,15 @@ The _Jarfile.lock_ generated is a YAML file containing information on how to han
               org.hamcrest:hamcrest-core:jar:1.1: {}
     ...
 
-  
-  
+
+
 ### Accessing Jars
 **LockJar.install(*args)**: Download Jars in the Jarfile.lock
 * _[String]_ will set the Jarfile.lock path, e.g. `'Better.lock'`. Default lock file is `'Jarfile.lock'`.
 * _[Array<String>]_ will set the groups, e.g. `['compile','test']`. Defaults group is _default_.
 * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
   * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
-  
+
 **LockJar.list(*args)**: Lists all dependencies as notations for groups from the Jarfile.lock.  Depending on the type of arg, a different configuration is set.  
 * _[String]_ will set the Jarfile.lock path, e.g. `'Better.lock'`. Default lock file is `'Jarfile.lock'`.
 * _[Array<String>]_ will set the groups, e.g. `['default', 'runtime']`. Defaults group is _default_.
@@ -139,24 +146,24 @@ The _Jarfile.lock_ generated is a YAML file containing information on how to han
   * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
   * **:local_paths** _[Boolean]_ converts the notations to paths of jars in the local repo
   * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before returning list of jars
-  
+
 **LockJar.load(*args)**: Loads all dependencies to the classpath for groups from the Jarfile.lock. Default group is _default_. Default lock file is _Jarfile.lock_.
 * _[String]_ will set the Jarfile.lock, e.g. `'Better.lock'`
 * _[Array<String>]_ will set the groups, e.g. `['default', 'runtime']`
 * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
   * **:local_repo** _[String]_ sets the local repo path
-  * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before loading to classpath 
+  * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before loading to classpath
 
 Once a _Jarfile.lock_ is generated, you can list all resolved jars by
-  
+
     jars = LockJar.list
-  
+
 or directly load all Jars into the classpath
-  
+
     jars = LockJar.load  
 
 Do not forget, if you change your _Jarfile_, you have to re-generate the _Jarfile.lock_.
-  
+
 See also [loading Jars into a custom ClassLoader](https://github.com/mguymon/lock_jar/wiki/ClassLoader).
 
 ### Shortcuts
@@ -172,13 +179,13 @@ You can skip the _Jarfile_ and _Jarfile.lock_ to directly play with dependencies
     end
 
 #### List without a Jarfile.lock
-    
+
     LockJar.list do
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
     end
 
 #### Load without a Jarfile.lock
-    
+
     LockJar.load do
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
     end
@@ -195,14 +202,14 @@ There is a simple command line helper. You can lock a _Jarfile_ with the followi
 
     lockjar lock
 
-List jars in a _Jarfile.lock_ with 
- 
+List jars in a _Jarfile.lock_ with
+
     lockjar list
-  
+
 Download all jars in a _Jarfile.lock_ with
 
     lockjar install
-  
+
 _lockjar_ _--help_ will give you list of all commands and their options.
 
 ## Gem Integration
@@ -224,18 +231,18 @@ Rakefile with default to install Jars using LockJar:
 
     task :prepare do
       require 'lock_jar'
-      
+
       # get jarfile relative the gem dir
-      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
-      
+      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ )
+
       LockJar.install( lockfile )
     end
-    
+
 #### Work around for Rakefile default
 
-The downside of using the Gem extension Rakefile is it requires the default to 
-point at the task to download the jars (from the example Rakefile, 
-`task :default => :prepare`). To get around this, I used a Rakefile called 
+The downside of using the Gem extension Rakefile is it requires the default to
+point at the task to download the jars (from the example Rakefile,
+`task :default => :prepare`). To get around this, I used a Rakefile called
 _PostInstallRakefile_ to handle the `task :prepare`. When packaging the gem, _PostInstallRakefile_ is
 renamed to `Rakefile`.
 
@@ -245,19 +252,19 @@ Instead of rely in a Rakefile to install Jars when the Gem is installed, Jars ca
 Ruby needs to be called before calling `LockJar.load`. Only Jars that are missing are downloaded.
 
       #get jarfile relative the gem dir
-      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
-      
+      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ )
+
       # Download any missing Jars
       LockJar.install( lockfile )
 
 ### Loading
 
-With the Jars installed, loading the classpath for the Gem is simple. 
+With the Jars installed, loading the classpath for the Gem is simple.
 As part of the load process for the Gem (an entry file that is required, etc) use the following:
 
       #get jarfile relative the gem dir
-      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ ) 
-      
+      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ )
+
       # Loads the ClassPath with Jars from the lockfile
       LockJar.load( lockfile )
 
@@ -270,7 +277,7 @@ LockJar integrates with [Buildr](http://buildr.apache.org/) using an [Addon](htt
 A new Buildr task is added to generate the lockfile for all projects
 
     buildr lock_jar:lock
-  
+
 and a task per project to generate the lockfile for a single project
 
     buildr <app>:<project>:lock_jar:lock
@@ -288,7 +295,7 @@ The _default_ group dependencies are automatically added to the classpath for co
 Sample buildfile with LockJar
 
     require 'lock_jar/buildr'
-    
+
     # app definition, inherited into all projects
     lock_jar do
 
@@ -317,10 +324,10 @@ Generated the following lock files using **lock_jar:lock**
 
 * _project1.lock_ - contains _junit_ and _mina_ jars.
 * _project2.lock_ - contains _junit_ and _pom.xml_ jars.
-  
+
 ## Bundler Integration
 
-Bundler integration is **experimental** right now. [LockJar patches Bundler](https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/bundler.rb) 
+Bundler integration is **experimental** right now. [LockJar patches Bundler](https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/bundler.rb)
 to allow creation of a _Jarfile.lock_ when Bundler calls `install` and `update`. The dependencies from the _Jarfile.lock_ are automatically loaded when
 Bundler  calls `setup` and `require`. To enable this support, add this require to your _Gemfile_
 
@@ -331,7 +338,7 @@ Gems with a Jarfile will be merge to generate a _Jarfile.lock_. The Jarfile.lock
 
 ### Bundler to LockJar groups
 
-LockJar will merge the dependencies from the `default` and `runtime` group of a Gem's _Jarfile_. These will be placed in the 
+LockJar will merge the dependencies from the `default` and `runtime` group of a Gem's _Jarfile_. These will be placed in the
 lockfile under Gem's corresponding Bundler group. For example, the following Gemfile:
 
     group :development do
@@ -355,7 +362,7 @@ Would produce the follow _Jarfile.lock_ excerpt:
          - com.google.guava:guava:jar:r05
 
 Since `solr_sail` is defined in the _Gemfile's_ `development` group, the corresponding _Jarfile.lock_ dependencies are also under the `development` group.
-      
+
 ## License
 
 Licensed to the Apache Software Foundation (ASF) under one or more
@@ -372,4 +379,3 @@ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
 License for the specific language governing permissions and limitations under
 the License.
-
