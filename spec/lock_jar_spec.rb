@@ -18,7 +18,7 @@ describe LockJar do
 
   describe "#lock" do
     context "creates a lockfile" do
-      let(:lockfile) do        
+      let(:lockfile) do
         LockJar.lock( lockjar_source, :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
         File.exists?( "#{TEMP_DIR}/Jarfile.lock" ).should be_true
         LockJar.read("#{TEMP_DIR}/Jarfile.lock")
@@ -85,6 +85,33 @@ describe LockJar do
 
       context "from a dsl" do
 
+        describe '#without_default_maven_repo' do
+          let(:lockjar_source) do
+            LockJar::Domain::Dsl.create do
+              without_default_maven_repo
+              remote_repo 'https://repository.jboss.org/nexus/content/groups/public'
+              jar 'junit:junit:4.10'
+            end
+          end
+
+          let(:expected_version) { LockJar::VERSION }
+          let(:expected_maps) { {"junit:junit:4.10"=>["#{TEMP_DIR}"] } }
+          let(:expected_remote_repositories) { %w[https://repository.jboss.org/nexus/content/groups/public] }
+          let(:expected_groups) do
+            {
+              "default"=>{
+                "dependencies"=>["junit:junit:jar:4.10", "org.hamcrest:hamcrest-core:jar:1.1"],
+                "artifacts"=>[{
+                  "jar:junit:junit:jar:4.10"=>{
+                    "transitive"=>{"org.hamcrest:hamcrest-core:jar:1.1"=>{}}}
+                }]
+              }
+            }
+          end
+
+          it_behaves_like 'a lockfile'
+        end
+
         describe '#map' do
           let(:lockjar_source) do
             LockJar::Domain::Dsl.create do
@@ -95,11 +122,7 @@ describe LockJar do
 
           let(:expected_version) { LockJar::VERSION }
           let(:expected_maps) { {"junit:junit:4.10"=>["#{TEMP_DIR}"] } }
-          let(:expected_remote_repositories) do
-            %w[
-                http://repo1.maven.org/maven2/
-              ]
-          end
+          let(:expected_remote_repositories) { %w[http://repo1.maven.org/maven2/] }
           let(:expected_groups) do
             {
               "default"=>{
@@ -126,7 +149,7 @@ describe LockJar do
 
           let(:expected_version) { LockJar::VERSION }
           let(:expected_excludes) { %w[commons-logging logkit] }
-          let(:expected_remote_repositories) { %w[http://repo1.maven.org/maven2/] }
+          let(:expected_remote_repositories) { %w[http://repo1.maven.org/maven2/ https://repository.jboss.org/nexus/content/groups/public] }
           let(:expected_groups) do
             { "default" =>
               {
@@ -315,20 +338,25 @@ describe LockJar do
   end
 
   describe "#load" do
-    it "by Jarfile.lock" do
+
+    def expect_java_class_not_loaded(java_class)
       if Naether.platform == 'java'
-        lambda { java_import 'org.apache.mina.core.IoUtil' }.should raise_error
+        lambda { java_import java_class }.should raise_error
       else
-        lambda { Rjb::import('org.apache.mina.core.IoUtil') }.should raise_error
+        lambda { Rjb::import(java_class) }.should raise_error
       end
+    end
 
+    def expect_java_class_loaded(java_class)
+      if Naether.platform == 'java'
+        lambda { java_import java_class }.should_not raise_error
+      else
+        lambda { Rjb::import(java_class) }.should_not raise_error
+      end
+    end
 
-      LockJar.lock( "spec/fixtures/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
-
-      jars = LockJar.load( "#{TEMP_DIR}/Jarfile.lock", ['default'], :local_repo => "#{TEMP_DIR}/test-repo" )
-      LockJar::Registry.instance.lockfile_registered?( "#{TEMP_DIR}/Jarfile.lock" ).should be_false
-
-      jars.should eql([
+    let(:expected_jars) do
+      [
         "spec/fixtures/naether-0.13.0.jar",
         File.expand_path("#{TEMP_DIR}/test-repo/ch/qos/logback/logback-classic/0.9.24/logback-classic-0.9.24.jar"),
         File.expand_path("#{TEMP_DIR}/test-repo/ch/qos/logback/logback-core/0.9.24/logback-core-0.9.24.jar"),
@@ -340,22 +368,23 @@ describe LockJar do
         File.expand_path("#{TEMP_DIR}/test-repo/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"),
         File.expand_path("#{TEMP_DIR}/test-repo/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"),
         File.expand_path("#{TEMP_DIR}/test-repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"),
-      ])
-      if Naether.platform == 'java'
-        lambda { java_import 'org.apache.mina.core.IoUtil' }.should_not raise_error
-      else
-        lambda { Rjb::import('org.apache.mina.core.IoUtil') }.should_not raise_error
-      end
+      ]
+    end
 
+    it "by Jarfile.lock" do
+      expect_java_class_not_loaded('org.apache.mina.core.IoUtil')
 
+      LockJar.lock( "spec/fixtures/Jarfile", :local_repo => "#{TEMP_DIR}/test-repo", :lockfile => "#{TEMP_DIR}/Jarfile.lock" )
+      jars = LockJar.load( "#{TEMP_DIR}/Jarfile.lock", ['default'], :local_repo => "#{TEMP_DIR}/test-repo" )
+      LockJar::Registry.instance.lockfile_registered?( "#{TEMP_DIR}/Jarfile.lock" ).should be_false
+
+      jars.should eql(expected_jars)
+
+      expect_java_class_loaded('org.apache.mina.core.IoUtil')
     end
 
     it "by block with resolve option" do
-      if Naether.platform == 'java'
-        lambda { java_import 'org.modeshape.common.math.Duration' }.should raise_error
-      else
-        lambda { Rjb::import('org.modeshape.common.math.Duration') }.should raise_error
-      end
+      expect_java_class_not_loaded('org.modeshape.common.math.Duration')
 
       jars = LockJar.load(:local_repo => TEST_REPO, :resolve => true) do
         jar 'org.modeshape:modeshape-common:3.4.0.Final'
@@ -363,11 +392,7 @@ describe LockJar do
 
       jars.should eql( [File.expand_path(TEST_REPO + "/org/modeshape/modeshape-common/3.4.0.Final/modeshape-common-3.4.0.Final.jar")] )
 
-      if Naether.platform == 'java'
-        lambda { java_import 'org.modeshape.common.math.Duration' }.should_not raise_error
-      else
-        lambda { Rjb::import('org.modeshape.common.math.Duration') }.should_not raise_error
-      end
+      expect_java_class_loaded('org.modeshape.common.math.Duration')
     end
   end
 
