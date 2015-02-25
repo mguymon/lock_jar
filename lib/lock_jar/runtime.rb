@@ -131,6 +131,7 @@ module LockJar
 
       jarfile.remote_repositories.each do |repo|
         resolver(opts).add_remote_repository( repo )
+        lockfile.remote_repositories << repo
       end
 
       unless jarfile.local_repository.nil?
