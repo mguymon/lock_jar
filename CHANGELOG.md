@@ -4,6 +4,10 @@
 
 * Add support for `without_default_maven_repo`
 
+### 0.12.1 (Feburary 25, 2015)
+
+* Fix for writing remote repositories to lockfile
+
 ### 0.10.0 (June 27, 2014)
 
 * Extract Bundler out to own Gem - https://github.com/mguymon/lock_jar_bundler
