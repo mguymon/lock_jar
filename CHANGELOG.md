@@ -4,6 +4,10 @@
 
 * Add support for `without_default_maven_repo`
 
+### 0.12.2 (Feburary 25, 2015)
+
+* Only write unique set of remote repositories to lockfile
+
 ### 0.12.1 (Feburary 25, 2015)
 
 * Fix for writing remote repositories to lockfile
