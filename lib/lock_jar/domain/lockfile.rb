@@ -15,6 +15,7 @@
 
 require "yaml"
 require 'lock_jar/version'
+require 'set'
 
 module LockJar
   module Domain
@@ -35,7 +36,7 @@ module LockJar
         lockfile.maps = lock_data['maps'] || []
         lockfile.excludes = lock_data['excludes'] || []
         lockfile.groups = lock_data['groups'] || lock_data['scopes'] || {}
-        lockfile.remote_repositories = lock_data['remote_repositories'] || lock_data['repositories'] || []
+        lockfile.remote_repositories = Set.new( Array(lock_data['remote_repositories'] || lock_data['repositories']) )
         lockfile.gems = lock_data['gems'] || []
         lockfile
       end
@@ -77,7 +78,7 @@ module LockJar
         lock_data['groups'] = groups
 
         if remote_repositories.size > 0
-          lock_data['remote_repositories'] = remote_repositories
+          lock_data['remote_repositories'] = remote_repositories.to_a
         end
 
         lock_data
