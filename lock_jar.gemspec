@@ -20,6 +20,6 @@ Gem::Specification.new do |s|
   s.require_paths = %w(lib)
   s.summary = 'Manage Jar files for Ruby'
 
-  s.add_dependency(%q<naether>, ['~> 0.14.0'])
+  s.add_dependency(%q<naether>, ['~> 0.14.2'])
   s.add_dependency(%q<thor>, ['>= 0.18.1'])
 end
