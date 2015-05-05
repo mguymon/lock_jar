@@ -12,11 +12,11 @@
 
 * Only write unique set of remote repositories to lockfile
 
-#### 0.12.3
+#### 0.12.3 (March 9, 2015)
 
 * Noop
 
-#### 0.12.4
+#### 0.12.4 (May 5, 2015)
 
 * Update Naether dep to 0.14.2
 
