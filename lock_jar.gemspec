@@ -22,4 +22,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency(%q<naether>, ['~> 0.14.2'])
   s.add_dependency(%q<thor>, ['>= 0.18.1'])
+
+  s.add_development_dependency('rake')
 end
