@@ -126,7 +126,8 @@ module LockJar
       if jarfile.clear_repositories
         resolver(opts).clear_remote_repositories
       else
-        lockfile.remote_repositories += resolver(opts).remote_repositories.to_a
+        repos = resolver(opts).remote_repositories
+        lockfile.remote_repositories += repos.to_a if repos
       end
 
       jarfile.remote_repositories.each do |repo|
@@ -169,7 +170,8 @@ module LockJar
 
             if artifact.is_a? LockJar::Domain::Jar
               group['dependencies'] << artifact.notation
-              artifact_data["transitive"] = resolver(opts).dependencies_graph[artifact.notation].to_hash
+              g = resolver(opts).dependencies_graph[artifact.notation]
+              artifact_data["transitive"] = g.to_hash if g
 
             elsif artifact.is_a? LockJar::Domain::Pom
               artifact_data['scopes'] = artifact.scopes
