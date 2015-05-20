@@ -24,6 +24,10 @@
 
 *	Fix NoMethodError on nil dependencies graph (<a href="https://github.com/mguymon/lock_jar/pull/30">Pull #30</a>) [<a href="https://github.com/pangloss">pangloss</a>]
 
+#### 0.12.6 (May 20, 2015)
+
+* Update to Naether 0.14.3
+
 ### 0.10.0 (June 27, 2014)
 
 * Extract Bundler out to own Gem - https://github.com/mguymon/lock_jar_bundler
