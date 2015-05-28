@@ -3,7 +3,7 @@
 [![Build Status](https://secure.travis-ci.org/mguymon/lock_jar.png?branch=master)](http://travis-ci.org/mguymon/lock_jar)
 
 LockJar manages Java Jars for Ruby. Powered by [Naether](https://github.com/mguymon/naether) to
- create a frankenstein of Bundler and Maven. A Jarfile ([example](https://github.com/mguymon/lock_jar/blob/master/spec/Jarfile)) is used to generate a Jarfile.lock that contains all the resolved jar dependencies. The Jarfile.lock can be used to populate the classpath.
+ create a frankenstein of Bundler and Maven. A Jarfile ([example](https://github.com/mguymon/lock_jar/blob/master/spec/support/Jarfile)) is used to generate a Jarfile.lock that contains all the resolved jar dependencies. The Jarfile.lock can be used to populate the classpath.
 
 LockJar can:
 * Be used directly in MRI 1.9.3, 2.0, 2.1 and JRuby 1.6, 1.7
