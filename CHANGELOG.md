@@ -1,5 +1,9 @@
 ## LockJar Changelog
 
+### 0.13.0 (June 3, 2015)
+
+* Use Naether 0.15.0
+
 ### 0.12.0 (Feburary 23, 2015)
 
 * Add support for `without_default_maven_repo`
