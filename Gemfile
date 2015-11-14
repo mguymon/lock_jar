@@ -10,4 +10,5 @@ group :development do
   gem 'yard'
   gem 'rspec', '~> 2.14.1'
   gem 'coveralls', require: false
+  gem "codeclimate-test-reporter", group: :test, require: nil
 end
