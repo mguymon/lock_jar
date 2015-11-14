@@ -394,6 +394,19 @@ describe LockJar do
 
       expect_java_class_loaded('org.modeshape.common.math.Duration')
     end
+
+    context 'with disable option' do
+      it 'consective calls to load should return nil' do
+        LockJar.load(local_repo: TEST_REPO, resolve: true) do
+          jar 'org.modeshape:modeshape-common:3.4.0.Final'
+        end
+
+        jars = LockJar.load(local_repo: TEST_REPO, resolve: true, disable: true) do
+          jar 'org.modeshape:modeshape-common:3.4.0.Final'
+        end
+        expect(jars).to be_empty
+      end
+    end
   end
 
   describe "#extract_args" do

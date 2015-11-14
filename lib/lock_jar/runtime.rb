@@ -33,6 +33,10 @@ module LockJar
       @current_resolver = nil
     end
 
+    def opts
+      current_resolver.opts if current_resolver
+    end
+
     def resolver( opts = {} )
 
       # XXX: Caches the resolver by the options. Passing in nil opts will replay
