@@ -4,10 +4,10 @@ source 'https://rubygems.org'
 gemspec
 
 
+gem "codeclimate-test-reporter", group: :test, require: nil
+
 group :development do
   gem 'guard-rspec', :require => false
   gem 'pry'
   gem 'yard'
-  gem 'coveralls', require: false
-  gem "codeclimate-test-reporter", group: :test, require: nil
 end

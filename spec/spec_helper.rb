@@ -10,12 +10,10 @@ require 'stringio'
 require 'fileutils'
 require 'lock_jar/logging'
 require 'pry'
-require 'coveralls'
 require "codeclimate-test-reporter"
 
 # coverage
 CodeClimate::TestReporter.start
-Coveralls.wear!
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
