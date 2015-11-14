@@ -7,33 +7,33 @@ require 'lock_jar/domain/jarfile_dsl'
 require 'lock_jar/domain/dsl_helper'
 
 module LockJar
-  
+
   class Bundler
-      
+
     class << self
-      
+
       attr_accessor :skip_lock
-    
+
       def load(*groups)
         if groups && !groups.empty?  && File.exists?( 'Jarfile.lock')
-          
+
           lockfile = LockJar::Domain::Lockfile.read( 'Jarfile.lock' )
-          
+
           # expand merged paths to include gem base path
           unless lockfile.merged.empty?
             lockfile.merged = LockJar::Bundler.expand_gem_paths( lockfile.merged )
           end
-          
+
           LockJar.load( lockfile, groups )
-          
+
           if ENV["DEBUG"]
             puts "[LockJar] Loaded Jars for #{groups.inspect}: #{LockJar::Registry.instance.loaded_jars.inspect}"
           end
         end
       end
-      
+
       def expand_gem_paths(merged)
-        
+
         merged_gem_paths = []
         Gem.path.each do |gem_root|
           merged.each do |merge|
@@ -47,12 +47,62 @@ module LockJar
             end
           end
         end
-        
+
         merged_gem_paths
+      end
+
+      # Create a lock file from bundled gems
+      def lock!(*opts)
+        definition = ::Bundler.definition
+
+        gems_with_jars = []
+
+        jarfile_opt = opts.find { |option| option.is_a? String }
+
+        jarfile = jarfile_opt || 'Jarfile'
+
+        # load local Jarfile
+        if File.exists?(jarfile)
+          dsl = LockJar::Domain::JarfileDsl.create( File.expand_path(jarfile) )
+          gems_with_jars << "jarfile:#{jarfile}"
+          
+        # Create new Dsl
+        else
+          dsl = LockJar::Domain::Dsl.new
+        end
+
+        definition.groups.each do |group|
+          if ENV["DEBUG"]
+            puts "[LockJar] Group #{group}:"
+          end
+
+          definition.specs_for( [group] ).each do |spec|
+            gem_dir = spec.gem_dir
+
+            jarfile = File.join( gem_dir, "Jarfile" )
+
+            if File.exists?( jarfile )
+              gems_with_jars << "gem:#{spec.name}"
+
+              if ENV["DEBUG"]
+                puts "[LockJar]   #{spec.name} has Jarfile"
+              end
+
+              spec_dsl = LockJar::Domain::GemDsl.create( spec, "Jarfile" )
+
+              dsl = LockJar::Domain::DslHelper.merge( dsl, spec_dsl, group.to_s )
+            end
+          end
+
+          LockJar::Bundler.skip_lock = true
+        end
+
+        puts "[LockJar] Locking Jars for: #{gems_with_jars.inspect}"
+        LockJar.lock(*([dsl] + opts))
       end
     end
   end
-  
+
 end
 
 module Bundler
@@ -100,55 +150,13 @@ module Bundler
   class Definition
     alias :_lockjar_extended_to_lock :to_lock
     def to_lock
-      to_lock = _lockjar_extended_to_lock
+      result = _lockjar_extended_to_lock
 
-      if LockJar::Bundler.skip_lock != true
-        definition = Bundler.definition
-        #if !definition.send( :nothing_changed? )
-          gems_with_jars = []
-
-          # load local Jarfile
-          if File.exists?( 'Jarfile' )
-            dsl = LockJar::Domain::JarfileDsl.create( File.expand_path( 'Jarfile' ) )
-            gems_with_jars << 'jarfile:Jarfile'
-          # Create new Dsl
-          else
-            dsl = LockJar::Domain::Dsl.new
-          end
-
-          definition.groups.each do |group|
-            if ENV["DEBUG"]
-              puts "[LockJar] Group #{group}:"
-            end
-
-            definition.specs_for( [group] ).each do |spec|
-              gem_dir = spec.gem_dir
-
-              jarfile = File.join( gem_dir, "Jarfile" )
-
-              if File.exists?( jarfile )
-                gems_with_jars << "gem:#{spec.name}"
-
-                if ENV["DEBUG"]
-                  puts "[LockJar]   #{spec.name} has Jarfile"
-                end
-
-                spec_dsl = LockJar::Domain::GemDsl.create( spec, "Jarfile" )
-
-                dsl = LockJar::Domain::DslHelper.merge( dsl, spec_dsl, group.to_s )
-              end
-            end
-
-          end
-
-          puts "[LockJar] Locking Jars for: #{gems_with_jars.inspect}"
-          LockJar.lock( dsl )
-        #elsif ENV["DEBUG"]
-        #  puts "[LockJar] Locking skiped, Gemfile has not changed"
-        #end
+      unless LockJar::Bundler.skip_lock
+        LockJar::Bundler.lock!
       end
 
-      to_lock
+      result
     end
 
   end
