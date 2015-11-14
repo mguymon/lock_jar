@@ -9,7 +9,7 @@ rvm:
   - jruby-20mode
   - jruby-21mode
 
-script: bundle exec rspec
+script: bundle exec rake
 sudo: false
 
 addons:
