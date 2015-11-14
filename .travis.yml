@@ -1,5 +1,5 @@
 before_install:
-  - export JRUBY_OPTS=--dev
+  - export JRUBY_OPTS="-Xcli.debug=true --debug"
 language: ruby
 rvm:
   - 1.9.3
