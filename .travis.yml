@@ -10,3 +10,4 @@ rvm:
   - jruby-21mode
 
 script: bundle exec rspec
+sudo: false
