@@ -2,9 +2,11 @@ require 'spec_helper'
 require 'lock_jar/bundler'
 
 describe LockJar::Bundler do
+  include Spec::Helpers
+
   describe '.lock!' do
     before do
-      File.delete('Jarfile.lock') if File.exist?('Jarfile.lock')
+      remove_file('Jarfile.lock')
       LockJar::Bundler.lock!('spec/fixtures/Jarfile')
     end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-shared_examples "a lockfile" do
+shared_examples 'a lockfile' do
   let(:lockfile_hash) { lockfile.to_h }
 
   it 'should have a version' do
@@ -15,18 +15,16 @@ shared_examples "a lockfile" do
 
   it 'should have a local repository' do
     if respond_to? :expected_local_repository
-      lockfile_hash['local_repository'].should eql expected_local_repository
+      expect(lockfile_hash['local_repository']).to(eql(expected_local_repository))
     end
   end
 
   it 'should have a maps' do
-    if respond_to? :expected_map
-      lockfile_hash['maps'].should eql expected_map
-    end
+    expect(lockfile_hash['maps']).to(eql(expected_map)) if respond_to? :expected_map
   end
 
   it 'should have remote repositories' do
-    lockfile_hash["remote_repositories"].should eql expected_remote_repositories
+    lockfile_hash['remote_repositories'].should eql expected_remote_repositories
   end
 
   context 'for groups' do

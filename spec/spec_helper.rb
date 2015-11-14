@@ -1,8 +1,7 @@
-$:.unshift File.expand_path('.')
-$:.unshift File.expand_path(File.join('..', File.dirname(__FILE__)))
-$:.unshift File.expand_path(File.join('..', File.dirname(__FILE__), 'lib'))
+$LOAD_PATH.unshift File.expand_path('.')
+$LOAD_PATH.unshift File.expand_path(File.join('..', File.dirname(__FILE__)))
+$LOAD_PATH.unshift File.expand_path(File.join('..', File.dirname(__FILE__), 'lib'))
 
-require 'rubygems'
 require 'rspec'
 require 'lock_jar'
 require 'lock_jar/cli'
@@ -10,7 +9,7 @@ require 'stringio'
 require 'fileutils'
 require 'lock_jar/logging'
 require 'pry'
-require "codeclimate-test-reporter"
+require 'codeclimate-test-reporter'
 
 # coverage
 CodeClimate::TestReporter.start
@@ -21,16 +20,18 @@ Dir[File.expand_path('.') + '/spec/support/**/*.rb'].each { |f| require f }
 
 LockJar::Logging.verbose!
 
+# rubocop:disable Style/GlobalVars
 def mock_terminal
   @input = StringIO.new
   @output = StringIO.new
   $terminal = HighLine.new @input, @output
 end
+# rubocop:enable Style/GlobalVars
 
-TEMP_DIR = File.expand_path(File.join(File.dirname(__FILE__), "..", ".spec-tmp"))
-TEST_REPO = File.expand_path(File.join(TEMP_DIR, "test-repo"))
-PARAM_CONFIG = File.expand_path(File.join(TEMP_DIR, "param_config"))
-DSL_CONFIG = File.expand_path(File.join(TEMP_DIR, "dsl_config"))
+TEMP_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', '.spec-tmp'))
+TEST_REPO = File.expand_path(File.join(TEMP_DIR, 'test-repo'))
+PARAM_CONFIG = File.expand_path(File.join(TEMP_DIR, 'param_config'))
+DSL_CONFIG = File.expand_path(File.join(TEMP_DIR, 'dsl_config'))
 
 RSpec.configure do |config|
   config.order = 'default'
