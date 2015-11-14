@@ -13,7 +13,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-require 'rubygems'
 require 'yaml'
 require 'singleton'
 require 'lock_jar/resolver'
@@ -110,15 +109,6 @@ module LockJar
           jarfile = LockJar::Domain::DslHelper.merge( jarfile, dsl )
         end
       end
-
-      if jarfile.respond_to?(:bundler_enabled ) && jarfile.bundler_enabled
-        require 'lock_jar_bundler/bundler'
-
-        LockJar::Bundler.bundled_jarfiles(jarfile.bundler_enabled).each do |bundled_jarfile|
-          jarfile = LockJar::Domain::DslHelper.merge( jarfile, LockJar::Domain::JarfileDsl.create(bundled_jarfile) )
-        end
-      end
-
 
       # If not set in opts, and is set in  dsl
       if opts[:local_repo].nil? && jarfile.local_repository

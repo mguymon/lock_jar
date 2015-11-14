@@ -258,7 +258,7 @@ describe LockJar do
     it 'should add an existing jarfiles in order' do
       LockJar.register_jarfile "spec/fixtures/Jarfile"
       LockJar.register_jarfile "spec/fixtures/Jarfile2"
-      LockJar.registered_jarfiles.should ==
+      LockJar.registered_jarfiles.keys.should ==
         ["spec/fixtures/Jarfile", "spec/fixtures/Jarfile2"]
     end
 

@@ -19,29 +19,18 @@ require 'lock_jar/domain/dsl_helper'
 module LockJar
   module Domain
     class JarfileDsl < Dsl
-  
-      attr_accessor :file_path, :bundler_enabled
-      
+
+      attr_accessor :file_path
+
       class << self
         alias :overriden_create :create
         def create(jarfile)
           builder = new
           builder.file_path = jarfile
-          
+
           evaluate(builder, jarfile)
         end
       end
-
-      def bundler(*groups)
-        if groups.nil?
-          groups = [:default]
-        else
-          groups = groups.map(&:to_sym)
-        end
-
-        @bundler_enabled = groups
-      end
-  
     end
   end
 end

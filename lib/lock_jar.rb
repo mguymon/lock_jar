@@ -89,7 +89,7 @@ module LockJar
     #   * :local_repo sets the local repo path
     #   * :lockfile sets the Jarfile.lock path. Default lockfile is *Jarfile.lock*.
     #   * :disable [Boolean] to true will disable any additional calls to load and lock
-    
+
     # A block can be passed in, overriding values from a Jarfile.
     #
     # @return [Hash] Lock data
@@ -115,17 +115,17 @@ module LockJar
     #
     # @param [String] jarfile path to register
     # @return [Array] All registered jarfiles
-    def register_jarfile( jarfile )
+    def register_jarfile(jarfile, spec = nil)
       fail "Jarfile not found: #{ jarfile }" unless File.exists? jarfile
-      registered_jarfiles << jarfile
+      registered_jarfiles[jarfile] = spec
     end
 
     def reset_registered_jarfiles
-      @@registered_jarfiles = []
+      @@registered_jarfiles = {}
     end
 
     def registered_jarfiles
-      @@registered_jarfiles ||= []
+      @@registered_jarfiles ||= {}
     end
 
     # Lock the registered Jarfiles and generate a Jarfile.lock.
@@ -140,8 +140,12 @@ module LockJar
     def lock_registered_jarfiles( *args, &blk )
       jarfiles = registered_jarfiles
       return if jarfiles.empty?
-      instances = jarfiles.map do |jarfile|
-        LockJar::Domain::JarfileDsl.create jarfile
+      instances = jarfiles.map do |jarfile, spec|
+        if spec
+          LockJar::Domain::GemDsl.create spec, jarfile
+        else
+          LockJar::Domain::JarfileDsl.create jarfile
+        end
       end
       combined = instances.reduce do |result, inst|
         LockJar::Domain::DslHelper.merge result, inst
