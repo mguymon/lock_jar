@@ -10,7 +10,9 @@ require 'stringio'
 require 'fileutils'
 require 'lock_jar/logging'
 require 'pry'
+require 'coveralls'
 
+Coveralls.wear!
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[File.expand_path('.') + '/spec/support/**/*.rb'].each { |f| require f }

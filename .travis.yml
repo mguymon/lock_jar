@@ -1,3 +1,5 @@
+before_install:
+  - export JRUBY_OPTS=--dev
 language: ruby
 rvm:
   - 1.9.3
@@ -7,4 +9,4 @@ rvm:
   - jruby-20mode
   - jruby-21mode
 
-script: bundle exec rspec spec
+script: bundle exec rspec
