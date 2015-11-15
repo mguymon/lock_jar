@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'lock_jar/domain/artifact'
 
 describe LockJar::Domain::Dsl do
-  context 'Instance' do
+  describe '.create' do
     it 'should load a Jarfile' do
       jarfile = LockJar::Domain::Dsl.create('spec/fixtures/Jarfile')
 
