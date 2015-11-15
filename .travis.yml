@@ -13,5 +13,9 @@ script: bundle exec rake
 sudo: false
 
 addons:
-    code_climate:
-        repo_token: 3377046eefe5079936ac6dd66241c7fac6e56c632a34b653ef7896e31fa048c1
+  code_climate:
+    repo_token: 3377046eefe5079936ac6dd66241c7fac6e56c632a34b653ef7896e31fa048c1
+
+cache:
+  directories:
+    - .spec-tmp
