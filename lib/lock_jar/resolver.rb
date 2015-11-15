@@ -21,8 +21,7 @@ require 'fileutils'
 module LockJar
   #
   class Resolver
-    attr_reader :opts
-    attr_reader :naether
+    attr_reader :opts, :naether
 
     def initialize(opts = {})
       @opts = opts
