@@ -3,3 +3,6 @@ languages:
 engines:
   rubocop:
     enabled: true
+    checks:
+      Rubocop/Rails/Output:
+        enabled: false
