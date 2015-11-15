@@ -3,8 +3,8 @@ module LockJar
   class Runtime
     #
     module List
+      # rubocop:disable Metrics/PerceivedComplexity, MethodLength
       def list(lockfile_or_path, groups = ['default'], opts = {}, &blk)
-        lockfile = nil
         dependencies = []
         maps = []
         with_locals = { with_locals: true }.merge(opts).delete(:with_locals)
@@ -49,6 +49,7 @@ module LockJar
           dependencies
         end
       end
+      # rubocop:enable Metrics/PerceivedComplexity, MethodLength
     end
   end
 end

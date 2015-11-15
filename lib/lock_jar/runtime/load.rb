@@ -11,8 +11,6 @@ module LockJar
       # @param [Block] blk
       # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def load(lockfile_or_path, groups = ['default'], opts = {}, &blk)
-        lockfile = nil
-
         # lockfile is only loaded once
         unless lockfile_or_path.nil?
           # loaded a Lockfile instance
@@ -50,7 +48,7 @@ module LockJar
 
         resolver(opts).load_to_classpath(dependencies)
       end
-      # rubocop:enable Metrics/CyclomaticComplexity, , Metrics/PerceivedComplexity
+      # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     end
   end
 end

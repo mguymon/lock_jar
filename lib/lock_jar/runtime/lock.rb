@@ -3,7 +3,7 @@ module LockJar
   class Runtime
     #
     module Lock
-      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, MethodLength
       def lock(jarfile_or_dsl, opts = {}, &blk)
         opts = { download: true }.merge(opts)
 
@@ -122,7 +122,7 @@ module LockJar
 
         lockfile
       end
-      # rubocop:enable Metrics/CyclomaticComplexity, , Metrics/PerceivedComplexity
+      # rubocop:enable Metrics/CyclomaticComplexity, , Metrics/PerceivedComplexity, MethodLength
     end
   end
 end
