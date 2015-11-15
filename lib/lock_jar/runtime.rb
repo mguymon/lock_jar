@@ -30,7 +30,6 @@ module LockJar
   class Runtime
     include Singleton
     include Load
-    include Lock
     include List
     include Install
 
@@ -38,6 +37,10 @@ module LockJar
 
     def initialize
       @current_resolver = nil
+    end
+
+    def lock(jarfile_or_dsl, opts = {}, &blk)
+      Lock.new(self, jarfile_or_dsl, opts, &blk).lock
     end
 
     def opts

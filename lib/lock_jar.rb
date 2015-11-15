@@ -165,6 +165,7 @@ module LockJar
 
   private
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def self.extract_args(type, args, &blk)
     lockfile_or_path = nil
     opts = {}
@@ -192,4 +193,5 @@ module LockJar
     end
     [lockfile_or_path, groups, opts]
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end
