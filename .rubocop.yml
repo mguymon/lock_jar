@@ -1,0 +1,26 @@
+# This is the configuration used to check the rubocop source code.
+
+AllCops:
+  Exclude:
+    - 'tmp/**/*'
+    - 'target/**/*'
+
+Metrics/LineLength:
+  Max: 100
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/MethodLength:
+  Max: 25
+
+Metrics/AbcSize:
+  Max: 30
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Style/PredicateName:
+  Enabled: false
+
+Style/Lambda:
+  Enabled: false
