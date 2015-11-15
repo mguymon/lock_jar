@@ -71,16 +71,8 @@ module LockJar
           puts '[LockJar] Group #{group}:' if ENV['DEBUG']
 
           definition.specs_for([group]).each do |spec|
-            gem_dir = spec.gem_dir
-
-            jarfile = File.join(gem_dir, 'Jarfile')
-
-            next unless File.exist?(jarfile)
-
-            gems_with_jars << "gem:#{spec.name}"
-            puts "[LockJar]   #{spec.name} has Jarfile" if ENV['DEBUG']
-            spec_dsl = LockJar::Domain::GemDsl.create(spec, 'Jarfile')
-            dsl = LockJar::Domain::DslMerger(dsl, spec_dsl, [group.to_s]).merge
+            dsl = merge_gem_dsl(dsl, spec, group)
+            gems_with_jars << "gem:#{spec.name}" if File.exist? File.join(spec.gem_dir, 'Jarfile')
           end
 
           LockJar::Bundler.skip_lock = true
@@ -88,6 +80,19 @@ module LockJar
 
         puts "[LockJar] Locking Jars for: #{gems_with_jars.inspect}"
         LockJar.lock(*([dsl] + opts))
+      end
+
+      private
+
+      def merge_gem_dsl(dsl, spec, group)
+        jarfile = File.join(spec.gem_dir, 'Jarfile')
+
+        return unless File.exist?(jarfile)
+
+        gems_with_jars << "gem:#{spec.name}"
+        puts "[LockJar]   #{spec.name} has Jarfile" if ENV['DEBUG']
+        spec_dsl = LockJar::Domain::GemDsl.create(spec, 'Jarfile')
+        LockJar::Domain::DslMerger(dsl, spec_dsl, [group.to_s]).merge
       end
     end
   end
