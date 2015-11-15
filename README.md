@@ -30,12 +30,12 @@ JRuby is natively supported. Ruby 1.9.3 and 2.1 uses [Rjb](http://rjb.rubyforge.
 A Jarfile is a simple file using a Ruby DSL for defining a project's dependencies using the following
 methods:
 
-* **local_repo( path )**: Set the local Maven repository, this were dependencies are downloaded to.
-* **remote_repo( url )**: Add additional url of remote Maven repository.
-* **group( groups )**: Set the group for nested jar or pom. A single or Array of groups can be set.
-* **jar( notations, opts = {} )**: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default group is _default_, can be specified by setting _opts = { :group => ['group_name'] }_
-* **local( path )**: Add a local path to a Jar
-* **pom( pom_path, opts = {} )**: Add a local Maven pom, default is to load dependencies for `runtime` and `compile` scopes. To select the scopes to be loaded from the pom, set the _opts = { :scopes => ['test'] }_
+* **local_repo(path)**: Set the local Maven repository, this were dependencies are downloaded to.
+* **remote_repo(url)**: Add additional url of remote Maven repository.
+* **group(groups)**: Set the group for nested jar or pom. A single or Array of groups can be set.
+* **jar(notations, opts = {})**: Add Jar dependency in artifact notation, artifact:group:version as the bare minimum. A single or Array of notations can be passed. Default group is _default_, can be specified by setting _opts = { :group => ['group_name'] }_
+* **local(path)**: Add a local path to a Jar
+* **pom(pom_path, opts = {})**: Add a local Maven pom, default is to load dependencies for `runtime` and `compile` scopes. To select the scopes to be loaded from the pom, set the _opts = { :scopes => ['test'] }_
 * **without_default_maven_repo**: Do not use the default maven repo.
 
 #### Example Jarfile
@@ -56,7 +56,7 @@ methods:
 
 ### Resolving dependencies
 
-**LockJar.lock( *args )**: Using a Jarfile, creates a lock file. Depending on the type of arg, a different configuration is set.
+**LockJar.lock(*args)**: Using a Jarfile, creates a lock file. Depending on the type of arg, a different configuration is set.
 * _[String]_ will set the Jarfile path, e.g. `'/somewhere/Jarfile.different'`. Default jarfile is `'Jarfile'`
 * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
   * **:download** _[Boolean]_ if true, will download jars to local repo. Defaults to true.
@@ -193,7 +193,7 @@ You can skip the _Jarfile_ and _Jarfile.lock_ to directly play with dependencies
 
 Since you skipped the locking part, mostly likely you will need to resolve the dependences in the block, just pass the _:resolve => true_ option to enable dependency resolution (also works for _LockJar.list_).
 
-    LockJar.load( :resolve => true ) do
+    LockJar.load(:resolve => true) do
       jar 'org.eclipse.jetty:example-jetty-embedded:jar:8.1.2.v20120308'
     end
 
@@ -234,9 +234,9 @@ Rakefile with default to install Jars using LockJar:
       require 'lock_jar'
 
       # get jarfile relative the gem dir
-      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ )
+      lockfile = File.expand_path("../Jarfile.lock", __FILE__)
 
-      LockJar.install( lockfile )
+      LockJar.install(lockfile)
     end
 
 #### Work around for Rakefile default
@@ -253,10 +253,10 @@ Instead of rely in a Rakefile to install Jars when the Gem is installed, Jars ca
 Ruby needs to be called before calling `LockJar.load`. Only Jars that are missing are downloaded.
 
       #get jarfile relative the gem dir
-      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ )
+      lockfile = File.expand_path("../Jarfile.lock", __FILE__)
 
       # Download any missing Jars
-      LockJar.install( lockfile )
+      LockJar.install(lockfile)
 
 ### Loading
 
@@ -264,10 +264,10 @@ With the Jars installed, loading the classpath for the Gem is simple.
 As part of the load process for the Gem (an entry file that is required, etc) use the following:
 
       #get jarfile relative the gem dir
-      lockfile = File.expand_path( "../Jarfile.lock", __FILE__ )
+      lockfile = File.expand_path("../Jarfile.lock", __FILE__)
 
       # Loads the ClassPath with Jars from the lockfile
-      LockJar.load( lockfile )
+      LockJar.load(lockfile)
 
 See also [loading Jars into a custom ClassLoader](https://github.com/mguymon/lock_jar/wiki/ClassLoader).
 

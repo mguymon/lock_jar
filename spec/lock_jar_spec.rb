@@ -395,7 +395,7 @@ describe LockJar do
       jars = LockJar.load("#{TEMP_DIR}/Jarfile.lock", ['default'], local_repo: "#{TEMP_DIR}/test-repo")
       LockJar::Registry.instance.lockfile_registered?("#{TEMP_DIR}/Jarfile.lock").should be_false
 
-      jars.should eql(expected_jars)
+      expect(jars).to eql(expected_jars)
 
       expect_java_class_loaded('org.apache.mina.core.IoUtil')
     end

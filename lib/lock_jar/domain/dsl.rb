@@ -14,13 +14,13 @@
 # the License.
 
 require 'lock_jar/maven'
-require 'lock_jar/domain/dsl_helper'
+require 'lock_jar/domain/dsl_merger'
 require 'lock_jar/domain/artifact'
 
 module LockJar
   module Domain
+    #
     class Dsl
-
       DEFAULT_GROUP = ['default']
 
       attr_accessor :artifacts, :remote_repositories, :local_repository, :groups,
@@ -29,46 +29,31 @@ module LockJar
       attr_reader :file_path
 
       class << self
-
         def create(jarfile = nil, &blk)
           builder = new
           evaluate(builder, jarfile, &blk)
         end
 
         def evaluate(builder, jarfile = nil, &blk)
-          if jarfile.nil? && blk.nil?
-            raise "jarfile or block must be set"
-          end
+          fail 'jarfile or block must be set' if jarfile.nil? && blk.nil?
 
-          if jarfile
-            builder.instance_eval(DslHelper.read_file(jarfile.to_s), jarfile.to_s, 1)
-          end
+          builder.instance_eval(IO.read(jarfile.to_s), jarfile.to_s, 1) if jarfile
 
-          if blk
-            builder.instance_eval(&blk)
-          end
+          builder.instance_eval(&blk) if blk
 
           builder
         end
-
       end
 
       def initialize
-
         @remote_repositories = []
         @artifacts = { 'default' => [] }
-
         @group_changed = false
-
         @present_group = 'default'
-
         @local_repository = nil
         @maps = {}
-
         @excludes = []
-
         @merged = []
-
         @clear_repositories = false
       end
 
@@ -78,83 +63,78 @@ module LockJar
 
       def jar(notation, *args)
         opts = {}
-        if args.last.is_a? Hash
-          opts.merge!( args.last )
-        end
 
-        artifact = Jar.new( notation )
+        opts.merge!(args.last) if args.last.is_a? Hash
 
-        assign_groups( artifact, opts[:group] )
+        artifact = Jar.new(notation)
+
+        assign_groups(artifact, opts[:group])
       end
 
-      def local( *args )
-        unless args.empty?
-          if File.directory?( File.expand_path( args.first ) )
-            warn "[DEPRECATION] `local` to set local_repository is deprecated.  Please use `local_repo` instead."
-            local_repo(args.first)
-          else
-            path = args.shift
+      def local(*args)
+        return if args.empty?
 
-            opts = {}
-            if args.last.is_a? Hash
-              opts.merge!( args.last )
-            end
+        if File.directory?(File.expand_path(args.first))
+          warn(
+            '[DEPRECATED] `local` to set local_repository is deprecated. '\
+            'Please use `local_repo` instead'
+          )
+          local_repo(args.first)
+        else
+          path = args.shift
 
-            artifact = Local.new( path )
+          opts = {}
 
-            assign_groups( artifact, opts[:group] )
-          end
+          opts.merge!(args.last) if args.last.is_a? Hash
+
+          artifact = Local.new(path)
+
+          assign_groups(artifact, opts[:group])
         end
       end
 
-      def local_repo( path )
+      def local_repo(path)
         @local_repository = path
       end
 
       alias_method :name, :local_repository
 
       # Map a dependency to another dependency or local directory.
-      def map( notation, *args )
+      def map(notation, *args)
         @maps[notation] = args
       end
 
       #
       def pom(path, *args)
-        unless path =~ /\.xml$/i
-          raise "#{path} is an invalid pom path"
-        end
+        fail "#{path} is an invalid pom path" unless path =~ /\.xml$/i
 
-        opts = { :scopes => ['runtime', 'compile'] }
+        opts = { scopes: %w(runtime compile) }
 
-        if args.last.is_a? Hash
-          opts.merge! args.last
-        end
+        opts.merge!(args.last) if args.last.is_a? Hash
 
-        artifact = Pom.new( path, opts[:scopes] )
-
-        assign_groups( artifact, opts[:groups] )
+        assign_groups(Pom.new(path, opts[:scopes]), opts[:groups])
       end
 
-      def remote_repo( url, opts = {} )
+      def remote_repo(url, _opts = {})
         @remote_repositories << url
       end
       alias_method :remote_repository, :remote_repo
       alias_method :repository, :remote_repo
 
-      def group(*groups, &blk)
-         @group_changed = true
-         groups.each do |group|
-           @present_group = group.to_s
-           yield
-         end
-         @group_changed = false
-         @present_group = 'default'
+      def group(*groups, &_blk)
+        @group_changed = true
+        groups.each do |group|
+          @present_group = group.to_s
+          yield
+        end
+        @group_changed = false
+        @present_group = 'default'
       end
 
       # @deprecated Please use {#group} instead
       def scope(*scopes, &blk)
-        warn "[DEPRECATION] `scope` is deprecated.  Please use `group` instead."
-        group(*scopes,&blk)
+        warn '[DEPRECATED] `scope` is deprecated.  Please use `group` instead.'
+        group(*scopes, &blk)
       end
 
       def without_default_maven_repo
@@ -162,33 +142,24 @@ module LockJar
       end
 
       private
-      def assign_groups(artifact, groups=nil)
 
+      def assign_groups(artifact, groups = nil)
         if groups
-
-          unless groups.is_a? Array
-            groups = [groups]
-          end
+          groups = Array(groups)
 
           # include present group if within a group block
-          if @group_changed
-            groups << @present_group
-          end
+          groups << @present_group if @group_changed
 
         else
           groups = [@present_group]
         end
 
-        if artifact
-          groups.uniq.each do |group|
-            group_key = group.to_s
-            @artifacts[group_key] = [] unless @artifacts[group_key]
-            @artifacts[group_key] << artifact
-          end
-        end
-
+        groups.uniq.each do |group|
+          group_key = group.to_s
+          @artifacts[group_key] = [] unless @artifacts[group_key]
+          @artifacts[group_key] << artifact
+        end if artifact
       end
-
     end
   end
 end

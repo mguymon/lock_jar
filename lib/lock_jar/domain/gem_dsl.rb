@@ -15,30 +15,29 @@
 
 require 'lock_jar/maven'
 require 'lock_jar/domain/jarfile_dsl'
-require 'lock_jar/domain/dsl_helper'
+require 'lock_jar/domain/dsl_merger'
 
 module LockJar
   module Domain
+    # Jarfile found in a Gem
     class GemDsl < JarfileDsl
-
       attr_accessor :gem_dir
 
       class << self
-        alias :overriden_create :create
         def create(spec, jarfile)
           builder = new
           builder.gem_dir = spec.gem_dir
 
-          jarfile = File.join( spec.gem_dir, jarfile )
+          jarfile = File.join(spec.gem_dir, jarfile)
           builder.file_path = "gem:#{spec.name}:Jarfile.lock"
 
           evaluate(builder, jarfile)
         end
       end
 
-      alias :overriden_pom :pom
+      alias_method :overriden_pom, :pom
       def pom(path, *args)
-        overriden_pom( File.join( gem_dir, path), *args)
+        overriden_pom(File.join(gem_dir, path), *args)
       end
     end
   end

@@ -13,21 +13,22 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-require "yaml"
-require 'lock_jar/version'
+require 'yaml'
 require 'set'
+require 'lock_jar/version'
 
 module LockJar
   module Domain
+    # Class representation of the lock file
     class Lockfile
-
       attr_accessor :local_repository, :maps, :excludes, :remote_repositories,
                     :version, :groups, :gems, :merged
 
-      def self.read( path )
+      # rubocop:disable Metrics/PerceivedComplexity
+      def self.read(path)
         lockfile = Lockfile.new
 
-        lock_data = YAML.load_file( path )
+        lock_data = YAML.load_file(path)
 
         lockfile.version = lock_data['version'] || LockJar::VERSION
         lockfile.merged = lock_data['merged']
@@ -36,10 +37,12 @@ module LockJar
         lockfile.maps = lock_data['maps'] || []
         lockfile.excludes = lock_data['excludes'] || []
         lockfile.groups = lock_data['groups'] || lock_data['scopes'] || {}
-        lockfile.remote_repositories = Set.new( Array(lock_data['remote_repositories'] || lock_data['repositories']) )
+        lockfile.remote_repositories =
+          Set.new(Array(lock_data['remote_repositories'] || lock_data['repositories']))
         lockfile.gems = lock_data['gems'] || []
         lockfile
       end
+      # rubocop:enable Metrics/PerceivedComplexity
 
       def initialize
         @groups = { 'default' => {} }
@@ -55,25 +58,15 @@ module LockJar
       def to_hash
         lock_data = { 'version' => @version }
 
-        unless local_repository.nil?
-          lock_data['local_repository'] = local_repository
-        end
+        lock_data['local_repository'] = local_repository unless local_repository.nil?
 
-        unless merged.empty?
-          lock_data['merged'] = merged
-        end
+        lock_data['merged'] = merged unless merged.empty?
 
-        if maps.size > 0
-          lock_data['maps'] = maps
-        end
+        lock_data['maps'] = maps if maps.size > 0
 
-        if excludes.size > 0
-          lock_data['excludes'] = excludes
-        end
+        lock_data['excludes'] = excludes if excludes.size > 0
 
-        unless gems.empty?
-          lock_data['gems'] = gems
-        end
+        lock_data['gems'] = gems unless gems.empty?
 
         lock_data['groups'] = groups
 
@@ -89,9 +82,9 @@ module LockJar
         to_hash.to_yaml
       end
 
-      def write( path )
-        File.open( path, "w") do |f|
-          f.write( to_yaml )
+      def write(path)
+        File.open(path, 'w') do |f|
+          f.write(to_yaml)
         end
       end
     end

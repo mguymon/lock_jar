@@ -9,7 +9,10 @@ Gem::Specification.new do |s|
   s.version = LockJar::VERSION
   s.authors = ['Michael Guymon']
   s.date = '2014-03-06'
-  s.description = 'Manage Jar files for Ruby. In the spirit of Bundler, a Jarfile is used to generate a Jarfile.lock that contains all the resolved jar dependencies for scopes runtime, compile, and test. The Jarfile.lock can be used to populate the classpath'
+  s.description = 'Manage Jar files for Ruby. In the spirit of Bundler, a Jarfile
+is used to generate a Jarfile.lock that contains all the resolved jar dependencies
+for scopes runtime, compile, and test. The Jarfile.lock can be used to populate the
+classpath'
   s.email = 'michael@tobedevoured.com'
   s.files         = `git ls-files -z`.split("\x0")
   s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) }

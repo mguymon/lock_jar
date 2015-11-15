@@ -14,16 +14,15 @@
 # the License.
 
 require 'lock_jar/maven'
-require 'lock_jar/domain/dsl_helper'
+require 'lock_jar/domain/dsl_merger'
 
 module LockJar
   module Domain
+    # Jarfile DSL
     class JarfileDsl < Dsl
-
       attr_accessor :file_path
 
       class << self
-        alias :overriden_create :create
         def create(jarfile)
           builder = new
           builder.file_path = jarfile

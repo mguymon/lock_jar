@@ -15,79 +15,71 @@
 
 require 'singleton'
 
-#
-# Registry of resources loaded by LockJar
-#
-# @author Michael Guymon
-#
-class LockJar::Registry
+module LockJar
+  #
+  # Registry of resources loaded by LockJar
+  #
+  # @author Michael Guymon
+  #
+  class Registry
     include Singleton
-    
-    attr_accessor :loaded_gems
-    attr_accessor :loaded_jars
-    attr_accessor :loaded_lockfiles
-    
+
+    attr_accessor :loaded_gems, :loaded_jars, :loaded_lockfiles
+
     def initialize
       @loaded_gems = {}
       @loaded_jars = []
       @loaded_lockfiles = []
     end
-    
-    def lockfile_registered?( lockfile )
-      if lockfile
-        @loaded_lockfiles.include? File.expand_path( lockfile )
-      end
-    end
-    
-    def register_lockfile( lockfile )
-      if lockfile && !lockfile_registered?( lockfile )
-        @loaded_lockfiles << File.expand_path( lockfile )
-      end
-    end
-    
-    def register_jars( jars )
-      if jars
-        jars_to_load = jars - @loaded_jars
-        
-        @loaded_jars += jars_to_load
-        
-        jars_to_load
-      end
-    end
-    
-    def register_gem( spec )
-      @loaded_gems[spec.name] = spec
-    end
-    
-    def gem_registered?( spec )
-      !@loaded_gems[spec.name].nil?
-    end
-    
-    def load_gem( spec )
-      unless gem_registered?( spec )
-        register_gem(spec)
-        gem_dir = spec.gem_dir
-  		
-        lockfile = File.join( gem_dir, "Jarfile.lock" )
-       	
-        if File.exists?( lockfile )
-       	  puts "#{spec.name} has Jarfile.lock, loading jars"
-          LockJar.load( lockfile )
-        end 
-      end
-    end
-    
-    def load_jars_for_gems      
-      specs = Gem.loaded_specs
-      if specs 
-        gems = specs.keys - @loaded_gems.keys
-        if gems.size > 0
-          gems.each do |key|
-            spec = specs[key]
-            load_gem( spec )
-          end 
-        end
-      end
+
+    def lockfile_registered?(lockfile)
+      @loaded_lockfiles.include? File.expand_path(lockfile) if lockfile
     end
 
+    def register_lockfile(lockfile)
+      return if lockfile.nil? || lockfile_registered?(lockfile)
+
+      @loaded_lockfiles << File.expand_path(lockfile)
+    end
+
+    def register_jars(jars)
+      return if jars.nil?
+
+      jars_to_load = jars - @loaded_jars
+
+      @loaded_jars += jars_to_load
+
+      jars_to_load
+    end
+
+    def register_gem(spec)
+      @loaded_gems[spec.name] = spec
+    end
+
+    def gem_registered?(spec)
+      !@loaded_gems[spec.name].nil?
+    end
+
+    def load_gem(spec)
+      return if gem_registered?(spec)
+
+      register_gem(spec)
+      gem_dir = spec.gem_dir
+
+      lockfile = File.join(gem_dir, 'Jarfile.lock')
+
+      return unless File.exist?(lockfile)
+
+      puts "#{spec.name} has Jarfile.lock, loading jars"
+      LockJar.load(lockfile)
+    end
+
+    def load_jars_for_gems
+      specs = Gem.loaded_specs
+      return if specs.nil?
+
+      gems = specs.keys - @loaded_gems.keys
+      gems.each { |key| load_gem(specs[key]) }
+    end
+  end
 end
