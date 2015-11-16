@@ -28,8 +28,8 @@ def mock_terminal
 end
 # rubocop:enable Style/GlobalVars
 
-TEMP_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', '.spec-tmp'))
-TEST_REPO = File.expand_path(File.join(TEMP_DIR, 'test-repo'))
+TEMP_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', 'tmp'))
+TEST_REPO = File.expand_path(File.join(TEMP_DIR, 'test-repo-install'))
 PARAM_CONFIG = File.expand_path(File.join(TEMP_DIR, 'param_config'))
 DSL_CONFIG = File.expand_path(File.join(TEMP_DIR, 'dsl_config'))
 
