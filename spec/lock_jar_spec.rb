@@ -396,7 +396,6 @@ describe LockJar do
       LockJar::Registry.instance.lockfile_registered?("#{TEMP_DIR}/Jarfile.lock").should be_false
 
       expect(jars).to eql(expected_jars)
-
       expect_java_class_loaded('org.apache.mina.core.IoUtil')
     end
 
@@ -414,12 +413,12 @@ describe LockJar do
 
     context 'with disable option' do
       it 'consective calls to load should return nil' do
-        LockJar.load(local_repo: TEST_REPO, resolve: true) do
+        LockJar.load(local_repo: TEST_REPO, resolve: true, disable: true) do
           jar 'org.modeshape:modeshape-common:3.4.0.Final'
         end
 
-        jars = LockJar.load(local_repo: TEST_REPO, resolve: true, disable: true) do
-          jar 'org.modeshape:modeshape-common:3.4.0.Final'
+        jars = LockJar.load(local_repo: TEST_REPO, resolve: true) do
+          jar 'another:jar:1.2.3'
         end
         expect(jars).to be_empty
       end

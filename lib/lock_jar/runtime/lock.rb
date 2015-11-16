@@ -5,38 +5,33 @@ module LockJar
   class Runtime
     # rubocop:disable ClassLength
     class Lock < SimpleDelegator
-      attr_reader :jarfile_or_dsl, :opts, :blk, :lockfile, :jarfile, :dsl
+      attr_accessor :jarfile, :lockfile
 
-      def initialize(runtime, jarfile_or_dsl, opts = {}, &blk)
+      def initialize(runtime)
         super(runtime)
 
-        @jarfile_or_dsl = jarfile_or_dsl
-        @opts = { download: true }.merge(opts)
-        @blk = blk
         @lockfile = LockJar::Domain::Lockfile.new
+      end
 
-        if @jarfile_or_dsl
-          if @jarfile_or_dsl.is_a? LockJar::Domain::Dsl
-            @jarfile = @jarfile_or_dsl
+      def lock(jarfile_or_dsl, opts = {}, &blk)
+        opts = { download: true }.merge(opts)
+
+        if jarfile_or_dsl
+          if jarfile_or_dsl.is_a? LockJar::Domain::Dsl
+            @jarfile = jarfile_or_dsl
           else
-            @jarfile = LockJar::Domain::JarfileDsl.create(@jarfile_or_dsl)
+            @jarfile = LockJar::Domain::JarfileDsl.create(jarfile_or_dsl)
           end
         end
 
-        return if blk.nil?
+        unless blk.nil?
+          dsl = LockJar::Domain::Dsl.create(&blk)
 
-        @dsl = LockJar::Domain::Dsl.create(&blk)
-        if @jarfile.nil?
-          @jarfile = @dsl
-        else
-          @jarfile = LockJar::Domain::DslMerger(@jarfile, @dsl).merge
-        end
-      end
-
-      def lock
-        # If not set in opts, and is set in  dsl
-        if opts[:local_repo].nil? && jarfile.local_repository
-          opts[:local_repo] = jarfile.local_repository
+          if jarfile
+            @jarfile = LockJar::Domain::DslMerger.new(jarfile, dsl).merge
+          else
+            @jarfile = dsl
+          end
         end
 
         apply_repositories!
@@ -59,6 +54,8 @@ module LockJar
 
       # rubocop:disable Metrics/AbcSize
       def apply_artifacts!(artifacts)
+
+        # Build the dependencies_graph hash in the resolver
         resolver(opts).resolve(
           artifacts.select(&:resolvable?).map(&:to_dep),
           opts[:download] == true
@@ -85,6 +82,8 @@ module LockJar
           end if lockfile.excludes
 
           group['dependencies'].sort!
+          group['dependencies'].uniq!
+
           group.delete 'locals' if group['locals'].empty?
 
           lockfile.groups[group_name] = group
@@ -117,7 +116,7 @@ module LockJar
           lockfile.remote_repositories << repo
         end
 
-        lockfile.local_repository = jarfile.local_repository unless jarfile.local_repository.nil?
+        lockfile.local_repository = opts[:local_repo] || jarfile.local_repository
       end
 
       def add_artifact!(group, artifact_data, artifact)
@@ -145,10 +144,7 @@ module LockJar
 
       def dependency_merge(graph)
         deps = graph.keys
-        graph.values.each do |next_step|
-          deps += dependency_merge(next_step)
-        end
-        deps
+        graph.values.flat_map { |next_step| deps += dependency_merge(next_step) }
       end
     end
     # rubocop:enable ClassLength

@@ -51,6 +51,7 @@ module LockJar
       def lock!(*opts)
         definition = ::Bundler.definition
 
+        dsl = nil
         gems_with_jars = []
 
         jarfile_opt = opts.find { |option| option.is_a? String }
@@ -60,7 +61,6 @@ module LockJar
         # load local Jarfile
         if File.exist?(jarfile)
           dsl = LockJar::Domain::JarfileDsl.create(File.expand_path(jarfile))
-          gems_with_jars << "jarfile:#{jarfile}"
 
         # Create new Dsl
         else
@@ -71,11 +71,10 @@ module LockJar
           puts '[LockJar] Group #{group}:' if ENV['DEBUG']
 
           definition.specs_for([group]).each do |spec|
-            dsl = merge_gem_dsl(dsl, spec, group)
+            merged_dsl = merge_gem_dsl(dsl, spec, group)
+            dsl = merged_dsl if merged_dsl
             gems_with_jars << "gem:#{spec.name}" if File.exist? File.join(spec.gem_dir, 'Jarfile')
           end
-
-          LockJar::Bundler.skip_lock = true
         end
 
         puts "[LockJar] Locking Jars for: #{gems_with_jars.inspect}"
@@ -89,10 +88,9 @@ module LockJar
 
         return unless File.exist?(jarfile)
 
-        gems_with_jars << "gem:#{spec.name}"
         puts "[LockJar]   #{spec.name} has Jarfile" if ENV['DEBUG']
         spec_dsl = LockJar::Domain::GemDsl.create(spec, 'Jarfile')
-        LockJar::Domain::DslMerger(dsl, spec_dsl, [group.to_s]).merge
+        LockJar::Domain::DslMerger.new(dsl, spec_dsl, [group.to_s]).merge
       end
     end
   end

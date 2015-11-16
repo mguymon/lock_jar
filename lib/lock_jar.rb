@@ -82,6 +82,7 @@ module LockJar
         Runtime.instance.load(lockfile, groups, opts, &blk)
       else
         puts 'LockJar#load has been disabled'
+        []
       end
     end
 
@@ -107,6 +108,7 @@ module LockJar
         Runtime.instance.lock(jarfile, opts, &blk)
       else
         puts 'LockJar#lock has been disabled'
+        []
       end
     end
 

@@ -40,7 +40,7 @@ module LockJar
     end
 
     def lock(jarfile_or_dsl, opts = {}, &blk)
-      Lock.new(self, jarfile_or_dsl, opts, &blk).lock
+      Lock.new(self).lock(jarfile_or_dsl, opts, &blk)
     end
 
     def opts

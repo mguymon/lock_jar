@@ -62,7 +62,7 @@ module LockJar
         artifacts = Hash.new { |hash, key| hash[key] = [] }
 
         from_dsl.artifacts.each do |group, group_artifacts|
-          next if restrict && restrict.include?(group)
+          next if restrict && !restrict.include?(group)
           artifacts[group] += into_dsl.artifacts[group] || []
           group_artifacts.each do |art|
             artifacts[group] << art unless artifacts[group].include? art
