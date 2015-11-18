@@ -6,3 +6,11 @@ engines:
     checks:
       Rubocop/Rails/Output:
         enabled: false
+ratings:
+   paths:
+   - lib/**
+exclude_paths:
+- spec/**/*
+- vendor/**/*
+- tmp/**/*
+- target/**/*
