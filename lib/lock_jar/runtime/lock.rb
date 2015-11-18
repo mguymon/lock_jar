@@ -3,9 +3,9 @@ require 'delegate'
 module LockJar
   #
   class Runtime
-    # rubocop:disable ClassLength
+    #
     class Lock < SimpleDelegator
-      attr_accessor :jarfile, :lockfile
+      attr_accessor :jarfile, :lockfile, :opts
 
       def initialize(runtime)
         super(runtime)
@@ -14,25 +14,9 @@ module LockJar
       end
 
       def lock(jarfile_or_dsl, opts = {}, &blk)
-        opts = { download: true }.merge(opts)
+        @opts = { download: true }.merge(opts)
 
-        if jarfile_or_dsl
-          if jarfile_or_dsl.is_a? LockJar::Domain::Dsl
-            @jarfile = jarfile_or_dsl
-          else
-            @jarfile = LockJar::Domain::JarfileDsl.create(jarfile_or_dsl)
-          end
-        end
-
-        unless blk.nil?
-          dsl = LockJar::Domain::Dsl.create(&blk)
-
-          if jarfile
-            @jarfile = LockJar::Domain::DslMerger.new(jarfile, dsl).merge
-          else
-            @jarfile = dsl
-          end
-        end
+        create_dsl!(jarfile_or_dsl, &blk)
 
         apply_repositories!
 
@@ -45,20 +29,37 @@ module LockJar
         artifacts = jarfile.artifacts.values.flatten
         apply_artifacts!(artifacts) unless artifacts.empty?
 
-        lockfile.write(opts[:lockfile] || 'Jarfile.lock')
+        lockfile.write(@opts[:lockfile] || 'Jarfile.lock')
 
         lockfile
       end
 
       private
 
+      def create_dsl!(jarfile_or_dsl, &blk)
+        if jarfile_or_dsl
+          if jarfile_or_dsl.is_a? LockJar::Domain::Dsl
+            @jarfile = jarfile_or_dsl
+          else
+            @jarfile = LockJar::Domain::JarfileDsl.create(jarfile_or_dsl)
+          end
+        end
+
+        return @jarfile if blk.nil?
+
+        if @jarfile
+          @jarfile = LockJar::Domain::DslMerger.new(
+            jarfile, LockJar::Domain::Dsl.create(&blk)).merge
+        else
+          @jarfile = LockJar::Domain::Dsl.create(&blk)
+        end
+      end
+
       # rubocop:disable Metrics/AbcSize
       def apply_artifacts!(artifacts)
-
         # Build the dependencies_graph hash in the resolver
         resolver(opts).resolve(
-          artifacts.select(&:resolvable?).map(&:to_dep),
-          opts[:download] == true
+          artifacts.select(&:resolvable?).map(&:to_dep), opts[:download] == true
         )
 
         jarfile.artifacts.each do |group_name, group_artifacts|
@@ -81,8 +82,7 @@ module LockJar
             group['dependencies'].delete_if { |dep| dep =~ /#{exclude}/ }
           end if lockfile.excludes
 
-          group['dependencies'].sort!
-          group['dependencies'].uniq!
+          group['dependencies'] = group['dependencies'].sort.uniq
 
           group.delete 'locals' if group['locals'].empty?
 
@@ -111,6 +111,7 @@ module LockJar
           lockfile.remote_repositories += repos.to_a if repos
         end
 
+        # Add remote repos to the resolver and the lockfile
         jarfile.remote_repositories.each do |repo|
           resolver(opts).add_remote_repository(repo)
           lockfile.remote_repositories << repo
@@ -147,6 +148,5 @@ module LockJar
         graph.values.flat_map { |next_step| deps += dependency_merge(next_step) }
       end
     end
-    # rubocop:enable ClassLength
   end
 end
