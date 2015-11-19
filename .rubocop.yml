@@ -4,6 +4,8 @@ AllCops:
   Exclude:
     - 'tmp/**/*'
     - 'target/**/*'
+    - 'vendor/**/*'
+    - 'spec/fixtures/**/*'
 
 Metrics/LineLength:
   Max: 100
