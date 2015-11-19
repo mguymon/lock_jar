@@ -18,6 +18,8 @@ require 'lock_jar/resolver'
 require 'lock_jar/runtime'
 require 'lock_jar/version'
 require 'lock_jar/domain/lockfile'
+require 'lock_jar/domain/jarfile_dsl'
+require 'lock_jar/domain/gem_dsl'
 require 'lock_jar/domain/dsl'
 
 #
@@ -124,16 +126,19 @@ module LockJar
     # Add a Jarfile to be included when LockJar.lock_registered_jarfiles is called.
     #
     # @param [String] jarfile path to register
+    # @param [GemSpec] gem spec if the Jarfile is from a gem
     # @return [Array] All registered jarfiles
-    def register_jarfile(jarfile, spec = nil)
+    def register_jarfile(jarfile, gem_spec = nil)
       fail "Jarfile not found: #{jarfile}" unless File.exist? jarfile
-      registered_jarfiles[jarfile] = spec
+      registered_jarfiles[jarfile] = gem_spec
     end
 
+    # Clear all registered jarfiles
     def reset_registered_jarfiles
       @registered_jarfiles = {}
     end
 
+    # Hash of registered jarfiles
     def registered_jarfiles
       @registered_jarfiles ||= {}
     end

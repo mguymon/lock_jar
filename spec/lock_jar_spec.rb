@@ -291,27 +291,58 @@ describe LockJar do
       LockJar.reset_registered_jarfiles
     end
 
-    it 'should work with no jarfiles' do
-      lockfile = "#{TEMP_DIR}/LRJJarfile1.lock"
-      File.unlink lockfile if File.exist? lockfile
-      result = LockJar.lock_registered_jarfiles lockfile: lockfile
-      result.should be_nil
-      File.exist?(lockfile).should be_false
+    let(:lock_registered_jarfiles) { LockJar.lock_registered_jarfiles lockfile: lockfile }
+
+    context 'with LRJJarfile1.lock' do
+      let(:lockfile) { "#{TEMP_DIR}/LRJJarfile1.lock" }
+
+      before do
+        File.unlink lockfile if File.exist? lockfile
+      end
+
+      it 'should work with no jarfiles' do
+        expect(lock_registered_jarfiles).to be_nil
+        expect(File).to_not exist(lockfile)
+      end
     end
 
-    it 'should merge all jarfiles' do
-      LockJar.register_jarfile 'spec/fixtures/Jarfile'
-      LockJar.register_jarfile 'spec/fixtures/Jarfile2'
-      lockfile = "#{TEMP_DIR}/LRJJarfile2.lock"
-      File.unlink lockfile if File.exist? lockfile
-      result = LockJar.lock_registered_jarfiles lockfile: lockfile
-      artifacts = result.to_hash['groups']['default']['artifacts'].flat_map(&:keys)
-      artifacts.should eq %w(
-        jar:org.apache.mina:mina-core:jar:2.0.4
-        pom:spec/pom.xml
-        jar:org.eclipse.jetty:jetty-servlet:jar:8.1.3.v20120416
-      )
-      File.exist?(lockfile).should be_true
+    context 'with multiple lockfiles' do
+      let(:lockfile) { "#{TEMP_DIR}/LRJJarfile2.lock" }
+
+      before do
+        LockJar.register_jarfile 'spec/fixtures/Jarfile'
+        LockJar.register_jarfile 'spec/fixtures/Jarfile2'
+        File.unlink lockfile if File.exist? lockfile
+      end
+
+      it 'should dependencies from all jarfiles' do
+        artifacts = lock_registered_jarfiles.to_hash['groups']['default']['artifacts'].flat_map(&:keys)
+        artifacts.should eq %w(
+          jar:org.apache.mina:mina-core:jar:2.0.4
+          pom:spec/pom.xml
+          jar:org.eclipse.jetty:jetty-servlet:jar:8.1.3.v20120416
+        )
+        expect(File).to exist(lockfile)
+      end
+    end
+
+    context 'with gem lockfiles' do
+      let(:lockfile) { "#{TEMP_DIR}/Jarfile.lock" }
+      let(:gem_spec) { Gem::Specification.find_by_name('jarfile_gem') }
+      let(:lock_registered_jarfiles) { LockJar.lock_registered_jarfiles lockfile: lockfile }
+
+      before do
+        LockJar.register_jarfile File.join(gem_spec.full_gem_path, 'Jarfile'), gem_spec
+        File.unlink lockfile if File.exist? lockfile
+      end
+
+      it 'should have gem dependencies' do
+        artifacts = lock_registered_jarfiles.to_hash['groups']['default']['artifacts'].flat_map(&:keys)
+        artifacts.should eq %w(
+          jar:commons-lang:commons-lang:jar:2.4
+        )
+        expect(File).to exist(lockfile)
+      end
     end
   end
 

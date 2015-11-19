@@ -3,7 +3,10 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in lock_jar.gemspec
 gemspec
 
-gem 'codeclimate-test-reporter', group: :test, require: nil
+group :test do
+  gem 'codeclimate-test-reporter', require: nil
+  gem 'jarfile_gem', path: 'spec/fixtures/jarfile_gem'
+end
 
 group :development do
   gem 'guard-rspec', require: false

@@ -8,7 +8,7 @@ describe LockJar::Domain::GemDsl do
     end
 
     it 'should create from a block' do
-      jarfile = LockJar::Domain::GemDsl.create(spec, 'Jarfile') do
+      jarfile = LockJar::Domain::GemDsl.create(spec, File.join(spec.gem_dir, 'Jarfile')) do
         pom 'pom.xml'
       end
 

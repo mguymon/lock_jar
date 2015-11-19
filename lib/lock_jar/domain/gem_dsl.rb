@@ -28,7 +28,6 @@ module LockJar
           builder = new
           builder.gem_dir = spec.gem_dir
 
-          jarfile = File.join(spec.gem_dir, jarfile)
           builder.file_path = "gem:#{spec.name}:Jarfile.lock"
 
           evaluate(builder, jarfile)

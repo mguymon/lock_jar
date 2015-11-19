@@ -56,11 +56,11 @@ module LockJar
 
         jarfile_opt = opts.find { |option| option.is_a? String }
 
-        jarfile = jarfile_opt || 'Jarfile'
+        jarfile = File.expand_path(jarfile_opt || 'Jarfile')
 
         # load local Jarfile
         if File.exist?(jarfile)
-          dsl = LockJar::Domain::JarfileDsl.create(File.expand_path(jarfile))
+          dsl = LockJar::Domain::JarfileDsl.create(jarfile)
 
         # Create new Dsl
         else
@@ -89,7 +89,7 @@ module LockJar
         return unless File.exist?(jarfile)
 
         puts "[LockJar]   #{spec.name} has Jarfile" if ENV['DEBUG']
-        spec_dsl = LockJar::Domain::GemDsl.create(spec, 'Jarfile')
+        spec_dsl = LockJar::Domain::GemDsl.create(spec, jarfile)
         LockJar::Domain::DslMerger.new(dsl, spec_dsl, [group.to_s]).merge
       end
     end
