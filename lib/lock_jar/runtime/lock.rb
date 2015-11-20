@@ -14,7 +14,6 @@ module LockJar
       end
 
       def lock(jarfile_or_dsl, opts = {}, &blk)
-
         @opts = { download: true }.merge(opts)
 
         create_dsl!(jarfile_or_dsl, &blk)
@@ -105,7 +104,7 @@ module LockJar
       end
 
       def apply_repositories!
-        lockfile.local_repository = opts[:local_repo] || jarfile.local_repository
+        lockfile.local_repository = opts[:local_repo] ||= jarfile.local_repository
 
         if jarfile.clear_repositories
           resolver(opts).clear_remote_repositories

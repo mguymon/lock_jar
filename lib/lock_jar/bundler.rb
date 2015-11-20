@@ -71,12 +71,12 @@ module LockJar
           puts "[LockJar] Group #{group}:" if ENV['DEBUG']
 
           definition.specs_for([group]).each do |spec|
-            if File.exist? File.join(spec.gem_dir, 'Jarfile')
-              merged_dsl = merge_gem_dsl(dsl, spec, group)
-              if merged_dsl
-                gems_with_jars << "gem:#{spec.name}"
-                dsl = merged_dsl
-              end
+            next unless File.exist? File.join(spec.gem_dir, 'Jarfile')
+
+            merged_dsl = merge_gem_dsl(dsl, spec, group)
+            if merged_dsl
+              gems_with_jars << "gem:#{spec.name}"
+              dsl = merged_dsl
             end
           end
         end
