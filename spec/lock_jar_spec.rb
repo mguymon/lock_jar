@@ -287,15 +287,14 @@ describe LockJar do
   end
 
   describe '#lock_registered_jarfiles' do
+    let(:lockfile) { "#{TEMP_DIR}/Jarfile.lock" }
+    let(:lock_registered_jarfiles) { LockJar.lock_registered_jarfiles lockfile: lockfile }
+
     after do
       LockJar.reset_registered_jarfiles
     end
 
-    let(:lock_registered_jarfiles) { LockJar.lock_registered_jarfiles lockfile: lockfile }
-
     context 'with LRJJarfile1.lock' do
-      let(:lockfile) { "#{TEMP_DIR}/LRJJarfile1.lock" }
-
       before do
         File.unlink lockfile if File.exist? lockfile
       end
@@ -307,8 +306,6 @@ describe LockJar do
     end
 
     context 'with multiple lockfiles' do
-      let(:lockfile) { "#{TEMP_DIR}/LRJJarfile2.lock" }
-
       before do
         LockJar.register_jarfile 'spec/fixtures/Jarfile'
         LockJar.register_jarfile 'spec/fixtures/Jarfile2'
@@ -327,12 +324,11 @@ describe LockJar do
     end
 
     context 'with gem lockfiles' do
-      let(:lockfile) { "#{TEMP_DIR}/Jarfile.lock" }
       let(:gem_spec) { Gem::Specification.find_by_name('jarfile_gem') }
       let(:lock_registered_jarfiles) { LockJar.lock_registered_jarfiles lockfile: lockfile }
 
       before do
-        LockJar.register_jarfile File.join(gem_spec.full_gem_path, 'Jarfile'), gem_spec
+        LockJar.register_jarfile 'spec/fixtures/jarfile_gem/Jarfile', gem_spec
         File.unlink lockfile if File.exist? lockfile
       end
 

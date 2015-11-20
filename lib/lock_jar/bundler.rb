@@ -10,41 +10,18 @@ module LockJar
   #
   class Bundler
     class << self
-      attr_accessor :skip_lock
+      # Patch Bundler::Definition.to_lock to run LockJar::Bundler.lock!
+      def lock_with_bundler(*opts)
+        ::Bundler::Definition.class_eval do
+          alias_method :_lockjar_extended_to_lock, :to_lock
+          define_method(:to_lock) do
+            result = _lockjar_extended_to_lock
 
-      def load(*groups)
-        return if groups.empty? || !File.exist?('Jarfile.lock')
+            LockJar::Bundler.lock!(opts)
 
-        lockfile = LockJar::Domain::Lockfile.read('Jarfile.lock')
-
-        # expand merged paths to include gem base path
-        unless lockfile.merged.empty?
-          lockfile.merged = LockJar::Bundler.expand_gem_paths(lockfile.merged)
-        end
-
-        LockJar.load(lockfile, groups)
-
-        puts(
-          '[LockJar] Loaded Jars for #{groups.inspect}: '\
-          "#{LockJar::Registry.instance.loaded_jars.inspect}"
-        ) if ENV['DEBUG']
-      end
-
-      def expand_gem_paths(merged)
-        merged_gem_paths = []
-        Gem.path.each do |gem_root|
-          merged.each do |merge|
-            next unless merge.start_with? 'gem:'
-
-            # merged gems follow the notation: gem:gemname:path
-            gem_path = merge.gsub(/^gem:.+:/, '')
-            gem_path = File.join(gem_root, gem_path)
-
-            merged_gem_paths << gem_path if File.exist? gem_path
+            result
           end
         end
-
-        merged_gem_paths
       end
 
       # Create a lock file from bundled gems
@@ -96,65 +73,6 @@ module LockJar
         spec_dsl = LockJar::Domain::GemDsl.create(spec, jarfile)
         LockJar::Domain::DslMerger.new(dsl, spec_dsl, [group.to_s]).merge
       end
-    end
-  end
-end
-
-# Patch Bundler module to allow LockJar to lock and load when Bundler is run
-module Bundler
-  class << self
-    alias_method :_lockjar_extended_require, :require
-    def require(*groups)
-      LockJar::Bundler.load(*groups)
-
-      LockJar::Bundler.skip_lock = true
-
-      _lockjar_extended_require
-    end
-
-    alias_method :_lockjar_extended_setup, :setup
-    def setup(*groups)
-      LockJar::Bundler.load(*groups)
-
-      LockJar::Bundler.skip_lock = true
-
-      _lockjar_extended_setup
-    end
-  end
-
-  # Patch Bundler::Runtime.require and Bundler::Runtime.setup to execute
-  # Lockjar::Bundler.load
-  class Runtime
-    alias_method :_lockjar_extended_require, :require
-    def require(*groups)
-      LockJar::Bundler.load(*groups)
-
-      LockJar::Bundler.skip_lock = true
-
-      _lockjar_extended_require
-    end
-
-    alias_method :_lockjar_extended_setup, :setup
-    def setup(*groups)
-      LockJar::Bundler.load(*groups)
-
-      LockJar::Bundler.skip_lock = true
-
-      _lockjar_extended_setup
-    end
-  end
-
-  # Patch Bundler::Definition.to_lock to run LockJar::Bundler.lock!
-  class Definition
-    alias_method :_lockjar_extended_to_lock, :to_lock
-    def to_lock
-      result = _lockjar_extended_to_lock
-
-      return result if LockJar::Bundler.skip_lock
-
-      LockJar::Bundler.lock!
-
-      result
     end
   end
 end
