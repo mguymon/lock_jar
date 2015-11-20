@@ -23,5 +23,13 @@ describe LockJar::Bundler do
       expect(LockJar::Bundler).to receive(:lock!).with([{ test: :arg }])
       ::Bundler::CLI::Install.new({}).run
     end
+
+    context 'with Bundler.setup' do
+      it 'should not call lock!' do
+        LockJar::Bundler.lock_with_bundler(test: :arg)
+        expect(LockJar::Bundler).to_not receive(:lock!).with([{ test: :arg }])
+        ::Bundler::setup
+      end
+    end
   end
 end

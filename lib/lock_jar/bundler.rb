@@ -10,18 +10,32 @@ module LockJar
   #
   class Bundler
     class << self
+      attr_accessor :skip_lock
+
       # Patch Bundler::Definition.to_lock to run LockJar::Bundler.lock!
       def lock_with_bundler(*opts)
+        next if @lock_with_bundler_patched
+
         ::Bundler::Definition.class_eval do
           alias_method :_lockjar_extended_to_lock, :to_lock
-          define_method(:to_lock) do
+          define_method(:to_lock) do |*args|
             result = _lockjar_extended_to_lock
 
-            LockJar::Bundler.lock!(opts)
+            LockJar::Bundler.lock!(opts) unless LockJar::Bundler.skip_lock
 
             result
           end
         end
+
+        ::Bundler::Runtime.class_eval do
+          alias_method :_lockjar_extended_setup, :setup
+          define_method(:setup) do |*groups|
+            LockJar::Bundler.skip_lock = true
+            _lockjar_extended_setup
+          end
+        end
+
+        @lock_with_bundler_patched = true
       end
 
       # Create a lock file from bundled gems
