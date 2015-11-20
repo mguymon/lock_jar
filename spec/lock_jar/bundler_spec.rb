@@ -7,28 +7,27 @@ describe LockJar::Bundler do
   include Spec::Helpers
 
   describe '.lock!' do
+    let(:bundler) do
+      Class.new { attr_accessor :setup }.new
+    end
+
     before do
       remove_file('Jarfile.lock')
-      LockJar::Bundler.lock!('spec/fixtures/Jarfile')
     end
 
-    it 'should create Jarfile.lock' do
-      expect(File).to exist('Jarfile.lock')
-    end
-  end
-
-  describe '.lock_with_bundler' do
-    it 'should call lock! from Bundler' do
-      LockJar::Bundler.lock_with_bundler(test: :arg)
-      expect(LockJar::Bundler).to receive(:lock!).with([{ test: :arg }])
-      ::Bundler::CLI::Install.new({}).run
+    context 'when Bundler.install has run' do
+      it 'should create Jarfile.lock' do
+        LockJar::Bundler.lock!(bundler, 'spec/fixtures/Jarfile')
+        expect(File).to exist('Jarfile.lock')
+      end
     end
 
-    context 'with Bundler.setup' do
-      it 'should not call lock!' do
-        LockJar::Bundler.lock_with_bundler(test: :arg)
-        expect(LockJar::Bundler).to_not receive(:lock!).with([{ test: :arg }])
-        ::Bundler::setup
+    context 'when Bundler.setup has run' do
+      before { bundler.setup = true }
+
+      it 'should create Jarfile.lock' do
+        LockJar::Bundler.lock!(bundler, 'spec/fixtures/Jarfile')
+        expect(File).to_not exist('Jarfile.lock')
       end
     end
   end

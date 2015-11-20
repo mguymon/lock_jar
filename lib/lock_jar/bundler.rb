@@ -10,40 +10,13 @@ module LockJar
   #
   class Bundler
     class << self
-      attr_accessor :skip_lock
-
-      # Patch Bundler::Definition.to_lock to run LockJar::Bundler.lock!
-      def lock_with_bundler(*opts)
-        next if @lock_with_bundler_patched
-
-        ::Bundler::Definition.class_eval do
-          alias_method :_lockjar_extended_to_lock, :to_lock
-          define_method(:to_lock) do |*args|
-            result = _lockjar_extended_to_lock
-
-            LockJar::Bundler.lock!(opts) unless LockJar::Bundler.skip_lock
-
-            result
-          end
-        end
-
-        ::Bundler::Runtime.class_eval do
-          alias_method :_lockjar_extended_setup, :setup
-          define_method(:setup) do |*groups|
-            LockJar::Bundler.skip_lock = true
-            _lockjar_extended_setup
-          end
-        end
-
-        @lock_with_bundler_patched = true
-      end
-
       # Create a lock file from bundled gems
-      def lock!(*opts)
-        definition = ::Bundler.definition
+      #
+      # rubocop:disable Metrics/PerceivedComplexity
+      def lock!(bundler, *opts)
+        return unless bundler.instance_variable_get('@setup').nil?
 
         dsl = nil
-        gems_with_jars = []
 
         jarfile_opt = opts.find { |option| option.is_a? String }
 
@@ -58,10 +31,11 @@ module LockJar
           dsl = LockJar::Domain::Dsl.new
         end
 
-        definition.groups.each do |group|
+        gems_with_jars = []
+        ::Bundler.definition.groups.each do |group|
           puts "[LockJar] Group #{group}:" if ENV['DEBUG']
 
-          definition.specs_for([group]).each do |spec|
+          ::Bundler.definition.specs_for([group]).each do |spec|
             next unless File.exist? File.join(spec.gem_dir, 'Jarfile')
 
             merged_dsl = merge_gem_dsl(dsl, spec, group)
@@ -75,6 +49,7 @@ module LockJar
         puts "[LockJar] Locking Jars for: #{gems_with_jars.inspect}"
         LockJar.lock(*([dsl] + opts))
       end
+      # rubocop:enable Metrics/PerceivedComplexity
 
       private
 
