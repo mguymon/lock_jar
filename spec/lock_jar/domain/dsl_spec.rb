@@ -15,7 +15,7 @@ describe LockJar::Domain::Dsl do
       expect(jarfile.artifacts['development'][0]).to eq LockJar::Domain::Jar.new('com.typesafe:config:jar:0.5.0')
       jarfile.artifacts['development'][1].should be_nil
 
-      expect(jarfile.artifacts['test'][0]).to eq LockJar::Domain::Jar.new('junit:junit:jar:4.10')
+      expect(jarfile.artifacts['test'][0]).to eq LockJar::Domain::Jar.new('org.testng:testng:jar:6.9.10')
       jarfile.artifacts['test'][1].should be_nil
 
       jarfile.remote_repositories.should eql(['http://mirrors.ibiblio.org/pub/mirrors/maven2'])
@@ -35,7 +35,7 @@ describe LockJar::Domain::Dsl do
         end
 
         group 'test' do
-          jar 'junit:junit:jar:4.10'
+          jar 'org.testng:testng:jar:6.9.10'
         end
       end
 
@@ -43,7 +43,7 @@ describe LockJar::Domain::Dsl do
       expect(block.artifacts).to eq(
         'default' => [LockJar::Domain::Jar.new('org.apache.mina:mina-core:2.0.4'), LockJar::Domain::Local.new('spec/fixtures/naether-0.13.0.jar'), LockJar::Domain::Pom.new('spec/pom.xml')],
         'pirate' => [LockJar::Domain::Jar.new('org.apache.tomcat:servlet-api:jar:6.0.35')],
-        'test' => [LockJar::Domain::Jar.new('junit:junit:jar:4.10')]
+        'test' => [LockJar::Domain::Jar.new('org.testng:testng:jar:6.9.10')]
       )
       block.remote_repositories.should eql(['http://repository.jboss.org/nexus/content/groups/public-jboss'])
     end

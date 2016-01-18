@@ -15,7 +15,7 @@ describe LockJar::Domain::DslMerger do
       end
 
       group 'test' do
-        jar 'junit:junit:jar:4.10'
+        jar 'org.testng:testng:jar:6.9.10'
       end
     end
 

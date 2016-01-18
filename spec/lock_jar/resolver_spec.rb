@@ -18,8 +18,8 @@ describe LockJar::Resolver do
   end
 
   it 'should return local paths for notations' do
-    expect(@resolver.to_local_paths(['junit:junit:jar:4.10'])).to(
-      eql([File.expand_path("#{TEMP_DIR}/test-repo/junit/junit/4.10/junit-4.10.jar")])
+    expect(@resolver.to_local_paths(['org.testng:testng:jar:6.9.10'])).to(
+      eql([File.expand_path("#{TEMP_DIR}/test-repo/org/testng/testng/6.9.10/testng-6.9.10.jar")])
     )
   end
 end

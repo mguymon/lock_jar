@@ -51,7 +51,7 @@ methods:
     end
 
     group 'test' do
-      jar 'junit:junit:jar:4.10', :group => 'test'
+      jar 'junit:junit:jar:4.12', :group => 'test'
     end
 
 ### Resolving dependencies
@@ -90,7 +90,7 @@ The _Jarfile.lock_ generated is a YAML file containing information on how to han
         - ch.qos.logback:logback-classic:jar:0.9.24
         - ch.qos.logback:logback-core:jar:0.9.24
         - com.metapossum:metapossum-scanner:jar:1.0
-        - com.slackworks:modelcitizen:jar:0.2.2
+        - com.tobedevoured.modelcitizen:core:jar:0.8.1
         - commons-beanutils:commons-beanutils:jar:1.8.3
         - commons-io:commons-io:jar:1.4
         - commons-lang:commons-lang:jar:2.6
@@ -123,10 +123,10 @@ The _Jarfile.lock_ generated is a YAML file containing information on how to han
             transitive: {}
       test:
         dependencies:
-        - junit:junit:jar:4.10
+        - junit:junit:jar:4.12
         - org.hamcrest:hamcrest-core:jar:1.1
         artifacts:
-        - jar:junit:junit:jar:4.10:
+        - jar:junit:junit:jar:4.12:
             transitive:
               org.hamcrest:hamcrest-core:jar:1.1: {}
     ...
@@ -301,7 +301,7 @@ Sample buildfile with LockJar
     lock_jar do
 
          group 'test' do
-           jar 'junit:junit:jar:4.10'
+           jar 'junit:junit:jar:4.12'
          end
     end
 
