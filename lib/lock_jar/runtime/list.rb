@@ -10,13 +10,8 @@ module LockJar
         with_locals = { with_locals: true }.merge(opts).delete(:with_locals)
 
         if lockfile_or_path
-          if lockfile_or_path.is_a? LockJar::Domain::Lockfile
-            lockfile = lockfile_or_path
-          elsif lockfile_or_path
-            lockfile = LockJar::Domain::Lockfile.read(lockfile_or_path)
-          end
-
-          dependencies = lockfile_dependencies(lockfile, groups, with_locals)
+          lockfile = build_lockfile(lockfile_or_path)
+          dependencies = dependencies_from_lockfile(lockfile, groups, with_locals, opts)
           maps = lockfile.maps
         end
 
@@ -41,15 +36,42 @@ module LockJar
 
         dependencies = resolver(opts).resolve(dependencies) if opts[:resolve]
 
-        if opts[:local_paths]
-          opts.delete(:local_paths) # remove list opts so resolver is not reset
-          resolver(opts).to_local_paths(dependencies)
+        # local_paths and !resolve are mutualally exclusive
+        if opts[:local_paths] && opts[:resolve] != false
+          # remove local_paths opt soresolver is not reset
+          resolver(opts.reject { |k| k == :local_paths }).to_local_paths(dependencies)
 
         else
           dependencies
         end
       end
       # rubocop:enable Metrics/PerceivedComplexity, MethodLength
+
+      def build_lockfile(lockfile_or_path)
+        if lockfile_or_path.is_a? LockJar::Domain::Lockfile
+          lockfile_or_path
+        elsif lockfile_or_path
+          LockJar::Domain::Lockfile.read(lockfile_or_path)
+        end
+      end
+
+      def dependencies_from_lockfile(lockfile, groups, with_locals, opts)
+        # Only list root dependencies
+        if opts[:resolve] == false
+          lockfile_dependencies(lockfile, groups, with_locals) do |group|
+            group['artifacts'].flat_map(&:keys).map do |notation|
+              # remove the prefix from artifacts, such as jar: or pom:
+              notation.gsub(/^.+?:/, '')
+            end
+          end
+
+        # List all dependencies
+        else
+          lockfile_dependencies(lockfile, groups, with_locals) do |group|
+            group['dependencies']
+          end
+        end
+      end
     end
   end
 end

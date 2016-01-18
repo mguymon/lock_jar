@@ -6,6 +6,8 @@ require 'naether'
 describe LockJar do
   include Spec::Helpers
 
+  let(:local_repo) { "#{TEMP_DIR}/test-repo" }
+
   before do
     LockJar::Runtime.instance.reset!
 
@@ -19,7 +21,7 @@ describe LockJar do
   describe '#lock' do
     context 'creates a lockfile' do
       let(:lockfile) do
-        LockJar.lock(lockjar_source, local_repo: "#{TEMP_DIR}/test-repo", lockfile: "#{TEMP_DIR}/Jarfile.lock")
+        LockJar.lock(lockjar_source, local_repo: local_repo, lockfile: "#{TEMP_DIR}/Jarfile.lock")
         expect(File).to exist("#{TEMP_DIR}/Jarfile.lock")
         LockJar.read("#{TEMP_DIR}/Jarfile.lock")
       end
@@ -196,7 +198,7 @@ describe LockJar do
 
       context 'from a block' do
         let(:lockfile) do
-          LockJar.lock(local_repo: "#{TEMP_DIR}/test-repo", lockfile: "#{TEMP_DIR}/NoRepoJarfile.lock") do
+          LockJar.lock(local_repo: local_repo, lockfile: "#{TEMP_DIR}/NoRepoJarfile.lock") do
             jar 'org.eclipse.jetty:jetty-servlet:8.1.3.v20120416'
           end
 
@@ -343,10 +345,15 @@ describe LockJar do
   end
 
   describe '#list' do
-    it 'should list jars' do
-      LockJar.lock('spec/fixtures/Jarfile', local_repo: "#{TEMP_DIR}/test-repo", lockfile: "#{TEMP_DIR}/Jarfile.lock")
+    let(:lock) do
+      LockJar.lock('spec/fixtures/Jarfile', local_repo: local_repo, lockfile: "#{TEMP_DIR}/Jarfile.lock")
+    end
+    let(:jars) do
+      lock
+      LockJar.list("#{TEMP_DIR}/Jarfile.lock", ['default', 'development', 'bad scope'], local_repo: local_repo)
+    end
 
-      jars = LockJar.list("#{TEMP_DIR}/Jarfile.lock", ['default', 'development', 'bad scope'], local_repo: "#{TEMP_DIR}/test-repo")
+    it 'should list jars' do
       jars.should eql(
         %w(
           ch.qos.logback:logback-classic:jar:0.9.24 ch.qos.logback:logback-core:jar:0.9.24
@@ -365,8 +372,8 @@ describe LockJar do
         jar 'junit:junit:4.10'
       end
 
-      LockJar.lock(dsl, local_repo: "#{TEMP_DIR}/test-repo", lockfile: "#{TEMP_DIR}/ListJarfile.lock")
-      paths = LockJar.list("#{TEMP_DIR}/ListJarfile.lock", local_repo: "#{TEMP_DIR}/test-repo")
+      LockJar.lock(dsl, local_repo: local_repo, lockfile: "#{TEMP_DIR}/ListJarfile.lock")
+      paths = LockJar.list("#{TEMP_DIR}/ListJarfile.lock", local_repo: local_repo)
       paths.should eql([TEMP_DIR, 'org.hamcrest:hamcrest-core:jar:1.1'])
     end
 
@@ -376,9 +383,24 @@ describe LockJar do
         jar 'junit:junit:4.10'
       end
 
-      LockJar.lock(dsl, local_repo: "#{TEMP_DIR}/test-repo", lockfile: "#{TEMP_DIR}/ListJarfile.lock")
-      paths = LockJar.list("#{TEMP_DIR}/ListJarfile.lock", local_repo: "#{TEMP_DIR}/test-repo")
+      LockJar.lock(dsl, local_repo: local_repo, lockfile: "#{TEMP_DIR}/ListJarfile.lock")
+      paths = LockJar.list("#{TEMP_DIR}/ListJarfile.lock", local_repo: local_repo)
       paths.should eql([TEMP_DIR, 'org.hamcrest:hamcrest-core:jar:1.1'])
+    end
+
+    context 'with resolve: false' do
+      let(:jars) do
+        lock
+        LockJar.list("#{TEMP_DIR}/Jarfile.lock", local_repo: local_repo, resolve: false)
+      end
+
+      it 'should only list root dependencies' do
+        jars.should eql(
+          %w(
+            org.apache.mina:mina-core:jar:2.0.4 spec/pom.xml spec/fixtures/naether-0.13.0.jar
+          )
+        )
+      end
     end
   end
 
@@ -418,8 +440,8 @@ describe LockJar do
     it 'by Jarfile.lock' do
       expect_java_class_not_loaded('org.apache.mina.core.IoUtil')
 
-      LockJar.lock('spec/fixtures/Jarfile', local_repo: "#{TEMP_DIR}/test-repo", lockfile: "#{TEMP_DIR}/Jarfile.lock")
-      jars = LockJar.load("#{TEMP_DIR}/Jarfile.lock", ['default'], local_repo: "#{TEMP_DIR}/test-repo")
+      LockJar.lock('spec/fixtures/Jarfile', local_repo: local_repo, lockfile: "#{TEMP_DIR}/Jarfile.lock")
+      jars = LockJar.load("#{TEMP_DIR}/Jarfile.lock", ['default'], local_repo: local_repo)
       LockJar::Registry.instance.lockfile_registered?("#{TEMP_DIR}/Jarfile.lock").should be_false
 
       expect(jars).to eql(expected_jars)
