@@ -251,11 +251,13 @@ describe LockJar do
       LockJar.lock('spec/fixtures/Jarfile', download_artifacts: false, local_repo: "#{TEMP_DIR}/test-repo-install", lockfile: "#{TEMP_DIR}/Jarfile.lock")
 
       jars = LockJar.install("#{TEMP_DIR}/Jarfile.lock", ['default'], local_repo: "#{TEMP_DIR}/test-repo-install")
-      jars.should eql([
-        File.expand_path("#{repo_path}/com/google/guava/guava/14.0.1/guava-14.0.1.jar"),
-        File.expand_path("#{repo_path}/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"),
-        File.expand_path("#{repo_path}/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar")
-      ])
+      expect(jars).to eql(
+        [
+          File.expand_path("#{repo_path}/com/google/guava/guava/14.0.1/guava-14.0.1.jar"),
+          File.expand_path("#{repo_path}/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar"),
+          File.expand_path("#{repo_path}/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar")
+        ]
+      )
     end
   end
 

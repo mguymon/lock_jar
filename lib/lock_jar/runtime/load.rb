@@ -17,12 +17,11 @@ module LockJar
           if lockfile_or_path.is_a? LockJar::Domain::Lockfile
             lockfile = lockfile_or_path
 
-          # check if lockfile path is already loaded
-          elsif LockJar::Registry.instance.lockfile_registered?(lockfile_or_path)
-            return
-
-          # convert lockfile path to a Lockfile instance
           else
+            # check if lockfile path is already loaded
+            return if LockJar::Registry.instance.lockfile_registered?(lockfile_or_path)
+
+            # convert lockfile path to a Lockfile instance
             lockfile = LockJar::Domain::Lockfile.read(lockfile_or_path)
           end
 

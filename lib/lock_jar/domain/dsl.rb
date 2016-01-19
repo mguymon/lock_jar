@@ -21,7 +21,7 @@ module LockJar
   module Domain
     #
     class Dsl
-      DEFAULT_GROUP = ['default']
+      DEFAULT_GROUP = ['default'].freeze
 
       attr_accessor :artifacts, :remote_repositories, :local_repository, :groups,
                     :maps, :excludes, :merged, :clear_repositories

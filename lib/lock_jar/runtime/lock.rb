@@ -38,11 +38,11 @@ module LockJar
 
       def create_dsl!(jarfile_or_dsl, &blk)
         if jarfile_or_dsl
-          if jarfile_or_dsl.is_a? LockJar::Domain::Dsl
-            @jarfile = jarfile_or_dsl
-          else
-            @jarfile = LockJar::Domain::JarfileDsl.create(jarfile_or_dsl)
-          end
+          @jarfile = if jarfile_or_dsl.is_a? LockJar::Domain::Dsl
+                       jarfile_or_dsl
+                     else
+                       LockJar::Domain::JarfileDsl.create(jarfile_or_dsl)
+                     end
         end
 
         return @jarfile if blk.nil?
@@ -132,7 +132,7 @@ module LockJar
           # iterate each dependency in Pom to map transitive dependencies
           transitive = {}
           artifact.notations.each do |notation|
-            transitive.merge!(notation => resolver(opts).dependencies_graph[notation])
+            transitive[notation] = resolver(opts).dependencies_graph[notation]
           end
           artifact_data['transitive'] = transitive
 
