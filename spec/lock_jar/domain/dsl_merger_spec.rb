@@ -15,7 +15,7 @@ describe LockJar::Domain::DslMerger do
       end
 
       group 'test' do
-        jar 'junit:junit:jar:4.10'
+        jar 'org.testng:testng:jar:6.9.10'
       end
     end
 
@@ -39,11 +39,13 @@ describe LockJar::Domain::DslMerger do
 
     dsl = LockJar::Domain::DslMerger.new(block1, block2).merge
 
-    expect(dsl.artifacts['default']).to eq([
-      LockJar::Domain::Jar.new('org.apache.mina:mina-core:2.0.4'),
-      LockJar::Domain::Pom.new('spec/pom.xml', %w(runtime compile)),
-      LockJar::Domain::Jar.new('compile-jar')
-    ])
+    expect(dsl.artifacts['default']).to eq(
+      [
+        LockJar::Domain::Jar.new('org.apache.mina:mina-core:2.0.4'),
+        LockJar::Domain::Pom.new('spec/pom.xml', %w(runtime compile)),
+        LockJar::Domain::Jar.new('compile-jar')
+      ]
+    )
     dsl.remote_repositories.should eql(['http://repository.jboss.org/nexus/content/groups/public-jboss', 'http://new-repo'])
   end
 end

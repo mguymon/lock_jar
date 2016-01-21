@@ -76,7 +76,7 @@ module LockJar
 
       groups.each do |group|
         next unless lockfile.groups[group.to_s]
-        dependencies += lockfile.groups[group.to_s]['dependencies']
+        dependencies += yield lockfile.groups[group.to_s]
 
         if with_locals
           locals = lockfile.groups[group.to_s]['locals']

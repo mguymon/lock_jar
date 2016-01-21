@@ -26,3 +26,6 @@ Style/PredicateName:
 
 Style/Lambda:
   Enabled: false
+
+Style/Alias:
+  Enabled: false

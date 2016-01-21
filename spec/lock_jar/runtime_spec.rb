@@ -5,7 +5,7 @@ describe LockJar::Runtime do
   describe '#load' do
     it 'should set local repo' do
       LockJar::Runtime.instance.load(nil, [], resolve: true, local_repo: TEST_REPO) do
-        jar 'junit:junit:4.10'
+        jar 'org.testng:testng:jar:6.9.10'
       end
 
       LockJar::Runtime.instance.current_resolver.naether.local_repo_path.should eql TEST_REPO

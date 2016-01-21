@@ -168,37 +168,35 @@ module LockJar
       args = args.reject { |arg| arg.is_a? String }
       lock(combined, *args, &blk)
     end
-  end
 
-  private
-
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def self.extract_args(type, args, &blk)
-    lockfile_or_path = nil
-    opts = {}
-    groups = ['default']
-    args.each do |arg|
-      case arg
-      when Hash
-        opts.merge!(arg)
-      when String
-        lockfile_or_path = arg
-      when LockJar::Domain::Lockfile
-        lockfile_or_path = arg if type == :lockfile
-      when LockJar::Domain::Dsl
-        lockfile_or_path = arg if type == :jarfile
-      when Array
-        groups = arg
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def extract_args(type, args, &blk)
+      lockfile_or_path = nil
+      opts = {}
+      groups = ['default']
+      args.each do |arg|
+        case arg
+        when Hash
+          opts.merge!(arg)
+        when String
+          lockfile_or_path = arg
+        when LockJar::Domain::Lockfile
+          lockfile_or_path = arg if type == :lockfile
+        when LockJar::Domain::Dsl
+          lockfile_or_path = arg if type == :jarfile
+        when Array
+          groups = arg
+        end
       end
-    end
-    if blk.nil? && lockfile_or_path.nil?
-      if type == :lockfile
-        lockfile_or_path = opts.fetch(:lockfile, 'Jarfile.lock')
-      elsif type == :jarfile
-        lockfile_or_path = 'Jarfile'
+      if blk.nil? && lockfile_or_path.nil?
+        if type == :lockfile
+          lockfile_or_path = opts.fetch(:lockfile, 'Jarfile.lock')
+        elsif type == :jarfile
+          lockfile_or_path = 'Jarfile'
+        end
       end
+      [lockfile_or_path, groups, opts]
     end
-    [lockfile_or_path, groups, opts]
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end

@@ -23,13 +23,13 @@ module LockJar
         jarfile = File.expand_path(jarfile_opt || 'Jarfile')
 
         # load local Jarfile
-        if File.exist?(jarfile)
-          dsl = LockJar::Domain::JarfileDsl.create(jarfile)
+        dsl = if File.exist?(jarfile)
+                LockJar::Domain::JarfileDsl.create(jarfile)
 
-        # Create new Dsl
-        else
-          dsl = LockJar::Domain::Dsl.new
-        end
+              # Create new Dsl
+              else
+                LockJar::Domain::Dsl.new
+              end
 
         gems_with_jars = []
         ::Bundler.definition.groups.each do |group|

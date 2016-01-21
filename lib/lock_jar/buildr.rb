@@ -22,7 +22,7 @@ module Buildr
 
   class << self
     def project_to_lockfile(project)
-      "#{project.name.gsub(/:/, '-')}.lock"
+      "#{project.name.tr(':', '-')}.lock"
     end
   end
 

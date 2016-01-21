@@ -14,9 +14,9 @@ ttp://maven.apache.org/maven-v4_0_0.xsd ">
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>com.slackworks</groupId>
-      <artifactId>modelcitizen</artifactId>
-      <version>0.2.2</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>14.0.1</version>
     </dependency>
     <dependency>
 			<groupId>org.jboss.unit</groupId>
@@ -24,11 +24,5 @@ ttp://maven.apache.org/maven-v4_0_0.xsd ">
 			<version>1.2.4</version>
       <scope>test</scope>
 		</dependency>
-	  <dependency>
-	      <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.8.2</version>
-          <scope>test</scope>
-	  </dependency>
   </dependencies>
 </project>

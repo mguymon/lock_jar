@@ -25,11 +25,9 @@ module LockJar
       attr_reader :type
 
       def <=>(other)
-        if other.is_a? Artifact
-          to_urn <=> other.to_urn
-        else
-          to_urn <=> other.to_s
-        end
+        return to_urn <=> other.to_urn if other.is_a? Artifact
+
+        to_urn <=> other.to_s
       end
 
       def resolvable?
@@ -104,11 +102,9 @@ module LockJar
 
       def <=>(other)
         if other.is_a? Pom
-          if to_urn == other.to_urn
-            return Set.new(scopes) <=> Set.new(other.scopes)
-          else
-            to_urn <=> other.to_urn
-          end
+          return Set.new(scopes) <=> Set.new(other.scopes) if to_urn == other.to_urn
+
+          to_urn <=> other.to_urn
         else
           super
         end

@@ -51,7 +51,7 @@ methods:
     end
 
     group 'test' do
-      jar 'junit:junit:jar:4.10', :group => 'test'
+      jar 'junit:junit:jar:4.12', :group => 'test'
     end
 
 ### Resolving dependencies
@@ -90,7 +90,7 @@ The _Jarfile.lock_ generated is a YAML file containing information on how to han
         - ch.qos.logback:logback-classic:jar:0.9.24
         - ch.qos.logback:logback-core:jar:0.9.24
         - com.metapossum:metapossum-scanner:jar:1.0
-        - com.slackworks:modelcitizen:jar:0.2.2
+        - com.tobedevoured.modelcitizen:core:jar:0.8.1
         - commons-beanutils:commons-beanutils:jar:1.8.3
         - commons-io:commons-io:jar:1.4
         - commons-lang:commons-lang:jar:2.6
@@ -123,10 +123,10 @@ The _Jarfile.lock_ generated is a YAML file containing information on how to han
             transitive: {}
       test:
         dependencies:
-        - junit:junit:jar:4.10
+        - junit:junit:jar:4.12
         - org.hamcrest:hamcrest-core:jar:1.1
         artifacts:
-        - jar:junit:junit:jar:4.10:
+        - jar:junit:junit:jar:4.12:
             transitive:
               org.hamcrest:hamcrest-core:jar:1.1: {}
     ...
@@ -146,7 +146,7 @@ The _Jarfile.lock_ generated is a YAML file containing information on how to han
 * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
   * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
   * **:local_paths** _[Boolean]_ converts the notations to paths of jars in the local repo
-  * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before returning list of jars
+  * **:resolve** _[Boolean]_ to `true` will make transitive dependences resolve before returning list of jars. Setting to `false` will list dependencies, excluding transitive dependencies.
 
 **LockJar.load(*args)**: Loads all dependencies to the classpath for groups from the Jarfile.lock. Default group is _default_. Default lock file is _Jarfile.lock_.
 * _[String]_ will set the Jarfile.lock, e.g. `'Better.lock'`
@@ -301,7 +301,7 @@ Sample buildfile with LockJar
     lock_jar do
 
          group 'test' do
-           jar 'junit:junit:jar:4.10'
+           jar 'junit:junit:jar:4.12'
          end
     end
 
@@ -337,7 +337,7 @@ to allow creation of a _Jarfile.lock_ when Bundler calls `install` and `update`.
     end
 
 You can optionally create a _Jarfile_ that will automatically be included when you `bundle install` or `bundle update`. Otherwise
-Gems with a Jarfile will be merge to generate a _Jarfile.lock_. 
+Gems with a Jarfile will be merge to generate a _Jarfile.lock_.
 
 ### Bundler to LockJar groups
 

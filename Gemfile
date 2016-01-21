@@ -12,5 +12,5 @@ group :development do
   gem 'guard-rspec', require: false
   gem 'pry'
   gem 'yard'
-  gem 'rubocop'
+  gem 'rubocop', '~> 0.36.0'
 end
