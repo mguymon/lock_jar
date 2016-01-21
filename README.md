@@ -146,7 +146,7 @@ The _Jarfile.lock_ generated is a YAML file containing information on how to han
 * _[Hash]_ will set the options, e.g. `{ :local_repo => 'path' }`
   * **:local_repo** _[String]_ sets the local repo path. Defaults to `ENV['M2_REPO']` or `'~/.m2/repository'`
   * **:local_paths** _[Boolean]_ converts the notations to paths of jars in the local repo
-  * **:resolve** _[Boolean]_ to true will make transitive dependences resolve before returning list of jars
+  * **:resolve** _[Boolean]_ to `true` will make transitive dependences resolve before returning list of jars. Setting to `false` will list dependencies, excluding transitive dependencies.
 
 **LockJar.load(*args)**: Loads all dependencies to the classpath for groups from the Jarfile.lock. Default group is _default_. Default lock file is _Jarfile.lock_.
 * _[String]_ will set the Jarfile.lock, e.g. `'Better.lock'`
@@ -337,7 +337,7 @@ to allow creation of a _Jarfile.lock_ when Bundler calls `install` and `update`.
     end
 
 You can optionally create a _Jarfile_ that will automatically be included when you `bundle install` or `bundle update`. Otherwise
-Gems with a Jarfile will be merge to generate a _Jarfile.lock_. 
+Gems with a Jarfile will be merge to generate a _Jarfile.lock_.
 
 ### Bundler to LockJar groups
 
