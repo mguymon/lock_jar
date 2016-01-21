@@ -38,7 +38,7 @@ module LockJar
 
         # local_paths and !resolve are mutualally exclusive
         if opts[:local_paths] && opts[:resolve] != false
-          # remove local_paths opt soresolver is not reset
+          # remove local_paths opt so resolver is not reset
           resolver(opts.reject { |k| k == :local_paths }).to_local_paths(dependencies)
 
         else
