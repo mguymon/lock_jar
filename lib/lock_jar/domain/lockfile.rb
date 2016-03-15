@@ -26,23 +26,44 @@ module LockJar
 
       # rubocop:disable Metrics/PerceivedComplexity
       def self.read(path)
-        lockfile = Lockfile.new
+        lock_data = fs_or_classpath(path)
 
-        lock_data = YAML.load_file(path)
+        fail "lockfile #{path} not found" if lock_data.nil?
 
-        lockfile.version = lock_data['version'] || LockJar::VERSION
-        lockfile.merged = lock_data['merged']
-        lockfile.local_repository = lock_data['local_repository']
-        lockfile.merged = lock_data['merged'] || []
-        lockfile.maps = lock_data['maps'] || []
-        lockfile.excludes = lock_data['excludes'] || []
-        lockfile.groups = lock_data['groups'] || lock_data['scopes'] || {}
-        lockfile.remote_repositories =
-          Set.new(Array(lock_data['remote_repositories'] || lock_data['repositories']))
-        lockfile.gems = lock_data['gems'] || []
-        lockfile
+        Lockfile.new.tap do |lockfile|
+          lockfile.version = lock_data['version'] || LockJar::VERSION
+          lockfile.merged = lock_data['merged']
+          lockfile.local_repository = lock_data['local_repository']
+          lockfile.merged = lock_data['merged'] || []
+          lockfile.maps = lock_data['maps'] || []
+          lockfile.excludes = lock_data['excludes'] || []
+          lockfile.groups = lock_data['groups'] || lock_data['scopes'] || {}
+          lockfile.remote_repositories =
+            Set.new(Array(lock_data['remote_repositories'] || lock_data['repositories']))
+          lockfile.gems = lock_data['gems'] || []
+        end
       end
       # rubocop:enable Metrics/PerceivedComplexity
+
+      def self.fs_or_classpath(path)
+        if File.exist? path
+          YAML.load_file(path)
+
+        # Lookup of Jarfile.lock in the classpath
+        elsif Naether.platform == 'java' || path.start_with?('classpath:')
+          stream = java.lang.Object.java_class.resource_as_stream("/#{path.gsub('classpath:', '')}")
+          if stream
+            reader = java.io.BufferedReader.new(java.io.InputStreamReader.new(stream))
+            lines = ''
+            while (line = reader.read_line)
+              lines << line << "\n"
+            end
+            reader.close
+
+            YAML.load(lines)
+          end
+        end
+      end
 
       def initialize
         @groups = { 'default' => {} }
