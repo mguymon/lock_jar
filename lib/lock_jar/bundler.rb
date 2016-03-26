@@ -13,8 +13,9 @@ module LockJar
       # Create a lock file from bundled gems
       #
       # rubocop:disable Metrics/PerceivedComplexity
-      def lock!(bundler, *opts)
-        return unless bundler.instance_variable_get('@setup').nil?
+      def lock!(*opts)
+        # check if Bundler has already run
+        return unless ::Bundler.instance_variable_get('@setup').nil?
 
         dsl = nil
 
@@ -46,7 +47,7 @@ module LockJar
           end
         end
 
-        puts "[LockJar] Locking Jars for: #{gems_with_jars.inspect}"
+        puts "[LockJar] Locking Jars for: #{gems_with_jars.inspect}" unless gems_with_jars.empty?
         LockJar.lock(*([dsl] + opts))
       end
       # rubocop:enable Metrics/PerceivedComplexity

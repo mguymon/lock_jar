@@ -333,7 +333,7 @@ to allow creation of a _Jarfile.lock_ when Bundler calls `install` and `update`.
 
     @@check ||= at_exit do
       require 'lock_jar/bundler'
-      LockJar::Bundler.lock!(::Bundler)
+      LockJar::Bundler.lock!
     end
 
 You can optionally create a _Jarfile_ that will automatically be included when you `bundle install` or `bundle update`. Otherwise
