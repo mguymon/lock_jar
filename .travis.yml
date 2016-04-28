@@ -2,12 +2,12 @@ before_install:
   - export JRUBY_OPTS="-Xcli.debug=true --debug"
 language: ruby
 rvm:
-  - 1.9.3
-  - 2.0.0
   - 2.1.0
-  - jruby-19mode
+  - 2.2.0
+  - 2.3.0
   - jruby-20mode
   - jruby-21mode
+  - jruby-9.0.5.0
 
 script: bundle exec rake
 sudo: false
