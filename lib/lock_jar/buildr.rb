@@ -18,16 +18,16 @@ require 'lock_jar/domain/dsl'
 
 #
 module Buildr
-  attr_reader :global_lockjar_dsl
-
   class << self
+    attr_accessor :global_lockjar_dsl
+
     def project_to_lockfile(project)
       "#{project.name.tr(':', '-')}.lock"
     end
   end
 
   def lock_jar(&blk)
-    @global_lockjar_dsl = ::LockJar::Domain::Dsl.create(&blk)
+    Buildr.global_lockjar_dsl = ::LockJar::Domain::Dsl.create(&blk)
   end
 
   namespace 'lock_jar' do
