@@ -1,7 +1,7 @@
 require 'yaml'
 
 module LockJar
-  # Handle authentication for
+  # Global configuration for LockJar
   class Config
     CONFIG_ENV = 'LOCKJAR_CONFIG'.freeze
     DEFAULT_FILENAME = '.lockjar'.freeze
@@ -9,6 +9,8 @@ module LockJar
     attr_reader :repositories
 
     class << self
+      # Load .lockjar YAML config file from ENV['LOCKJAR_CONFIG'], current_dir, or
+      # home dir.
       def load_config_file
         local_config_paths =
           [Dir.pwd, Dir.home]
@@ -29,7 +31,6 @@ module LockJar
     #     ':url' => {
     #       'username' => ''
     #       'password' => ''
-    #       'ssh_key' => ''
     #     }
     #   }
     # }
