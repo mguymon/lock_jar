@@ -15,6 +15,7 @@
 
 require 'yaml'
 require 'singleton'
+require 'lock_jar/config'
 require 'lock_jar/resolver'
 require 'lock_jar/registry'
 require 'lock_jar/domain/dsl'
@@ -33,9 +34,10 @@ module LockJar
     include List
     include Install
 
-    attr_reader :current_resolver
+    attr_reader :current_resolver, :config
 
     def initialize
+      @config = Config.load_config_file
       @current_resolver = nil
     end
 
@@ -59,7 +61,7 @@ module LockJar
       end
 
       if @current_resolver.nil? || opts != @current_resolver.opts
-        @current_resolver = LockJar::Resolver.new(opts)
+        @current_resolver = LockJar::Resolver.new(config, opts)
       end
 
       @current_resolver

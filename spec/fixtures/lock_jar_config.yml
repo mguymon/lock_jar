@@ -1,0 +1,4 @@
+repositories:
+  'https://some.fancy.doman/maven':
+    username: 'user1'
+    password: 'the_pass'
