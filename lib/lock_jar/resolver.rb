@@ -24,7 +24,7 @@ module LockJar
     attr_reader :config, :opts, :naether
 
     def initialize(config, opts = {})
-      @config = config
+      @config = config || LockJar::Config.new({})
       @opts = opts
       local_repo = opts[:local_repo] || Naether::Bootstrap.default_local_repo
 

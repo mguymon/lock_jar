@@ -41,7 +41,7 @@ describe LockJar::Resolver do
 
   describe '#add_remote_repository' do
     let(:remote_repos) do
-      Naether::Java.convert_to_ruby_array(subject.naether.remote_repositories).map do |repo|
+      subject.naether.remote_repositories.map do |repo|
         {
           url: repo.url
         }.tap do |hash|
