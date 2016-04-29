@@ -11,5 +11,4 @@ end
 group :development do
   gem 'pry'
   gem 'yard'
-  gem 'rubocop', '~> 0.36.0'
 end
