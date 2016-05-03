@@ -21,7 +21,7 @@ module LockJar
           .compact
           .find { |path| File.exist? path }
 
-        new(YAML.load(IO.read(config_path))) if config_path
+        new(YAML.load_file(config_path)) if config_path
       end
     end
 
