@@ -21,9 +21,10 @@ require 'fileutils'
 module LockJar
   #
   class Resolver
-    attr_reader :opts, :naether
+    attr_reader :config, :opts, :naether
 
-    def initialize(opts = {})
+    def initialize(config, opts = {})
+      @config = config || LockJar::Config.new({})
       @opts = opts
       local_repo = opts[:local_repo] || Naether::Bootstrap.default_local_repo
 
@@ -31,7 +32,6 @@ module LockJar
       Naether::Bootstrap.bootstrap_local_repo(local_repo, opts)
 
       # Bootstrapping naether will create an instance from downloaded jars.
-      # If jars exist locally already, create manually
       @naether = Naether.create
       @naether.local_repo_path = local_repo if local_repo
       @naether.clear_remote_repositories if opts[:offline]
@@ -46,7 +46,10 @@ module LockJar
     end
 
     def add_remote_repository(repo)
-      @naether.add_remote_repository(repo)
+      repo_config = config.repositories[repo] || {}
+      username = repo_config['username']
+      password = repo_config['password']
+      @naether.add_remote_repository(repo, username, password)
     end
 
     def resolve(dependencies, download_artifacts = true)
