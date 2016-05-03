@@ -29,7 +29,6 @@ describe LockJar::Config do
     end
 
     context 'using home dir config' do
-
       before do
         allow(Dir).to receive(:home).and_return(TEMP_DIR)
       end
