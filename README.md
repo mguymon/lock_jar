@@ -271,6 +271,17 @@ As part of the load process for the Gem (an entry file that is required, etc) us
 
 See also [loading Jars into a custom ClassLoader](https://github.com/mguymon/lock_jar/wiki/ClassLoader).
 
+## Authentication
+
+LockJar supports authentication to repository by passing in credentials from a `.lockjar` file. The YAML file contains a username and passwords per repository, for example:
+
+    repositories:
+      'https://some.fancy.doman/maven':
+        username: 'user1'
+        password: 'the_pass'
+
+The order of precedence for locating the `.lockjar` file is the `ENV['LOCKJAR_CONFIG']`, current working directory, and last the user's home directory.
+
 ## Buildr Integration
 
 LockJar integrates with [Buildr](http://buildr.apache.org/) using an [Addon](https://github.com/mguymon/lock_jar/blob/master/lib/lock_jar/buildr.rb). This allows the Jarfile to be defined directly into a _buildfile_. A global LockJar definition can be set and is inherited to all projects. Each project may have its own LockJar definition. A lock file is generated per project based on the project name.
