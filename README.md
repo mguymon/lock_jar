@@ -23,7 +23,7 @@ https://github.com/mguymon/lock_jar
 
 ## Ruby Usage
 
-JRuby is natively supported. Ruby 1.9.3 and 2.1 uses [Rjb](http://rjb.rubyforge.org/) to proxy over JNI.
+JRuby is natively supported. Ruby 2.x uses [Rjb](http://rjb.rubyforge.org/) to proxy over JNI.
 
 ### Jarfile
 
@@ -310,26 +310,23 @@ Sample buildfile with LockJar
 
     # app definition, inherited into all projects
     lock_jar do
-
-         group 'test' do
-           jar 'junit:junit:jar:4.12'
-         end
+      group 'test' do
+        jar 'junit:junit:jar:4.12'
+      end
     end
 
     define 'app' do
-
-       def 'project1' do
+       define 'project1' do
          lock_jar do
-           jar  "org.apache.mina:mina-core:2.0.4"
+           jar "org.apache.mina:mina-core:2.0.4"
          end
        end
 
-       def 'project2' do
-          lock_jar do
-            pom 'pom.xml'
-          end
+       define 'project2' do
+         lock_jar do
+           pom 'pom.xml'
+         end
        end
-
     end
 
 Generated the following lock files using **lock_jar:lock**
